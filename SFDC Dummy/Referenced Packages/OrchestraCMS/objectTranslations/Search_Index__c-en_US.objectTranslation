@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Search Index</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Search Indices</value>
+    </caseValues>
+    <fields>
+        <label><!-- Access Control --></label>
+        <name>Access_Control__c</name>
+    </fields>
+    <fields>
+        <label><!-- Custom Field AI --></label>
+        <name>Custom_Field_AI__c</name>
+    </fields>
+    <fields>
+        <label><!-- Custom Field --></label>
+        <name>Custom_Field__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Keywords --></label>
+        <name>Keywords__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language Index Key --></label>
+        <name>Language_Index_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+    </fields>
+    <fields>
+        <label><!-- Layout Key --></label>
+        <name>Layout_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- PublishEndDate --></label>
+        <name>PublishEndDate__c</name>
+    </fields>
+    <fields>
+        <label><!-- PublishStartDate --></label>
+        <name>PublishStartDate__c</name>
+    </fields>
+    <fields>
+        <label><!-- Site Name --></label>
+        <name>Site_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Status --></label>
+        <name>Status__c</name>
+    </fields>
+    <fields>
+        <label><!-- TagPath --></label>
+        <name>TagPath__c</name>
+    </fields>
+    <fields>
+        <label><!-- Title --></label>
+        <name>Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- URL --></label>
+        <name>URL__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Latest Id --></label>
+        <name>Version_Latest_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Origin Id --></label>
+        <name>Version_Origin_Id__c</name>
+    </fields>
+    <recordTypes>
+        <label><!-- Content --></label>
+        <name>Content</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Library --></label>
+        <name>Library</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Page --></label>
+        <name>Page</name>
+    </recordTypes>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

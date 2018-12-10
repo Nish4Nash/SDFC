@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customApplications>
+        <label><!-- OrchestraCMS --></label>
+        <name>OrchestraCMS</name>
+    </customApplications>
+    <customLabels>
+        <label><!-- Used for first node in  a breadcrumb - the link to the home page --></label>
+        <name>breadcrumb_homepage</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- email verification text link --></label>
+        <name>email_verification_text_link</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- forgot your password question --></label>
+        <name>forgot_your_password_q</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- myprofile myalerts --></label>
+        <name>myprofile_myalerts</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- myprofile mysubscriptions --></label>
+        <name>myprofile_mysubscriptions</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- new user question --></label>
+        <name>new_user_q</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- ocms_no_access_to_secure_url --></label>
+        <name>ocms_no_access_to_secure_url</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- password --></label>
+        <name>password</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Login --></label>
+        <name>portal_login_button</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Logout --></label>
+        <name>portal_login_status_logout_link</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- New User --></label>
+        <name>portal_login_status_new_user_link</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Back to Portal --></label>
+        <name>portal_status_back_to_portal_link</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- My Profile --></label>
+        <name>portal_status_my_options_label</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Welcome --></label>
+        <name>portal_status_welcome</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription email alert label --></label>
+        <name>subscription_email_alert_label</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription-email-label --></label>
+        <name>subscription_email_label</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription enter email message --></label>
+        <name>subscription_enter_email_message</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription error --></label>
+        <name>subscription_error</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription exists msg --></label>
+        <name>subscription_exists_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription guest success msg --></label>
+        <name>subscription_guest_success_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription invalid email msg --></label>
+        <name>subscription_invalid_email_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription no taxonomy error --></label>
+        <name>subscription_no_taxonomy_error</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription not verified msg --></label>
+        <name>subscription_not_verified_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription subscribe label --></label>
+        <name>subscription_subscribe_label</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription success msg --></label>
+        <name>subscription_success_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- subscription to email alerts success msg --></label>
+        <name>subscription_to_email_alerts_success_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- taxonomy.load.more.button --></label>
+        <name>taxonomy_load_more_button</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- taxonomy load noitems msg --></label>
+        <name>taxonomy_load_noitems_msg</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Username --></label>
+        <name>username</name>
+    </customLabels>
+    <customPageWebLinks>
+        <label><!-- OrchestraCMS Package Configure --></label>
+        <name>OrchestraCMS_Package_Configure</name>
+    </customPageWebLinks>
+    <customTabs>
+        <label><!-- OrchestraCMS --></label>
+        <name>OrchestraCMS</name>
+    </customTabs>
+    <customTabs>
+        <label><!-- Site Preview --></label>
+        <name>Site_Preview</name>
+    </customTabs>
+</Translations>

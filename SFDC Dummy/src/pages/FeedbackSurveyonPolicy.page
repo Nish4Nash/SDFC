@@ -1,0 +1,72 @@
+<apex:page controller="PolicySurveyClass"  sidebar="false">
+  <!-- Page Header -->
+  <apex:sectionHeader title="ManuLife Feedback on Policy" />
+    <head>
+	  <style>
+       	 .centerize { 
+            	text-align: center;
+		}
+      	.picklist {
+                height:33px;
+                width:255px;
+                font-size:14px;
+                font-style:italic;
+                font-weight:bold;
+                text-align:left;
+                padding-top:7px;
+                padding-bottom:7px;
+                padding-left:10px;
+                border: 0;
+        }
+         label{
+          		 height:33px;
+                width:255px;
+                font-size:14px;
+                font-style:italic;
+                font-weight:bold;
+                text-align:left;
+                padding-top:7px;
+                padding-bottom:7px;
+                padding-left:10px;
+                border: 0;
+          
+          }
+          commandButton{
+                height:33px;
+                width:255px;
+                font-size:24px;
+                font-weight:bold;
+                text-align:centre;
+                padding-top:7px;
+                padding-bottom:7px;
+                padding-left:10px;
+                border: 0;
+        }
+  
+     </style>
+    </head>
+  <!-- Begin Form -->
+  <apex:form >
+    <apex:pageBlock title="Feedback Survey"> 
+        <apex:pageBlockSection title="Please provide the neccesary feedback">
+            <apex:inputField label="How was your onboarding experience?" value="{!survey.Fq1__c}" styleClass="picklist"  required="true" />
+            <apex:inputField label="Front office staff answered all my questions?." value="{!survey.Fq2__c}"  styleClass="picklist" required="true" /> 
+            <apex:inputField label="How Satisfied you with our Policy Benefits and Coverage?" value="{!survey.Fq3__c}" styleClass="picklist" required="true" /> 
+            <apex:inputField label="How was your policy premium paying experience?" value="{!survey.Fq4__c}" styleClass="picklist" required="true" /> 
+            <apex:inputField label="I am treated with courtesy by all employees?" value="{!survey.Fq5__c}" styleClass="picklist" required="true" /> 
+             <apex:inputField label="Are you satisfied, dissatisfied, or neither satisfied nor dissatisfied with your automobile insurance agent?" value="{!survey.Fq6__c}" styleClass="picklist" required="true" />
+             <apex:inputField label="Whether you think you will refer our policies to your friends?" value="{!survey.Fq7__c}" styleClass="picklist" required="true" />
+             <apex:inputField label="Have you ever been or are you currently the subject of an investment-related, insurance-related, or consumer initiated complaint??" value="{!survey.Fq8__c}" styleClass="picklist" required="true" />
+             <apex:inputField label="Have you ever thought of registering insurance-related, or consumer initiated complaint?" value="{!survey.Fq9__c}" styleClass="picklist" required="true" />
+        </apex:pageBlockSection> 
+            
+      <div class="centerize">
+                <apex:commandButton value="Submit your feedback"  action="{!submitfeedback}" />
+      </div>
+        
+       <apex:pageMessages />
+  	</apex:pageBlock>
+  </apex:form>
+    
+    
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:page controller="cms.GenerateContent" language="{!ContentRenderLanguage}" extensions="cms.vfCacheGenerator" showHeader="false" sidebar="false" standardStylesheets="false" >
+<html>
+	<head>
+	</head>
+	<body>
+		{:Start:}
+			<apex:outputText escape="false" value="{!HTML}"/>
+		{:Stop:}
+	</body>
+</html> 
+</apex:page>

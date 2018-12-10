@@ -1,0 +1,118 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.SmallBlockWithImage"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	 
+		  <script type="text/javascript" language="javascript">
+		 	$(document).ready(function(){
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array();
+					attributes.push({"name":"ImageId", "value":$('#Image').image_selector_input('getSelected'), "type":"Text"});
+					attributes.push({"name":"ContentSummary", "value":CKEDITOR.instances.ContentSummary.getData(), "type":"Text"});
+					attributes.push({"name":"ContentTitle", "value":$('#ContentTitle').val(), "type":"Text"});
+					attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+					attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+					attributes.push({"name":"TargetPageLink", "value":$('#TargetPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					attributes.push({"name":"MoreLink", "value":$('#MoreLink').val(), "type":"Text"});
+					return attributes; 
+				});		
+				 $('#TargetPageLink').page_selector_input({
+	 				input_field: 'TargetPageLink',
+	 				input_id: 'TargetPageLink_selector_input',
+					dialog_id: 'SmallBlockWithImageTarget_selector_dialog',
+					selected: {!IF(OR(TargetPageLinkObj.LinkJSON == null,TargetPageLinkObj.LinkJSON == ''), 'null',TargetPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(TargetPageLinkObj.LinkName)}'
+					
+ 				}); 
+ 				
+ 				$('#Image').image_selector_input({
+					field_id: 'Image',
+					dialog_id: 'Image_selector_dialog',
+					url: '{!ImageId}'
+				});
+				$(document).data('sname', '{!SiteName}');
+				CKEDITOR.replace('ContentSummary',{!CKEditorConfig});
+			});
+		  </script>
+	  
+    <apex:outputPanel >
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+              <tr>
+               
+                <td>
+                	<label class="ocmsLabel">Image</label>
+                    <div id="Image"/>
+                    
+                </td>
+              </tr>
+              
+              <tr>
+               	<td>
+                	<label class="ocmsLabel">Alternative Text</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!AltText}" name="AltText" id="AltText"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!AltText}" name="AltText" id="AltText"  />
+                	</apex:outputText>
+                	<p class="ocmsHelpText" >Word that describes image that will be read by screen-reading software.</p>
+		
+                </td>
+              </tr>
+               <tr>
+               	<td>
+                	<label class="ocmsLabel">Title Text</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input  class="ocmsTextInputLrg"  type="text" value="{!TitleText}" name="TitleText" id="TitleText"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input  class="ocmsTextInputLrg"  type="text" value="{!TitleText}" name="TitleText" id="TitleText"  />
+                	</apex:outputText>
+                	<p class="ocmsHelpText" >Text that appears when the mouse pointer hovers over the image.</p>
+		
+                </td>
+              </tr>
+              <tr>
+                
+           		<td>
+                	<label class="ocmsLabel">Title</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}">
+                    	<input class="ocmsTextInputLrg" type="text" name="ContentTitle" id="ContentTitle" value="{!ContentTitle}" disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}">
+                    	<input class="ocmsTextInputLrg" type="text" name="ContentTitle" id="ContentTitle" value="{!ContentTitle}" />
+                	</apex:outputText>
+                </td>
+              </tr>
+              <tr>
+               
+                <td>
+                	<label class="ocmsLabel">Summary</label>
+						<textarea name="ContentSummary" id="ContentSummary" rows="12" cols="50"><apex:outputText value="{!ContentSummary}" /></textarea>
+				</td>
+              </tr>
+              <tr>
+                
+                <td>
+                    <label class="ocmsLabel">Target Page</label>
+                   
+                    <div id="TargetPageLink" />
+                </td>
+              </tr>
+              <tr>
+                
+                <td>
+                	 <label class="ocmsLabel">More Link</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}">
+                    	<input class="ocmsTextInputLrg" type="text" name="MoreLink" id="MoreLink" value="{!MoreLink}" disabled="disabled"  />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}">
+                    	<input class="ocmsTextInputLrg" type="text" name="MoreLink" id="MoreLink" value="{!MoreLink}"  />
+                	</apex:outputText>
+                </td>
+              </tr>
+            </table>
+    	</form>
+    </apex:outputPanel>
+
+	<br /><br /><br />
+
+</apex:page>

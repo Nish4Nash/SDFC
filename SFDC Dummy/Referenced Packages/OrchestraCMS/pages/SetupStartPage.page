@@ -1,0 +1,508 @@
+<apex:page controller="cms.StartPageController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+    <head>
+        <title>Manage Overture Tab</title>
+        
+        <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+        <c:CmsScripts /> 
+        
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/StartPageAdmin.js')}" />
+        
+        <script type="text/javascript">
+            $(document).data('cms', {
+                'context'   : 'orchestracms',
+                'namespace' : '{!namespace}'
+            });
+
+            // Calling the content selector, taking a callback function.
+            function openContentManager(cb) {
+                $("link[href$='gwtui.css']").prop('disabled', false);
+                var data = {
+                    'siteName' : '{!SiteName}',
+                    'autoHide' : false,
+                    'closeOnSelect' : true,
+                    '_CallbackFunc' : cb,
+                    '_contentTemplateIds' : {!contentTemplateIds}.toString(),
+                    '_callbackOnClose': function() { $("link[href$='gwtui.css']").prop('disabled', true); }
+                }
+                loadContenttable(data);
+            }
+
+            /**
+             * @Object An object for managing the administration of the overture tab.
+             */
+            var ocmsStartPageAdmin = {
+                sname: '{!SiteName}' ,
+
+                // _startPageDefinition - the entire start page configuration returned from the server.
+                _startPageDefinition: {},
+                // _updateLocks - The list of locked settings that need to be update on all profile users of this profile
+                _updateLocks: [],
+                // _updateGlobals - The list of all settings that need to be pushed to all profiles and users
+                _updateGlobals: [],
+                // _allWidgets - A map of all the available widgets to use on a start page.  {"widgetName" : {widgetDefinition}}
+                _allWidgets: {},
+
+                // Adds a lock to the list of locks.
+                addLock: function(setting) {
+                    this._updateLocks.push(setting);
+                },
+
+                // Returns the existing list of locks.
+                getLocks: function() {
+                    return this._updateLocks;
+                },
+
+                // Resets the list of locked settings.
+                clearLocks: function() {
+                    this._updateLocks = [];
+                },
+
+                // Adds a value to the list of global updates.
+                addGlobal: function(setting) {
+                    this._updateGlobals.push(setting);
+                },
+
+                // Removes a value from the list of global updates.
+                removeGlobal: function(setting) {
+                    this._updateGlobals.splice(this._updateGlobals.indexOf(setting), 1);
+                },
+                
+                // Returns the existing list of global settings.
+                getGlobals: function() {
+                    return this._updateGlobals;
+                },
+                
+                // Resets the list of global settings.
+                clearGlobals: function() {
+                    this._updateGlobals = [];
+                },
+
+                // Sets the list of all widgets
+                setAllWidgets: function(widgetList) {
+                    this._allWidgets = widgetList;
+                },
+
+                // Adds a widget to the start page definition
+                addWidget: function(layoutPanelName, widget) {
+                    var widgetList = this._startPageDefinition.layout.panels[layoutPanelName].widgetList.value.split(',');
+                    widgetList.push(widget.name.value);
+                    this._startPageDefinition.layout.panels[layoutPanelName].widgetList.value = widgetList.join(',');
+                    this._startPageDefinition.layout.panels[layoutPanelName].widgets[widget.name.value] = widget;
+
+                },
+
+                // Takes a string argument and returns the object found along that path within the _startPageDefinition object
+                getSetting: function(path) {
+                    return [this._startPageDefinition].concat(path.split('.')).reduce(function(previous, current) {
+                        return previous[current];
+                    });
+                },
+
+                // Initialization of the start page.
+                create: function(definition) {
+                    // Reset the locks and globals (important when switching between profiles.)
+                    this.clearLocks();
+                    this.clearGlobals();
+                    // Set the start page definition to the one provided from the server.
+                    this._setStartPageDefinition(definition);
+
+                    // Start Tab Name
+                    var setTabName = document.querySelector('#StartTabName');
+                    setTabName.setAttribute('ocmsSPSettingPath', 'label');
+                    setTabName.setAttribute('ocmsSPSettingLock', this._startPageDefinition.label.locked);
+
+                    // Icon
+                    var setIconName = document.querySelector('#TabIcon-image-input');
+                    setIconName.setAttribute('ocmsSPSettingPath', 'icon');
+                    setIconName.setAttribute('ocmsSPSettingLock', this._startPageDefinition.icon.locked);
+
+                    // Then, go build the whole page layout based on the definition.
+                    this._buildPageLayout(this._startPageDefinition.layout, 'layout');
+        
+                },
+        
+                // Select all the settings from the page and update their corresponding values in the _startPageDefinition object
+                save: function() {
+                    var self = ocmsStartPageAdmin;
+
+                    // Grab everything identified as a setting
+                    var allSettings = document.querySelectorAll('.ocmsSPData');
+
+                    [].forEach.call(allSettings, function(setting) {
+                        // Get the string path that represents which setting we are updating.
+                        var settingPath = setting.getAttribute('ocmsSPSettingPath');
+                        // Find the lock value for this setting.
+                        var settingLock = setting.getAttribute('ocmsSPSettingLock') == 'true';
+
+                        // Grab the object for the setting requested.
+                        var thisSetting = self.getSetting(settingPath);
+
+                        // If it is an input text box or hidden, set the value and lock.
+                        if (setting.nodeName == 'INPUT' && (setting.type == 'text' || setting.type == 'hidden')) {
+                            thisSetting.value = setting.value;
+                            thisSetting.locked = settingLock;
+
+                        // If it is a checkbox, set the value to the string of the boolean value.
+                        } else if (setting.nodeName == 'INPUT' && setting.type == 'checkbox') {
+                            thisSetting.value = setting.checked.toString();
+                            thisSetting.locked = settingLock;
+
+                        // If it is a div then save the innerHTML
+                        } else if (setting.nodeName == 'DIV') {
+                            // Special case for saving the icon
+                            if (setting.id == 'TabIcon-image-input') {
+                                thisSetting.value = $(setting).image_selector_input('getSelected');
+                            } else {
+                                thisSetting.value = setting.innerHTML;
+                                thisSetting.locked = settingLock;
+                            }
+                        }
+
+                    });
+
+                },
+
+                // Empty out the existing page and then reload it.
+                refresh: function(){
+                    var adminPageRoot = document.querySelector('#ocmsSPLayoutAdmin');
+                    while (adminPageRoot.firstChild) {
+                        adminPageRoot.removeChild(adminPageRoot.firstChild);
+                    }
+                    this.create(this._startPageDefinition);
+
+                },
+
+                _setStartPageDefinition: function(definition) {
+                    this._startPageDefinition = definition;
+                },
+
+                // Turn the start page definition into a JSON string.
+                getStartPageDefinitionJSON: function() {
+                    return JSON.stringify(this._startPageDefinition);
+                },
+
+                // Inserts the root container and then loops over the panels and creates them.
+                _buildPageLayout: function(layout, configPath) {
+                    var rootContainer = document.createElement('div');
+                    var rootContainerName = 'ocmsSPLayout';
+                    rootContainer.className = rootContainerName;
+                    rootContainer.id = rootContainerName;
+
+                    var panels = document.createDocumentFragment();
+                    if (!(typeof layout.panelList.value == 'undefined') && !(layout.panelList.value == null)) {
+                        var panelList = layout.panelList.value.split(',');
+                        for (var panelIndex = 0, panelEnd = panelList.length; panelIndex < panelEnd; panelIndex++) {
+                            var currentPanelName = panelList[panelIndex];
+                            var currentPanelDef = layout.panels[currentPanelName];
+                            
+                            var panel = new LayoutPanel(currentPanelDef, this, configPath+'.panels.'+currentPanelName);
+
+                            panels.appendChild(panel.element);
+                           
+                        }
+                    }
+                    rootContainer.appendChild(panels);
+
+                    var adminPageRoot = document.querySelector('#ocmsSPLayoutAdmin');
+                    adminPageRoot.appendChild(rootContainer);
+                }
+            }
+
+            /**
+             * @function init will make an ajax request for the start page definition for the selected profile and then build the page.
+             * @param {String} profileId - The id of the license profile.
+             * @param {function} callback - A function to execute once the start page configuration is returned.
+             */
+            function init(profileId, callback) {
+                var data = {};
+                data['action'] = 'getStartPage';
+                data['profile'] = profileId;
+                
+                var options = {};
+                options['readonly'] = false;
+                options['bAsync'] = true;
+                options['cb'] = function(json, success) {
+                    json = $.orchestracmsUtil.parseJSON(json);
+                    if (!success.status || json.error !== undefined) {
+                        $.ocmsDebug.logError('Error encountered getting the global start page configuration: {0}', json.error.message);
+                        $('<div></div>').ocmsShowErrorPopup({
+                            message : 'Unable to load configuration.  Error: '+json['error']['message'],
+                            showIcon : true,
+                            showMask : true,
+                            width : 300
+                        });
+                    } else {
+                        ocmsStartPageAdmin._setStartPageDefinition(json.success.message);
+                        ocmsStartPageAdmin.refresh();
+                        if (typeof callback == 'function') {
+                            callback(profileId);
+                        }
+        
+                    }
+        
+                }
+                
+                _doAjaxRequest(data, options);
+            
+            }
+
+
+            /**
+             * @function _doAjaxRequest will take already built up data and options objects and add the correct service name.
+             * @param {String} profileId - The id of the license profile.
+             * @param {function} callback - A function to execute once the start page configuration is returned.
+             */
+            function _doAjaxRequest(data, options){
+                data['service'] = 'StartPageController';
+                $.ocmsDebug.logInfo("Running: {0}", data);
+                
+                doServiceRequest(data, options);
+            }
+                        
+            $(document).ready(function(){
+                $("link[href$='gwtui.css']").prop('disabled', true);
+
+                // The page setup function, as a callback to be executed after the page configuration is returned from the server.
+                var callback = function(profileId) {
+                    /**
+                     * @function saveConfiguration will take the existing page configuration and save it for the profile that is selected.
+                     * @param {String} saveProfileId - The id of the license profile that is being updated.
+                     * @param {Boolean} saveOnly - The action is a save only (true if the settings don't need to be re-rendered, false if they do.)
+                     * @param {Boolean} clone - If the action is also going to clone the setup to other profiles, clone is true.
+                     * @param {Boolean} reset - If the action is going to save the default out-of-the-box configuration then reset is true.
+                     */
+                    var saveConfiguration = function(saveProfileId, saveOnly, clone, reset) {
+                        var waitingMessage = '';
+                        if (clone === true) {
+                            waitingMessage = 'Saving and cloning';
+                        } else if (reset === true) {
+                            waitingMessage = 'Resetting';
+                        } else {
+                            waitingMessage = 'Saving';
+                        }
+                        // Put up the overlay and disable the save button while the save is happening.
+                        $.orchestracmsUtil._showWaitMessage(waitingMessage);
+                        $('.progessPlaceholder').css('display', 'inline-block');
+                        $('.SaveButton').button("disable");
+                        
+                        // Update the start page configuration
+                        ocmsStartPageAdmin.save();
+
+                        // ...then save it to the server.
+                        var data = {};
+                        data['action'] = 'setStartPage';
+                        data['profile'] = typeof saveProfileId == 'undefined' ? $('#ocmsProfileSelect').val() : saveProfileId;
+                        data['configuration'] = ocmsStartPageAdmin.getStartPageDefinitionJSON();
+                        data['locks'] = JSON.stringify(ocmsStartPageAdmin.getLocks());
+                        data['global'] = JSON.stringify(ocmsStartPageAdmin.getGlobals());
+                        if (clone === true) {
+                            data['cloneTo'] = $('#ocmsCloneProfileSelect').val();
+                        }
+                        if (reset === true) {
+                            data['reset'] = true;
+                        }
+                        
+                        var options = {};
+                        options['readonly'] = false;
+                        options['bAsync'] = true;
+                        options['cb'] = function(json, success) {
+                            // Once there is a response, remove the overlay, enable the save button and hide the progress indicator.
+                            $('.progessPlaceholder').css('display', 'none');
+                            $('.SaveButton').button("enable");
+                            $.orchestracmsUtil._closeWaitMessage();
+
+                            json = $.orchestracmsUtil.parseJSON(json);
+                            if (!success.status || json.error !== undefined) {
+
+                                $.ocmsDebug.logError('Error encountered setting the start page configuration: {0}', json.error.message);
+                                $('<div></div>').ocmsShowErrorPopup({
+                                    message : 'Unable to save configuration.  Error: '+json['error']['message'],
+                                    showIcon : true,
+                                    showMask : true,
+                                    width : 300
+                                });
+                            }
+                            else {
+                                // If this was purely a save then we don't need to update the UI.  Otherwise, we do.
+                                if (!saveOnly)
+                                    init($('#ocmsProfileSelect').val(), callback);
+                            }
+                        
+                        }
+                        
+                        _doAjaxRequest(data, options);
+                    }
+
+                    var profileIdToSave = profileId;
+
+                    // Set up save button.
+                    var saveButton = function(){
+                        saveConfiguration(profileIdToSave, true);
+                    }
+                    $('.SaveButton').button().off('click.ocms.saveStartPage');
+                    $('.SaveButton').button().on('click.ocms.saveStartPage', saveButton);
+
+
+                    // Set up clone button.
+                    $('#cloneButton').button({disabled: true});
+
+
+                    // Set up reset button.
+                    var resetButton = function(){
+                        // If we wish to reset the configuration, prompt the user about the action.
+                        var resetMessage = 'Are you sure you wish to reset the <strong>'+ $("#ocmsProfileSelect option:selected").text() +'</strong> profile\'s configuration to the original default values?  This action will also reset any user preferences for users in this profile.';
+                        $('<div />').ocmsShowConfirmationDlg({
+                            title: 'Confirm Reset',
+                            message: resetMessage,
+                            onYES: function() {
+                                // Run the save.
+                                saveConfiguration(profileIdToSave, false, false, true);
+                                return true;
+                            },
+                            onNO: function() { return true; }
+                        });
+                    }
+                    $('#resetButton').button().off('click.ocms.resetStartPage');
+                    $('#resetButton').button().on('click.ocms.resetStartPage', resetButton);
+                    
+
+                    var profileList = {!ocmsProfilesJSON}
+                    
+                    // Configure the profiles selection box.
+                    var selectionBox = $('#ocmsProfileSelect');
+                    selectionBox.empty();
+                    for (var profileCount = 0; profileCount < profileList.length; profileCount++) {
+                        selectionBox.append('<option value="'+ profileList[profileCount].id +'"'+ (profileList[profileCount].id == profileId ? ' selected' : '') +'>'+ profileList[profileCount].name +'</option>');
+                    }
+
+                    // When the profile selection box is changed, save the existing changes before switching.
+                    var saveChange = function(){
+                        saveConfiguration(profileIdToSave, false);
+                    }
+                    selectionBox.off('change.ocms.saveStartPage');
+                    selectionBox.on('change.ocms.saveStartPage', saveChange);
+
+
+                    // Configure the clone profile selection box.
+                    var cloneSelectionBox = $('#ocmsCloneProfileSelect');
+                    cloneSelectionBox.empty();
+                    cloneSelectionBox.append('<option value=""></option>');
+                    cloneSelectionBox.append('<option value="allProfiles">All other profiles</option>');
+                    for (var profileCount = 0; profileCount < profileList.length; profileCount++) {
+                        cloneSelectionBox.append('<option value="'+ profileList[profileCount].id +'">'+ profileList[profileCount].name +'</option>');
+                    }
+
+                    var cloneChange = function(){
+                        if ($('#ocmsCloneProfileSelect').val() !== '') {
+                            var cloneButton = function(){
+                                // If we wish to clone  the configuration, prompt the user about the action.
+                                var cloneMessage = 'Are you sure you wish to overwrite the <strong>'+ $("#ocmsCloneProfileSelect option:selected").text() +'</strong> profile\'s configuration with this one?';
+                                $('<div />').ocmsShowConfirmationDlg({
+                                    title: 'Confirm Clone',
+                                    message: cloneMessage,
+                                    onYES: function() {
+                                        // Run the save and reset the selection box and button to the default state.
+                                        saveConfiguration(profileIdToSave, true, true);
+
+                                        $('#ocmsCloneProfileSelect').val('');
+                                        $('#cloneButton').button('disable');
+                                        
+                                        return true;
+                                    },
+                                    onNO: function() { return true; }
+                                });
+                            }
+                            $('#cloneButton').button('enable');
+                            $('#cloneButton').button().off('click.ocms.cloneStartPage');
+                            $('#cloneButton').button().on('click.ocms.cloneStartPage', cloneButton);
+
+                        } else {
+                            $('#cloneButton').button('disable');
+                            $('#cloneButton').button().off('click.ocms.cloneStartPage');
+
+                        }
+                    }
+                    cloneSelectionBox.off('change.ocms.cloneSelectionChange');
+                    cloneSelectionBox.on('change.ocms.cloneSelectionChange', cloneChange);
+
+
+                    $('#TabIcon-image-input').image_selector_input({
+                        type: 'Image',
+                        disabled: false,
+                        sname: '{!SiteName}',
+                        ajaxLoader: '{!URLFOR($Resource.cms__jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}',
+                        url: $('#TabIcon-image-input').attr('ocmsSPIconUrl'),
+                        height: 20,
+                        width: 20,
+                        instructionalText: ''
+                    });
+
+                    //Manipulate the icon selection styles:
+                    var iconContainer = $('#TabIcon');
+                    iconContainer.find('.container').css('float', 'left').css('margin', '0 3px');
+                }
+                init('{!profileId}', callback);
+            });
+
+        </script>
+    </head>
+
+    <body class="ocms">
+    
+        <c:SetupMenu sname="{!SiteName}" activeitem="startpage" />
+		<c:ContentManagerSelector sname="{!SiteName}" />
+        <div style="margin-left: 210px; padding: 10px;">    
+
+            <div class="ocms-setup-breadcrumb">
+                <div class="ocms-setup-breadcrumb-start"></div>
+                <div class="ocms-setup-breadcrumb-item">Setup</div>
+                <div class="ocms-setup-breadcrumb-separator-active"></div>
+                <div class="ocms-setup-breadcrumb-item-active">Overture Tab</div>
+                <div class="ocms-setup-breadcrumb-end"></div>
+                <div class="ocms-clear"></div>
+            </div>
+
+            <br />
+
+            <div class="SaveButton" >Save</div><div class="ocms-icon-progress-16 progessPlaceholder" style="width: 16px; line-height: normal; display: none; margin-left: 10px; vertical-align: middle;"></div>
+            <br /><br />
+            <span style="font-size:1.4em">General Settings</span><br/>
+            <div id="GeneralSettings" style="padding: 5px;">
+                <div id="TabIcon" style="display: inline-block; vertical-align: top;">
+                    <label class="ocmsLabel">Tab Icon</label>
+                    <div id="TabIcon-image-input" class="ocmsSPData" ocmsSPIconUrl="{!siteStartPageIcon}"></div>
+                    <span class="ocmsHelpText">20x20 px</span>
+                </div>
+                <div id="TabName" style="display: inline-block; vertical-align: top; margin-left: 25px;">
+                    <label class="ocmsLabel" for="StartTabName">Tab Name</label><br />
+                    <input class="ocmsTextInputMed ocmsSPData" type="text" name="StartTabName" id="StartTabName" value="{!siteStartPageName}"/>
+                </div>
+            </div>
+
+            <span style="font-size:1.4em">Profile-specific Settings</span><br/>
+            <div style="padding-bottom: 15px;">
+                <p>Determine what the user in each OrchestraCMS profile can see and edit on the Overture tab.</p>
+                <div id="ocmsProfileSelection" style="display: inline-block; vertical-align: top;">
+                    <label for="ocmsProfileSelect">OrchestraCMS Profile</label>&nbsp;
+                    <select id="ocmsProfileSelect"></select>                    
+                </div>
+                <div id="cloneToOCMSProfile"  style="display: inline-block; vertical-align: top; margin-left: 35px;">
+                    <label for="ocmsCloneProfileSelect">Clone this configuration to</label>&nbsp;
+                    <select id="ocmsCloneProfileSelect"></select>
+                    <div id="cloneButton">Clone</div>
+                </div>
+                <div id="resetOCMSProfile"  style="display: inline-block; vertical-align: top; margin-left: 35px;">
+                    <div id="resetButton">Reset This Profile</div>
+                </div>
+            </div>
+
+            <div id="ocmsSPLayoutAdmin"></div>
+
+            <div class="SaveButton" >Save</div><div class="ocms-icon-progress-16 progessPlaceholder" style="width: 16px; line-height: normal; display: none; margin-left: 10px; vertical-align: middle;"></div>
+        </div>
+    </body>
+
+</html>
+</apex:page>

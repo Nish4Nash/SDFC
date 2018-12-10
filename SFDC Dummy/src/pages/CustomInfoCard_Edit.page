@@ -1,0 +1,124 @@
+<apex:page controller="cms.CreateContentController" extensions="CustomInfoCardController" showHeader="false" sidebar="false" cache="false" standardStylesheets="false">
+<apex:outputPanel layout="block">
+<script type="text/javascript" language="javascript">
+$(document).ready(function(){
+
+<!-- The ce.content_editor(‘registerSaveFunction’) is how attributes are saved to Salesforce through OrchestraCMS this is followed by the array of data to be saved in this case the variable we stored the attributes in -->
+ce.content_editor('registerSaveFunction', function() {
+
+<!-- Each element value that will be stored in Salesforce through OrchestraCMS will need to it’s value pushed to the attributes array of objects -->
+            var attributes = new Array();
+               attributes.push({"name":"thumbnail", "value":$('#thumbnail').val(), "type":"Text"});                
+               attributes.push({"name":"fullName", "value":$('#fullName').val(), "type":"Text"});
+               attributes.push({"name":"title", "value":$('#title').val(), "type":"Text"});
+               attributes.push({"name":"workAddress", "value":$('#workAddress').val(), "type":"Text"});
+               attributes.push({"name":"email", "value":$('#email').val(), "type":"Text"});
+               attributes.push({"name":"website", "value":$('#website').val(), "type":"Text"});
+               attributes.push({"name":"bio", "value":CKEDITOR.instances.bio.getData(), "type":"Text"});
+               
+               return attributes;
+});
+});
+
+    </script>
+<!-- <style> tags can be used to add styling directly to the edit page; however, best practice is to include them in a stylesheet for the site -->
+    <style>
+     input {
+        width: 500px;
+     }
+    </style>
+    
+<!-- Markup for the edit page  -->
+    <h1>Edit Info Card</h1>
+        <table>
+                <tr>
+                    <td>Image: </td>
+                    <td>
+<!-- Image Selector: a hidden input is used to store the value from the image selector.  -->         
+                        <input type="hidden" name="thumbnail" id="thumbnail" value="{!thumbnail}" /> 
+<cms:ImageSelector sname="{!content.cms__Site_Name__c}" cPassThroughId="thumbnail" cImage="{!thumbnail}" type="Image" disabled="{!content.cms__Published__c}" DialogId="thumbnailDlg" />
+                    </td>    
+            </tr>
+            <tr>
+                    <td>Full Name: </td>
+                    <td>
+<!-- The rendered=”{!content.cms__Published__c}” will display the input element contained within the apex:outputText if the content has been published whereas the rendered=”{!!content.cms__Published__c}” will display its input element if the content has not been published  -->         
+                        <apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+<input id="fullName" name="fullName" type="text" value="{!fullName}" disabled="disabled"></input>                   
+                        </apex:outputText>
+                        <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+                                <input id="fullName" name="fullName" type="text" value="{!fullName}"></input>
+                        </apex:outputText>
+                    </td>      
+                </tr>
+             <tr>
+                    <td>Title: </td>
+                 <td>
+                            <apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+<input id="title" name="title" type="text" value="{!title}" disabled="disabled"></input>                   
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+<input id="title" name="title" type="text" value="{!title}"></input>
+                            </apex:outputText>
+                    </td>      
+                </tr>
+<tr>
+                 <td>Work Address: </td>
+                    <td>
+                            <apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+<input id="workAddress" name="workAddress" type="text" value="{!workAddress}" disabled="disabled"></input>                   
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+<input id="workAddress" name="workAddress" type="text" value="{!workAddress}"></input>
+                            </apex:outputText>
+                    </td>      
+                </tr>
+<tr>
+                    <td>Email: </td>
+                    <td>
+                            <apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+<input id="email" name="email" type="text" value="{!email}" disabled="disabled"></input>                   
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+<input id="email" name="email" type="text" value="{!email}"></input>
+                            </apex:outputText>
+                    </td>      
+             </tr>
+<tr>
+                    <td>Website: </td>
+                    <td>
+<!-- PageSelector is very similar to the ImageSelector  -->
+                            <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+<input type="hidden" name="website" id="website" value="{!website}" />
+<cms:PageSelector sname="{!content.cms__Site_Name__c}" cPassThroughId="website" DialogId="websiteDlg" value="{!website}"/>
+                         </apex:outputText>
+<apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+<input name="parsedWebsite" id="parsedWebsite" type="text" value="{!parsedWebsite}"> </input>                   
+                            </apex:outputText>
+                    </td>    
+                </tr>
+    <tr>
+                    <td><label for="bio">Biography:</label></td>
+                    <td>
+                            <apex:outputText escape="false" rendered="{!!content.cms__Published__c}">
+<!--  CKEDITOR is implemented by OrchestraCMS to provide a rich text editor to replace a text area -->
+                                <textarea name="bio" id="bio" rows="24" cols="50">{!bio}</textarea>
+                                <script type="text/javascript" language="javascript">
+                                        $(function() {
+CKEDITOR.replace('bio');
+}); 
+                                </script>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!content.cms__Published__c}">
+                                    <textarea name="bio" id="bio" rows="24" cols="50">{!bio}</textarea>
+                                    <script type="text/javascript" language="javascript">
+$(function() {
+CKEDITOR.replace('bio');
+});
+</script>
+                            </apex:outputText>          
+                    </td>
+                </tr>
+        </table>            
+</apex:outputPanel>
+</apex:page>

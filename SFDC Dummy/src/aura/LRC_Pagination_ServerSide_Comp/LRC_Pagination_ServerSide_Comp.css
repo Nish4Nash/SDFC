@@ -1,0 +1,20 @@
+.THIS.table-wrapper{
+    width:85%;
+    margin:0 auto;
+}
+.THIS .heading{
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 1rem;    
+}
+.THIS.table-wrapper table th,.THIS.table-wrapper table td {
+    text-align: left;
+    padding: 0.5rem 1rem;
+    border: 1px solid #000;
+    font-size:1rem;
+}
+
+.THIS.table-wrapper table th {
+    background: #0070d2;
+    color: #fff;    
+}

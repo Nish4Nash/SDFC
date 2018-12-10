@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Attribute Data</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Attribute Data</value>
+    </caseValues>
+    <fields>
+        <label><!-- Apex Class Name --></label>
+        <name>Apex_Class_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Definition JS Constructor --></label>
+        <name>Definition_JS_Constructor__c</name>
+    </fields>
+    <fields>
+        <label><!-- Definition Resource Name --></label>
+        <name>Definition_Resource_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Definition Script Path --></label>
+        <name>Definition_Script_Path__c</name>
+    </fields>
+    <fields>
+        <label><!-- Definition Stylesheet Path --></label>
+        <name>Definition_Stylesheet_Path__c</name>
+    </fields>
+    <fields>
+        <label><!-- Editor JS Constructor --></label>
+        <name>Editor_JS_Constructor__c</name>
+    </fields>
+    <fields>
+        <label><!-- Editor Resource Name --></label>
+        <name>Editor_Resource_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Editor Script Path --></label>
+        <name>Editor_Script_Path__c</name>
+    </fields>
+    <fields>
+        <label><!-- Editor Stylesheet Path --></label>
+        <name>Editor_Stylesheet_Path__c</name>
+    </fields>
+    <fields>
+        <label><!-- Label --></label>
+        <name>Label__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

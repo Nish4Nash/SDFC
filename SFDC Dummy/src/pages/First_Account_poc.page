@@ -1,0 +1,9 @@
+<apex:page controller="Account_first_poc_apex">
+  <!-- Begin Default Content REMOVE THIS -->
+  <apex:form >
+  MYfirstInput:<apex:InputText value="{!inputVariable}"/>
+  <apex:commandButton value="SaveIt" action="{!saveMyValue}"/>
+   MYfirstOutput:<apex:OutputText value="{!OutputVariable}"/>
+  </apex:form>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

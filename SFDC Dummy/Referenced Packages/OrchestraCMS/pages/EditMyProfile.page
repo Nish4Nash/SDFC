@@ -1,0 +1,64 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.MyProfileController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    <script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+         	 ce.content_editor('registerSaveFunction', function(){
+	             var attributes = new Array();
+	             attributes.push({"name":"ChangePwdPageLink", "value":$('#ChangePwdPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+	             attributes.push({"name":"ChangeUserDetailsPageLink", "value":$('#ChangeUserDetailsPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+	             attributes.push({"name":"AvailableSubscriptionsPageLink", "value":$('#AvailableSubscriptionsPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				 return attributes;
+			});
+			
+			$('#ChangePwdPageLink').page_selector_input({
+	 				input_field: 'ChangePwdPageLink',
+	 				input_id: 'ChangePwdPageLink_selector_input',
+					dialog_id: 'ChangePwdPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(ChangePwdPageLinkObj.LinkJSON == null, ChangePwdPageLinkObj.LinkJSON == ''), 'null', ChangePwdPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ChangePwdPageLinkObj.LinkName)}'
+ 			});
+ 			
+ 			$('#ChangeUserDetailsPageLink').page_selector_input({
+	 				input_field: 'ChangeUserDetailsPageLink',
+	 				input_id: 'ChangeUserDetailsPageLink_selector_input',
+					dialog_id: 'ChangeUserDetailsPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(ChangeUserDetailsPageLinkObj.LinkJSON == null, ChangeUserDetailsPageLinkObj.LinkJSON == ''), 'null', ChangeUserDetailsPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ChangeUserDetailsPageLinkObj.LinkName)}'
+ 			});
+ 			
+ 			$('#AvailableSubscriptionsPageLink').page_selector_input({
+	 				input_field: 'AvailableSubscriptionsPageLink',
+	 				input_id: 'AvailableSubscriptionsPageLink_selector_input',
+					dialog_id: 'AvailableSubscriptionsPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(AvailableSubscriptionsPageLinkObj.LinkJSON == null, AvailableSubscriptionsPageLinkObj.LinkJSON == ''), 'null', AvailableSubscriptionsPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(AvailableSubscriptionsPageLinkObj.LinkName)}'
+ 			});
+         }); 
+
+     </script>
+     <form>
+         <table class="ocmsContentEditor ocmsContentEditorNested">
+             <tr>
+                <td>
+                    <label class="ocmsLabel" for="ChangePwdPageLink">Change Password Page</label>
+                    <div id="ChangePwdPageLink" />
+                    <p class="ocmsHelpText">Page that users see after changing their password</p>
+                </td>
+             </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="ChangeUserDetailsPageLink">Change User Details Page</label>
+                    <div id="ChangeUserDetailsPageLink" />
+                    <p class="ocmsHelpText">Page that the use will access to change their user details</p>
+                </td>
+             </tr>
+             <tr>
+                <td>
+                    <label class="ocmsLabel" for="AvailableSubscriptionsPageLink">Available Subscriptions List Page</label>
+                    <div id="AvailableSubscriptionsPageLink" />
+                    <p class="ocmsHelpText">Page that has the available subscriptions content template</p>
+                </td>
+             </tr>
+        </table>
+   </form>
+
+</apex:page>

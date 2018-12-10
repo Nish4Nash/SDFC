@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Restriction Group</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Restriction Groups</value>
+    </caseValues>
+    <fields>
+        <label><!-- Ancestor 1 --></label>
+        <name>Ancestor_1__c</name>
+        <relationshipLabel><!-- Restriction Groups (Ancestor 1) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor 2 --></label>
+        <name>Ancestor_2__c</name>
+        <relationshipLabel><!-- Restriction Groups (Ancestor 2) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor --></label>
+        <name>Ancestor__c</name>
+        <relationshipLabel><!-- Restriction Groups --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Depth --></label>
+        <name>Depth__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Key --></label>
+        <name>Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Restriction Type --></label>
+        <name>Restriction_Type__c</name>
+        <relationshipLabel><!-- Restriction Groups --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Restriction Groups --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

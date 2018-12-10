@@ -1,0 +1,54 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.TaxonomyMenuController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    <style>
+        .ocms-property-viewer {
+            height:inherit !important;
+        }
+        .ocms-property-form {
+            height:auto !important;
+        }
+       .ocms-content-editor-panel {
+                padding:0;
+            }
+    </style>
+	
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/taxonomy/TaxonomyManager.js')}" />
+	
+	<script>
+		//var taxonomyMgr;
+		$(document).ready(function() {
+            ce.content_editor('option', 'EmailSubscriptionClientVerificationPageLink',{
+                                        'selected': {!IF(OR(EmailSubscriptionClientVerificationPageLink.LinkJSON == null, EmailSubscriptionClientVerificationPageLink.LinkJSON == ''), 'null', EmailSubscriptionClientVerificationPageLink.LinkJSON)},
+                                        'selected_name': '{!JSENCODE(EmailSubscriptionClientVerificationPageLink.LinkName)}',
+                                        'ajaxLoaderImage': '{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}'
+                                         });
+            ce.content_editor('option', 'TargetPageLink', {
+                                        'selected': {!IF(OR(TargetPageLink.LinkJSON == null, TargetPageLink.LinkJSON == ''), 'null', TargetPageLink.LinkJSON)},
+                                        'selected_name': '{!JSENCODE(TargetPageLink.LinkName)}',
+                                        'ajaxLoaderImage': '{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}'
+                                         });
+            ce.content_editor('option', 'isTypeNone', {!isTypeNone});
+            ce.content_editor('option', 'isTypeAll',  {!isTypeAll});
+            ce.content_editor('option', 'isTypeLeaf', {!isTypeLeaf});
+            ce.content_editor('option', 'isModelAlert', {!isModelAlert});
+            ce.content_editor('option', 'isModelSubscription', {!isModelSubscription});
+            ce.content_editor('option', 'isPublicNotificationModel', {!isPublicNotificationModel});
+            
+           var taxonomyMgr=  $('#taxonomyMgr').ocmsTaxonomyManager({
+             	taxonomy : '{!JSENCODE(content.Id)}'
+               	,isPublished: {!content.Published__c}
+               	,isDisabled: {!disableAll}
+                ,showLanguages: {!showLanguages}
+               	,allLanguageInformation: allLanguageInformation
+                ,languageId: '{!languageInUse.Id}'
+                ,contentType: '{!JSENCODE(content.Content_Type__c)}'
+             });
+            
+        });
+       
+       
+       	
+	</script>
+	<div>
+	<div id="taxonomyMgr" style="height:100%;border-top: 1px solid rgb(226,235,187);border-bottom: 1px solid rgb(226,235,187);"></div>	
+	</div>
+</apex:page>

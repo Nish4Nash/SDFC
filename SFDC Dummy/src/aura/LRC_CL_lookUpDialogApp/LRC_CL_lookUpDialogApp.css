@@ -1,0 +1,32 @@
+.THIS div.transbox
+{
+    background-color: #d5d5d5;
+    -moz-opacity: 0.90;
+    /* for IE */
+    filter:alpha(opacity=96);
+    /* CSS3 standard */
+    opacity:0.96;
+    z-index: 100;
+}
+
+
+
+.THIS .popupdivCls
+{
+    /*  Below Css will keep it in view even if you scroll down. */
+    border-radius: 1em;
+    background-color : white;
+    background-repeat : repeat;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+    padding: 1em;
+    
+    position:relative;
+    top: 20%;
+    left: 10%;
+    width:80%;
+    height:70%;
+    /*margin-top: -5%; /*set to a negative number 1/2 of your height*/
+    /*margin-left: -25%; /*set to a negative number 1/2 of your width*/
+    border: 1px solid #ccc;
+    
+}

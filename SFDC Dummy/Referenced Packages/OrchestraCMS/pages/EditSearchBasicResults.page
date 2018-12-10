@@ -1,0 +1,67 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.SearchBasicResultsController"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	<apex:outputPanel layout="block" style="padding: 5px;">
+	
+	 	<script type="text/javascript" language="javascript">
+			$(document).ready(function(){
+                ce.content_editor('registerSaveFunction', function(){
+                	var attributes = new Array();
+
+					// both of these properties are languge specific values
+                   attributes.push({"name":"SearchedLabel", "value":$('#SearchedLabel').val(), "type":"Text"});
+                   attributes.push({"name":"ResultsLabel", "value":$('#ResultsLabel').val(), "type":"Text"});
+
+                    return attributes;
+                });
+			});
+		</script>
+	
+		<style type="text/css">
+			table.ocmsContentEditor tr td {
+				float: none;
+			}
+			table.ocmsContentEditor {
+				height: auto;
+			}
+			span .ocms-instructional-text {
+				display: block;
+				margin-top: 0.5em;
+			}
+			span .ocms-instructional-text {
+				width: 300px;
+			}
+			#ResultsPageDlg .ocmsTextInputLrg {
+				display: inline-block;
+			}
+		</style>
+	
+	<form>
+		<table class="ocms-form-edit ocmsContentEditor ocmsContentEditorNested">
+
+			<tr>
+				<td>
+	            	<label class="ocmsLabel">Searched Label</label>
+					<apex:outputText rendered="{!disableAll}">
+		            	<input type="text" name="SearchedLabel" id="SearchedLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchedLabel}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+		            	<input type="text" name="SearchedLabel" id="SearchedLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchedLabel}" />
+					</apex:outputText>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+	            	<label class="ocmsLabel">Results Label</label>
+					<apex:outputText rendered="{!disableAll}">
+		            	<input type="text" name="ResultsLabel" id="ResultsLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!ResultsLabel}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+		            	<input type="text" name="ResultsLabel" id="ResultsLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!ResultsLabel}" />
+					</apex:outputText>
+				</td>
+			</tr>
+
+	    </table>
+	</form>
+	</apex:outputPanel>
+</apex:page>

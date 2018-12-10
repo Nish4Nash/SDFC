@@ -1,0 +1,173 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.ListableWithImage" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	<head>
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/DateFormatSelector.js')}" />
+		<style type="text/css">
+
+			.date-format-selector { list-style-type: none; margin: 0; padding: 0; }
+			.date-format-selector li {position:relative; margin: 3px 3px 3px 0; padding: 18px 1px 1px 1px; float: left; height: 32px; font-size: 4em; text-align: center; border: 1px solid #cccccc; }
+			.drag-handle {position: absolute; top:0; left:0; width: 15px; height: 15px;}
+		</style>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#date_formatter').date_format_selector({
+					target: '#DateFormat',
+					value: '{!JSENCODE(DateFormat)}',
+					disabled: {!disableAll}
+				});
+				
+				$('#TargetLink').page_selector_input({
+	 				input_field: 'TargetLink',
+	 				input_id: 'TargetLink_selector_input',
+					dialog_id: 'TargetLinkDlg_selector_dialog',
+					selected: {!IF(OR(TargetLinkObj.LinkJSON == null, TargetLinkObj.LinkJSON == ''), 'null', TargetLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(TargetLinkObj.LinkName)}'
+ 				});
+ 				
+ 				$('#ListImage').image_selector_input({
+					field_id: 'ListImageInput',
+					dialog_id: 'ListImage_selector_dialog',
+					url: '{!ListImage}'
+				});
+				
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"ListTitle", "value":$('#ListTitle').val(), "type":"Text"});
+				attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+				attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+				attributes.push({"name":"ListSummary", "value":$('#ListSummary').val(), "type":"Text"});
+				attributes.push({"name":"ListImage", "value":$('#ListImage').image_selector_input('getSelected'), "type":"Text"});
+				attributes.push({"name":"ShowDate", "value":$('#ShowDate:checked').val() == 'true' ? 'true' : 'false', "type":"Boolean"});
+				attributes.push({"name":"TargetLink", "value":$('#TargetLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				attributes.push({"name":"DateFormat", "value":$('#DateFormat').val(), "type":"Text"});
+				attributes.push({"name":"ListableMoreLink", "value":$('#MoreLink').val(), "type":"Text"});
+				return attributes; 
+			
+			});
+			
+		});
+			
+		</script>
+
+	</head>
+
+
+    <apex:outputPanel layout="block">
+
+       <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+             
+              <tr>
+               	<td>
+                	<label class="ocmsLabel">Image</label>
+                    <div id="ListImage"/>
+                </td>
+              </tr>
+			    <tr>
+               	<td>
+                	<label class="ocmsLabel" for="AltText">Alternative Text</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!AltText}" name="AltText" id="AltText"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!AltText}" name="AltText" id="AltText"  />
+                	</apex:outputText>
+                	<p class="ocmsHelpText" >Word that describes image that will be read by screen-reading software.</p>
+		
+                </td>
+              </tr>
+               <tr>
+               	<td>
+                	<label class="ocmsLabel" for="TitleText">Title Text</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!TitleText}" name="TitleText" id="TitleText"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!TitleText}" name="TitleText" id="TitleText"  />
+                	</apex:outputText>
+                	<p class="ocmsHelpText" >Text that appears when the mouse pointer hovers over the image.</p>
+		
+                </td>
+              </tr>
+			   <tr>
+               	<td>
+                	<label class="ocmsLabel" for="ListTitle">Title</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!ListTitle}" name="ListTitle" id="ListTitle"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!ListTitle}" name="ListTitle" id="ListTitle"  />
+                	</apex:outputText>
+                </td>
+              </tr>
+              <tr>
+              
+                <td>
+                 	<label class="ocmsLabel" for="ListSummary">Summary</label>
+                 	<apex:outputText escape="false" rendered="{!disableAll}" >
+                		<textarea class="ocmsTextInputLrg"  id="ListSummary" name="ListSummary" disabled="disabled"><apex:outputText value="{!ListSummary}" /></textarea>
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                		<textarea class="ocmsTextInputLrg"  id="ListSummary" name="ListSummary"><apex:outputText value="{!ListSummary}" /></textarea>
+                	</apex:outputText>
+                	<p class="ocmsHelpText" >Text that will appear as a link on your list.</p>
+		
+                </td>
+              </tr>
+			  <tr>
+			   
+				<td>
+				<label class="ocmsLabel">Target Link</label>
+			      <div id="TargetLink" />
+				</td>
+			  </tr>
+			   <tr>
+        	       <td>
+                	<label class="ocmsLabel" for="MoreLink">More Link</label>
+                  	<apex:outputText escape="false" rendered="{!disableAll}">
+                  		<input class="ocmsTextInputLrg"  type="text" name="MoreLink" id="MoreLink" value="{!ListableMoreLink}" disabled="disabled" />
+                  	</apex:outputText>
+                  	<apex:outputText escape="false" rendered="{!!disableAll}">
+                  		<input class="ocmsTextInputLrg"  type="text" name="MoreLink" id="MoreLink" value="{!ListableMoreLink}" />
+                  	</apex:outputText>
+                </td>
+              </tr>
+			  <tr class="ocmsCheckForm">
+			  	
+			  	<td>
+			  	<ul>
+			  		<li>
+				  		Show Published Date
+				  		<apex:outputText escape="false" rendered="{!ShowDate}">
+				  			<apex:outputText escape="false" rendered="{!disableAll}">
+				  				<input type="checkbox" name="ShowDate" id="ShowDate" class="ocmsLanguageNeutral" value="true" checked="checked" disabled="disabled"/>
+				  			</apex:outputText>
+				  			<apex:outputText escape="false" rendered="{!!disableAll}">
+				  				<input type="checkbox" name="ShowDate" id="ShowDate" class="ocmsLanguageNeutral" value="true" checked="checked"/>
+				  			</apex:outputText>
+				  		</apex:outputText>
+				  		<apex:outputText escape="false" rendered="{!!ShowDate}">
+				  			<apex:outputText escape="false" rendered="{!disableAll}">
+				  				<input type="checkbox" name="ShowDate" id="ShowDate" class="ocmsLanguageNeutral" value="true" disabled="disabled" />
+							</apex:outputText>
+							<apex:outputText escape="false" rendered="{!!disableAll}">
+								<input type="checkbox" name="ShowDate" id="ShowDate" class="ocmsLanguageNeutral" value="true" />
+							</apex:outputText>
+				  		</apex:outputText>
+				  		
+			  		</li>
+			  	</ul>
+			  	</td>
+			  </tr>
+			  <tr>
+			  	<td style="margin-left:26px;">
+			  		<label class="ocmsLabel" for="date_formatter">Date Format</label>
+			  		<input type="hidden" name="DateFormat" id="DateFormat" value="{!DateFormat}" />
+			  		<div id="date_formatter"></div>
+			  	</td>
+			  </tr>
+        	 
+           </table>
+        </form>
+    </apex:outputPanel>
+</apex:page>

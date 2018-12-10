@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Tag</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Tags</value>
+    </caseValues>
+    <fields>
+        <label><!-- Ancestor1 --></label>
+        <name>Ancestor1__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor1) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor2 --></label>
+        <name>Ancestor2__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor2) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor3 --></label>
+        <name>Ancestor3__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor3) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor4 --></label>
+        <name>Ancestor4__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor4) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor5 --></label>
+        <name>Ancestor5__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor5) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor6 --></label>
+        <name>Ancestor6__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor6) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor --></label>
+        <name>Ancestor__c</name>
+        <relationshipLabel><!-- Tag Definition (Ancestor0) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Tags --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Depth --></label>
+        <name>Depth__c</name>
+    </fields>
+    <fields>
+        <label><!-- Distribution List --></label>
+        <name>Distribution_List__c</name>
+        <relationshipLabel><!-- Tags --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Visible --></label>
+        <name>Is_Visible__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Object Access Level --></label>
+        <name>Object_Access_Level__c</name>
+    </fields>
+    <fields>
+        <label><!-- Object Start Date --></label>
+        <name>Object_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Page --></label>
+        <name>Page__c</name>
+        <relationshipLabel><!-- Tags --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Subscription --></label>
+        <name>Subscription__c</name>
+        <relationshipLabel><!-- Tags --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Tag Definition Name --></label>
+        <name>Tag_Definition_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Tag Definition --></label>
+        <name>Tag_Definition__c</name>
+        <relationshipLabel><!-- Tags --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- TaxonomyOrigin --></label>
+        <name>Taxonomy__c</name>
+        <relationshipLabel><!-- TaxonomyTags --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

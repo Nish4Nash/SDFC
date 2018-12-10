@@ -1,0 +1,493 @@
+<apex:page controller="cms.InstallSiteController"  showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="OrchestraCMS" action="{!installConfiguration}">
+<html>
+
+<head>
+	<title>OrchestraCMS - Set Up a New Site</title>
+	<style type="text/css">
+	  ul {
+	    margin: 0px;
+	    padding: 0px;
+	    color: #FF0000;
+	    list-style-type: none;
+	  }
+	  ul li {
+	    display: block;
+	    margin: 0px; 
+	    padding: 5px 0px 5px 5px;
+	  }
+	  .ocms-a {
+		    cursor:pointer;
+		    text-decoration:underline;
+		}
+	  .ocms-a:hover {
+	    	text-decoration:none;
+	    	color:#788E1E;
+	  }
+	  .ocms td {
+	        vertical-align: top;
+	  }
+	</style>
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-migrate.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUtil, '/OCMSScripts.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/RESTProxy.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryMessagePane.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryDialogs.js')}" />
+    
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('#installIntranetButton').button().click(function(event){
+				installIntranet();
+				$('#installIntranetButton').button('disable');
+			});
+			
+			$('#installSFButton').button().click(function(event){
+				installSF();
+				$('#installSFButton').button('disable');
+			});
+			setSelectedUser();
+		});
+	    
+	    function redirectToManage(sname){
+	   		window.location.href='/apex/Manage?sname=' + sname; 
+       	}
+	    
+	    function setSelectedUser() {
+	    	var selectedSite = $('#availableSites option:selected').text();
+	        $('#defaultGuestUser option').filter(function() {return this.text==(selectedSite.trim()+" Site Guest User")}).prop('selected', true);
+	              
+	    }
+	       
+		function installSF(){
+        	 var popup = $('<div></div>').ocmsShowInfoPopup({
+				message: 'Creating and initializing OrchestraCMS site'
+			});
+			var sname = $('#availableSites option:selected').text().trim();
+			var data = {};
+	    	data['action']   		= 'installSFSite';
+	       	data['service']   		= 'InstallSiteService';
+		    data['site_id']			= $('#availableSites').val();
+		    data['langCode']		= $('#defaultLanguageCodeSF').val();
+		    data['lang']			= $('#defaultLanguageSF').val();
+		    data['guest']			= $('#defaultGuestUser').val();
+		    data['lang_description']=$("#langDescriptionSF").val();
+		    data['token']			= '{!token}';
+		   
+		   	var handler = function(json, result){
+				json = $.orchestracmsUtil.parseJSON(json);
+				if((result.status == true) && (json.isSuccess)) {
+				     popup.message='done';
+				     savePermissionSetAjax(json,sname);
+				     popup.ocmsShowInfoPopup('closeMessage');
+		    	} else {
+				         $('<div></div>').ocmsShowErrorPopup({
+                  				title: 'error',
+                  				message : 'Error in: ' + json.message,
+                  				width: 400
+           				});
+           				$('#installSFButton').button('enable');
+           			}
+				   
+				}
+				var options = {};
+				options['cb']     = handler;
+				doServiceRequest(data, options);
+		 }
+        
+        
+        function installIntranet(){
+        	   	var popup = $('<div></div>').ocmsShowInfoPopup({
+        	   	message: 'Creating OrchestraCMS site'
+			});
+			var sname =  $('#site_name').val().trim();
+			var data = {};
+	    	data['action']   		= 'installIntranet';
+	       	data['service']   		= 'InstallSiteService';
+	       	data['token']			 = '{!token}';
+		    data['site_name'] 		= $('#site_name').val(); 
+		    data['site_label']   =  $('#site_label').val();
+		    data['lang']		=   $('#defaultLanguageIntranet').val();
+		    data['langCode']		=   $('#defaultLanguageCodeIntranet').val();
+		    data['lang_description'] =	$("#langDescriptionIntranet").val();
+		   
+		   	var handler = function(json, result){
+				json = $.orchestracmsUtil.parseJSON(json);
+				if((result.status == true) && (json.isSuccess)) {
+				     popup.message='done';
+				     savePermissionSetAjax(json,sname);
+				     
+				     popup.ocmsShowInfoPopup('closeMessage');
+		    	} else {
+				         $('<div></div>').ocmsShowErrorPopup({
+                  				title: 'error',
+                  				message : 'Error installing site: ' + json.message,
+                  				width: 400
+                  				
+           				});
+           				$('#installIntranetButton').button('enable');
+           			}
+				   
+				}
+				var options = {};
+				options['cb']     = handler;
+				doServiceRequest(data, options);
+			
+        }
+		
+		function savePermissionSetAjax(jsonData,sname){
+        	var profileName = '{!profile.Name__c}';
+        	var popup = $('<div></div>').ocmsShowInfoPopup({
+				message: 'Saving Permission Set for ' + profileName + ' profile'
+			});
+			
+			var data = {};
+	    	data['action']   		= 'generate_ocms_prof_perm';
+		   	data['service']   		= 'ocmsPermissionSetGen';
+		    data['profile_id'] 		= jsonData.profileId;
+		    data['profile_name']	= jsonData.profileName;
+		    data['permsetId']		=  '';
+		    data['sitename']			= sname;
+		    data['apply_perm_to_user'] =true;
+		    data['token']			 = '{!token}';
+		   
+		   	var handler = function(json, result){
+				json = $.orchestracmsUtil.parseJSON(json);
+				if((result.status == true) && (json.isSuccess)) {
+				     popup.message='done';
+				     updateLicenseProfileMap(jsonData.profileId,json.message,sname);
+				     popup.ocmsShowInfoPopup('closeMessage');
+		    	} else {
+				         $('<div></div>').ocmsShowErrorPopup({
+                  				title: 'error',
+                  				message : 'Error creating permissions for Administrator in this profile: ' + json.message,
+                  				width: 400,
+                  				onClose: function() {redirectToManage(sname);}
+           				});
+           			}
+				}
+				var options = {};
+				options['cb']     = handler;
+				doServiceRequest(data, options);
+				
+		}
+        
+        
+        function savePermissionSetGuestAjax(sname){
+              var popup = $('<div></div>').ocmsShowInfoPopup({
+				message: 'Saving Permission Set for Site User'
+			});
+			
+			var data = {};
+	    	data['action']   		= 'generate_site_viewer_perm';
+		   	data['service']   		= 'ocmsPermissionSetGen';
+		    data['site_viewer'] 	=  $('#defaultGuestUser').val();
+		    data['sname']			=  sname;
+		    data['token']			 = '{!token}';
+		   	var handler = function(json, result){
+				json = $.orchestracmsUtil.parseJSON(json);
+				if((result.status == true) && (json.isSuccess)) {
+				     popup.message='done';
+				     popup.ocmsShowInfoPopup('closeMessage');
+				     redirectToManage(sname);
+				    
+		    	} else {
+				        $('<div></div>').ocmsShowErrorPopup({
+                  				title: 'error',
+                  				message : 'Error creating permissions for Site User: ' + json.message,
+                  				width: 400,
+                  				onClose: function() {redirectToManage(sname);}
+           				});
+           			}
+           		}
+				var options = {};
+				options['cb']     = handler;
+				doServiceRequest(data, options);
+			}
+        
+         
+         	function updateLicenseProfileMap(profileId, permSetId,sname){
+          		var popup = $('<div></div>').ocmsShowInfoPopup({
+				message: 'Updating Permission Set for OrchestraCMS profile'
+				});
+				
+				var data = {};
+		    	data['action']   		= 'updateLicenseProfileMap';
+		       	data['service']   		= 'InstallSiteService';
+			    data['profile_id']   	=  profileId;
+			    data['permissionSetId']	=  permSetId;
+			    data['sname']			=  sname;
+			    data['token']			 = '{!token}';
+			   
+			   
+			 	var handler = function(json, result){
+					json = $.orchestracmsUtil.parseJSON(json);
+						if((result.status == true) && (json.isSuccess)) {
+						     popup.message='done';
+						     popup.ocmsShowInfoPopup('closeMessage');
+						     
+						    
+				    	} else {
+						         
+					      $('<div></div>').ocmsShowErrorPopup({
+	               				title: 'error',
+	               				message : 'Error creating permissions for Site User: ' + json.message,
+	               				width: 400,
+	               				onClose: function() {redirectToManage(sname);}
+	           				});
+	           			}
+		           		if('{!selectPropertiesSiteForce}' == 'true')
+		           			savePermissionSetGuestAjax(sname);
+		           		else
+		           			redirectToManage(sname);
+					   
+					}
+					var options = {};
+					options['cb']     = handler;
+					doServiceRequest(data, options);		
+        }
+    
+         
+         function doServiceRequest(params, options) {
+		    var cms = $(document).data('cms');
+		    var page;
+		    var cb                  = options.cb;
+		    var cbHandlerOnComplete = options.cbHandlerOnComplete;
+		    var bAsync              = options.bAsync;
+		    var readonly            = options.readonly;
+		    
+		   var paramToPassToAjax = {};
+		    if(typeof params === 'string' ||  params instanceof String){
+			    var pairs = params.split('&');
+				pairs.forEach(function(pair) {
+	    			pair = pair.split('=');
+	    			paramToPassToAjax[pair[0]] = decodeURIComponent(pair[1].replaceAll('\\+','%20'));
+				});
+		    	
+		    }else
+		    	paramToPassToAjax=params;
+		    
+		    if(bAsync === undefined || bAsync === null){
+		          bAsync = true;
+		    }    
+		    if(readonly === undefined || readonly === null){
+		        readonly = false;
+		    }
+		    
+            var endpoint    = readonly ? 'ServiceEndpointReadOnly' : 'ServiceEndpoint';
+		    
+		    paramToPassToAjax['token'] = '{!token}';
+		    paramToPassToAjax['sname'] = '{!SiteName}';
+	        paramToPassToAjax['runtime'] = 'Application';
+
+			var target = 'ServiceEndpoint';
+	
+		    $.ajax({
+		        url: endpoint,
+		        data: paramToPassToAjax,
+		        success: function(result, status, xhr){
+		            // AJAX Success.
+		            // In the event of an error in a service call, the error object
+		            // is returned and handled by the callback.
+		            // Event object simulates the Remoting event object allowing for a unified callback.
+		            var event = {
+		                'status' : true,
+		                'type'   : 'rpc'
+		            }
+		            if ($.isFunction(cb))
+		              cb(result, event);
+		        },
+		        
+		        error: function(xhr, status, errorThrown){
+		            // AJAX Error
+		            // Event object simulates the Remoting event object allowing for a unified callback.
+		            var event = {
+		                'status'  : false,
+		                'type'    : 'exception',
+		                'message' : status + ': ' + errorThrown,
+		                'where'   : ''
+		            }
+		            if ($.isFunction(cb))
+		              cb(null, event);
+		        },
+		        complete: function(xhr, textStatus) {
+		            if ($.isFunction(cbHandlerOnComplete))
+		                cbHandlerOnComplete(textStatus);
+		        },
+		        async: bAsync,
+		        dataType: 'html',
+		        type: 'POST'
+		    });
+		
+		}
+	</script>
+</head>
+
+<body class="ocms">
+
+<div class="ocms-header-area" style="margin-top: 20px; height: 50px;">
+	<div class="ocms-header" style="height: 50px; background: none;">
+	            <div class="ocms-logos">
+	                <a id="stantive-logo" href="http://www.stantive.com" target="StantiveInfo">
+	                    <div class="ocms-tooltipText">Stantive.com (Opens in new window)</div>
+	                	<img class="nopadding" align="bottom" src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoStantive.png')}"/>
+	               	</a>
+	                <a id="ocms-logo" href="http://www.stantive.com" target="OrchestraInfo">
+	                    <div class="ocms-tooltipText">OrchestraCMS.com (Opens in new window)</div>
+	                	<img class="nopadding" align="bottom" src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoOrchestraCMS.png')}"/>
+	                </a>
+	 	            <span style="position: relative; top: 25px; left: 425px;">v{!packageVersion}</span>
+	            </div>
+	</div>
+</div>
+<div style="margin-top: 70px; margin-left: 25px; font-size: 12px;">
+
+
+<apex:outputPanel rendered="{!installRequired}">
+  
+  <br /><br />
+  This site needs to be configured for use with OrchestraCMS. Launch OrchestraCMS
+  and click on the <strong>Setup New Site</strong>.
+
+</apex:outputPanel>
+<apex:outputPanel rendered="{!selectType}">
+  
+  <h2 style="font-size: 16px; font-weight: normal;">Set Up a New Site</h2>
+  
+  <br /><br />
+  
+  Click <a href="/apex/InstallSite?step=properties&type=sforce" class="ocms-a">Salesforce Site</a> for an external website<br /><br /> 
+   
+  Click <a href="/apex/InstallSite?step=properties&type=intranet" class="ocms-a">Salesforce Intranet</a> for an intranet<br /><br />
+
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!selectPropertiesSiteForce}">
+ 
+	<div>
+      <h2 style="font-size: 16px; font-weight: normal;">Select Your Site</h2><br /><br />
+
+	  <apex:messages />
+		
+	  <apex:outputPanel rendered="{!existingSitesAvailable}">
+		 <table border="0" cellspacing="0" cellpadding="5">
+			  <tr>
+			    <td style="padding: 5px 5px 5px 0px; vertical-align: middle;" >Site Label</td>
+			    <td>
+			      <select id="availableSites" onchange="setSelectedUser();">
+	                    <apex:repeat value="{!existingSites}" var="option"> 
+	                         <option value="{!option.value}" > {!option.label} </option>
+	                   </apex:repeat>
+	              </select>
+			     
+		        </td>	    
+			  </tr>
+		      <tr>
+		        <td style="padding: 5px 5px 5px 0px;" >Default Language</td>
+		        <td>
+		            <input type="text"  id="defaultLanguageSF"/> 
+		             <select id="defaultLanguageCodeSF" >
+	                    <apex:repeat value="{!LanguageOptions}" var="option"> 
+	                         <option value="{!option.value}" > {!option.label} </option>
+	                   </apex:repeat>
+	              </select>
+		           
+		            <div style="width: 400px;" class="ocms-instructional-text">Your site's default language selection and label.</div><br />
+		            <textarea rows="4" cols="50"  id="langDescriptionSF"/><br />
+		            <div style="width: 400px;" class="ocms-instructional-text">Default Language description.</div>
+		        </td>
+		      </tr>
+		      <tr>
+			  <td style="padding: 5px 5px 5px 0px;" >Site Guest User</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+					<apex:outputPanel id="guest" >
+					<select id="defaultGuestUser" >
+	                    <apex:repeat value="{!guestUserSelection}" var="option"> 
+	                        <option value="{!option.value}" > {!option.label} </option>
+	                   </apex:repeat>
+	              </select>
+				<br />
+		            <div style="width: 400px;" class="ocms-instructional-text">Your site's Guest User.</div><br />
+		          </apex:outputPanel>  		  
+			  </td>
+			</tr>
+	      </table>
+	
+	      <br />
+	      
+	     <div id="installSFButton" >Install</div>
+	 
+  	 </apex:outputPanel>
+
+     <apex:outputPanel rendered="{!!existingSitesAvailable}">
+		No sites available. You must first create a Salesforce Site and then launch this installer.<br />
+		To create a Salesforce Site, go to <b>Setup</b> | <b>Develop</b> | <b>Sites.</b>
+     </apex:outputPanel>
+      
+    </div>
+     
+</apex:outputPanel>
+ 
+
+<apex:outputPanel rendered="{!selectPropertiesIntranet}">
+
+  
+	<div>
+      <h2 style="font-size: 16px; font-weight: normal;">Set Your Intranet's Site Properties</h2><br /><br />
+
+	  <apex:messages />
+	    
+      <table border="0" cellspacing="0" cellpadding="5">
+      <tr>
+        <td>Site Label</td>
+        <td><input type="text" id="site_label" /><br />
+        	<div style="width: 400px;" class="ocms-instructional-text">The name of the site as it appears in the OrchestraCMS interface.</div>
+        </td>
+      </tr>
+      <tr>
+        <td>Site Name</td>
+        <td>
+        	<input type="text" id="site_name" /><br />
+        	<div style="width: 400px;" class="ocms-instructional-text">The name used when referencing the site internally. This name can contain only underscores and alphanumeric 
+        	characters and must be unique in your organization. It must begin with a letter, not include spaces, not end with 
+        	an underscore and not contain two consecutive underscores.</div>
+        </td>
+	  </tr>
+      <tr>
+        <td>Default <br />Language</td>
+        <td>
+            <input type="text" id="defaultLanguageIntranet" /> 
+            <select id="defaultLanguageCodeIntranet" >
+	                    <apex:repeat value="{!LanguageOptions}" var="option"> 
+	                        <option value="{!option.value}" > {!option.label} </option>
+	                   </apex:repeat>
+	        </select>
+           
+            <div style="width: 400px;" class="ocms-instructional-text">Your site's default language selection and label.</div><br />
+            <textarea rows="4" cols="50"  id="langDescriptionIntranet"/><br />
+            <div style="width: 400px;" class="ocms-instructional-text">Default Language description.</div>
+        </td>
+      </tr>
+      </table>
+      
+      <br />
+    
+      <div id="installIntranetButton">Install</div>
+      
+    </div>
+    
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!finished}">
+<div style="text-align: center;">
+  <br />
+  <apex:image value="{!URLFOR($Resource.cms__CmsImages,'/orchestra-install-success.jpg')}"></apex:image>
+</div>
+</apex:outputPanel>
+
+</div>
+
+</body>
+</html>
+</apex:page>

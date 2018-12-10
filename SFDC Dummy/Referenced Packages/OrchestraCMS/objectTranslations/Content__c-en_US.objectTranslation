@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content</value>
+    </caseValues>
+    <fields>
+        <label><!-- Access Level --></label>
+        <name>Access_Level__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Actual Preview Start Date --></label>
+        <name>Actual_Preview_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Actual Published Start Date --></label>
+        <name>Actual_Published_Start_Date__c</name>
+    </fields>
+    <fields>
+        <help><!-- This checkbox is used in the rendering algorithm to determine whether access controlled content can render it&apos;s cache and whether or not it needs to be dynamically loaded in the case of page caching --></help>
+        <label><!-- All Shared With Guest --></label>
+        <name>All_Shared_With_Guest__c</name>
+    </fields>
+    <fields>
+        <help><!-- This checkbox is used in the rendering algorithm to determine whether access controlled content can render it&apos;s cache and whether or not it needs to be dynamically loaded in the case of page caching --></help>
+        <label><!-- All Shared With Portal --></label>
+        <name>All_Shared_With_Portal__c</name>
+    </fields>
+    <fields>
+        <label><!-- Am Latest Preview --></label>
+        <name>Am_Latest_Preview__c</name>
+    </fields>
+    <fields>
+        <label><!-- Am Latest Published --></label>
+        <name>Am_Latest_Published__c</name>
+    </fields>
+    <fields>
+        <label><!-- Ancestor1 --></label>
+        <name>Ancestor1__c</name>
+        <relationshipLabel><!-- Content (Ancestor1) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor2 --></label>
+        <name>Ancestor2__c</name>
+        <relationshipLabel><!-- Content (Ancestor2) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor3 --></label>
+        <name>Ancestor3__c</name>
+        <relationshipLabel><!-- Content (Ancestor3) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor4 --></label>
+        <name>Ancestor4__c</name>
+        <relationshipLabel><!-- Content (Ancestor4) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor5 --></label>
+        <name>Ancestor5__c</name>
+        <relationshipLabel><!-- Content (Ancestor5) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor6 --></label>
+        <name>Ancestor6__c</name>
+        <relationshipLabel><!-- Content (Ancestor6) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Ancestor --></label>
+        <name>Ancestor__c</name>
+        <relationshipLabel><!-- Content (Ancestor0) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Approval --></label>
+        <name>Approval__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Available Languages --></label>
+        <name>Available_Languages__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Content Layout --></label>
+        <name>Content_Layout__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Type --></label>
+        <name>Content_Type__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Depth --></label>
+        <name>Depth__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Dirty Date --></label>
+        <name>Dirty_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Exclude Search --></label>
+        <name>Exclude_Search__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- IndexCount --></label>
+        <name>IndexCount__c</name>
+    </fields>
+    <fields>
+        <label><!-- Index --></label>
+        <name>Index__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Not Targeted --></label>
+        <name>Is_Not_Targeted__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+    </fields>
+    <fields>
+        <label><!-- Last Order --></label>
+        <name>Last_Order__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked For Edit By --></label>
+        <name>LockedForEditBy__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- LockedForEditDate --></label>
+        <name>LockedForEditDate__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked For Edit --></label>
+        <name>LockedForEdit__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Object Start Date --></label>
+        <name>Object_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Order --></label>
+        <name>Order__c</name>
+    </fields>
+    <fields>
+        <label><!-- Original Preview Start Date --></label>
+        <name>Original_Preview_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Original Published Start Date --></label>
+        <name>Original_Published_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Parent Origin --></label>
+        <name>Parent_Origin__c</name>
+        <relationshipLabel><!-- Descendents --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Parent --></label>
+        <name>Parent__c</name>
+        <relationshipLabel><!-- Children --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Preview End Date --></label>
+        <name>Preview_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Preview Expires --></label>
+        <name>Preview_Expires__c</name>
+    </fields>
+    <fields>
+        <label><!-- Preview Start Date --></label>
+        <name>Preview_Start_Date__c</name>
+    </fields>
+    <fields>
+        <help><!-- Visible when previewing. --></help>
+        <label><!-- Preview --></label>
+        <name>Preview__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority Duration --></label>
+        <name>Priority_Duration__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority End Date --></label>
+        <name>Priority_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority Preview --></label>
+        <name>Priority_Preview__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority Weight --></label>
+        <name>Priority_Weight__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority --></label>
+        <name>Priority__c</name>
+    </fields>
+    <fields>
+        <label><!-- Published End Date --></label>
+        <name>Published_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Published Expires --></label>
+        <name>Published_Expires__c</name>
+    </fields>
+    <fields>
+        <label><!-- Published Start Date --></label>
+        <name>Published_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Published --></label>
+        <name>Published__c</name>
+    </fields>
+    <fields>
+        <label><!-- Revision Number --></label>
+        <name>Revision_Number__c</name>
+    </fields>
+    <fields>
+        <label><!-- Revision Origin --></label>
+        <name>Revision_Origin__c</name>
+        <relationshipLabel><!-- Revisions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Search Content Name --></label>
+        <name>Search_Content_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Site Name --></label>
+        <name>Site_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Sub Tree --></label>
+        <name>SubTree__c</name>
+        <relationshipLabel><!-- Parent Trees --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- TagFilter1 --></label>
+        <name>TagFilter1__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter2 --></label>
+        <name>TagFilter2__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter3 --></label>
+        <name>TagFilter3__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter4 --></label>
+        <name>TagFilter4__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter5 --></label>
+        <name>TagFilter5__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter6 --></label>
+        <name>TagFilter6__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TagFilter --></label>
+        <name>TagFilter__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Tag Definition --></label>
+        <name>Tag_Definition__c</name>
+        <relationshipLabel><!-- Content --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter10 --></label>
+        <name>TargetFilter10__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter11 --></label>
+        <name>TargetFilter11__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter12 --></label>
+        <name>TargetFilter12__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter13 --></label>
+        <name>TargetFilter13__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter14 --></label>
+        <name>TargetFilter14__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter15 --></label>
+        <name>TargetFilter15__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter16 --></label>
+        <name>TargetFilter16__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter17 --></label>
+        <name>TargetFilter17__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter18 --></label>
+        <name>TargetFilter18__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter19 --></label>
+        <name>TargetFilter19__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter1 --></label>
+        <name>TargetFilter1__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter2 --></label>
+        <name>TargetFilter2__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter3 --></label>
+        <name>TargetFilter3__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter4 --></label>
+        <name>TargetFilter4__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter5 --></label>
+        <name>TargetFilter5__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter6 --></label>
+        <name>TargetFilter6__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter7 --></label>
+        <name>TargetFilter7__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter8 --></label>
+        <name>TargetFilter8__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter9 --></label>
+        <name>TargetFilter9__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll10 --></label>
+        <name>TargetFilterAll10__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll11 --></label>
+        <name>TargetFilterAll11__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll12 --></label>
+        <name>TargetFilterAll12__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll13 --></label>
+        <name>TargetFilterAll13__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll14 --></label>
+        <name>TargetFilterAll14__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll15 --></label>
+        <name>TargetFilterAll15__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll16 --></label>
+        <name>TargetFilterAll16__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll17 --></label>
+        <name>TargetFilterAll17__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll18 --></label>
+        <name>TargetFilterAll18__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll19 --></label>
+        <name>TargetFilterAll19__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll1 --></label>
+        <name>TargetFilterAll1__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll2 --></label>
+        <name>TargetFilterAll2__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll3 --></label>
+        <name>TargetFilterAll3__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll4 --></label>
+        <name>TargetFilterAll4__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll5 --></label>
+        <name>TargetFilterAll5__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll6 --></label>
+        <name>TargetFilterAll6__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll7 --></label>
+        <name>TargetFilterAll7__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll8 --></label>
+        <name>TargetFilterAll8__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll9 --></label>
+        <name>TargetFilterAll9__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll --></label>
+        <name>TargetFilterAll__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter --></label>
+        <name>TargetFilter__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Targets --></label>
+        <name>Targets__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Title --></label>
+        <name>Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Adhoc --></label>
+        <name>Total_Adhoc__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Attributes --></label>
+        <name>Total_Attributes__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Content --></label>
+        <name>Total_Content__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Predefined --></label>
+        <name>Total_Predefined__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Shares --></label>
+        <name>Total_Shares__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Tags --></label>
+        <name>Total_Tags__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Templates --></label>
+        <name>Total_Templates__c</name>
+    </fields>
+    <fields>
+        <label><!-- Translated Languages --></label>
+        <name>Translated_Languages__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Unique Search Name --></label>
+        <name>Unique_Search_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Latest Published --></label>
+        <name>Version_Latest_Published__c</name>
+        <relationshipLabel><!-- Content (Version Latest Published) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Version Latest --></label>
+        <name>Version_Latest__c</name>
+        <relationshipLabel><!-- Content (Version Latest) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Version Name --></label>
+        <name>Version_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Number --></label>
+        <name>Version_Number__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Origin --></label>
+        <name>Version_Origin__c</name>
+        <relationshipLabel><!-- Versions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Version Original --></label>
+        <name>Version_Original__c</name>
+    </fields>
+    <fields>
+        <label><!-- Version Parent --></label>
+        <name>Version_Parent__c</name>
+        <relationshipLabel><!-- Child Versions --></relationshipLabel>
+    </fields>
+    <layouts>
+        <layout>Content Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Content Sharing Rule --></label>
+        <name>OrchestraCMS_Content_Sharing_Rule</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Managed Share --></label>
+        <name>OrchestraCMS_Managed_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Collaborator Share --></label>
+        <name>OrchestraCMS_Manual_Collaborator_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Visitor Share --></label>
+        <name>OrchestraCMS_Manual_Visitor_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Visitor Single Share --></label>
+        <name>OrchestraCMS_Manual_Visitor_Single_Share</name>
+    </sharingReasons>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- You cannot change the sitemap name! --></errorMessage>
+        <name>Dont_Change_Sitemap_Name</name>
+    </validationRules>
+</CustomObjectTranslation>

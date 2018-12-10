@@ -1,0 +1,385 @@
+<apex:page controller="cms.SetupProfileUsersController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+    <title>Manage Licenses</title>
+	
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	<c:CmsScripts />
+    <script type="text/javascript">
+    	
+    	var allCheckbox = $('#allUsers').ocmsCheckbox({'active':false, 'disabled':false});
+    	var subcheckboxes = new Array();
+    	var rowList = new Array();
+    	var selectedUsers = new Array();
+    	
+    	$(document).ready(function(){
+    			
+
+    			$('.list-row').each(function(){
+    				var row = $(this);
+
+    				var checkbox = row.find('.ocms-checkbox').ocmsCheckbox({
+    					'active' : false,
+    					'disabled' : false,
+    					'onUpdateState' : function(){
+    						var self = $(this);
+    						if(row.find('.ocms-checkbox').ocmsCheckbox('getState') == 'blank'){
+    							row.removeClass('ocms-list-selected');
+    						}else{
+    							row.addClass('ocms-list-selected');
+    						}
+    					}
+    				});
+
+    				rowList[rowList.length] = {
+    					'row' 		: row,
+    					'checkbox' 	: checkbox,
+    					'userid' 	: row.find('.ocms-checkbox').attr('id')
+    				}
+
+    				subcheckboxes[subcheckboxes.length] = { 'checkbox' : checkbox }
+
+    			});
+
+    			$('<div id="ocmsCheckboxTree"></div>').ocmsCheckboxTree({
+    				'top' : [
+    					{
+    						'checkbox': allCheckbox,
+    						'subcheckboxes' : subcheckboxes
+    					}
+    				]
+    			});
+
+    			$('#findUserDialog').dialog({
+    				'autoOpen': false,
+    				'width': 500,
+    				'height': 300,
+    				'buttons': {
+    					'Save': function(){
+    						var self = $(this);
+    						var rowList = self.data('rowList');
+    						for(var i = 0; i < rowList.length; i++){
+    							if(rowList[i].checkbox.ocmsCheckbox('getState') != 'blank'){
+    								if (rowList[i].userid != undefined)
+    									selectedUsers[selectedUsers.length] = rowList[i].userid;
+    							}
+    						}
+    						if(selectedUsers.length > 0){
+    							var userlist = '';
+    							for(var i = 0; i < selectedUsers.length; i++){
+    								userlist = userlist + selectedUsers[i];
+    								if(i < selectedUsers.length-1)
+    									userlist = userlist + ',';
+    							}
+								
+							 $('#loading2').show();
+								addUsers(userlist);
+																
+    						}
+    						$(this).dialog('close');
+    					},
+    					'Cancel': function(){
+    						$(this).dialog('close');
+    					}
+    				}
+    			});
+
+    			$('#findUserDialog').data('rowList', rowList);
+
+    			$('#addUserButton').button().click(function(){
+    				$('#findUserDialog').dialog('open');
+    				allCheckbox.ocmsCheckbox('setState','blank');
+    				for(var i = 0; i < subcheckboxes.length; i++){
+    					subcheckboxes[i].checkbox.ocmsCheckbox('setState', 'blank');
+    				}
+    					
+    				});
+    			$('#doneButton').button().click(function(){
+    				done();
+    			});
+    			$('#filterButton').button().click(function(){
+    				var filterText = $('#filterText').val();
+    				$('#loading').show();
+    				filterUser(filterText);
+
+    			});
+
+    			$('#validatePermissionsButton').button().click(function(){
+	    				
+		    		var popup = $('<div></div>').ocmsShowInfoPopup({
+						message: 'Verifying permissions for users in this profile'
+					});
+						
+					var data = {};
+			    	data['action']   		= 'validate_permissions';
+				   	data['service']   		= 'ocmsPermissionSetGen';
+				    data['sname']     		= '{!site_name}';
+				    data['profile_id'] 		= '{!profile.Id}';
+				   	var handler = function(json, result){
+						json = $.orchestracmsUtil.parseJSON(json);
+						if((result.status == true) && (json.isSuccess)) {
+						     popup.message='done';
+						     validate();
+				    	} else {
+						         $('<div></div>').ocmsShowErrorPopup({
+	                   				title: 'error',
+	                   				message : 'Error verifying permissions for users in this profile: ' + json.message,
+	                   				width: 400
+	            				});
+	            			}
+						    popup.ocmsShowInfoPopup('closeMessage');
+						}
+						var options = {};
+						options['cb']     = handler;
+						doServiceRequest(data, options);
+	    		});
+    		
+    		});
+
+	    	function refreshList(){
+
+				$('#loading').hide();
+
+    			allCheckbox = $('#allUsers').ocmsCheckbox({'active':false, 'disabled':false});
+    			subcheckboxes = new Array();
+    			rowList = new Array();
+    			selectedUsers = new Array();
+
+    			$('.list-row').each(function(){
+    				var row = $(this);
+
+    				var checkbox = row.find('.ocms-checkbox').ocmsCheckbox({
+    					'active' : false,
+    					'disabled' : false,
+    					'onUpdateState' : function(){
+    						var self = $(this);
+    						if(row.find('.ocms-checkbox').ocmsCheckbox('getState') == 'blank'){
+    							row.removeClass('ocms-list-selected');
+    						}else{
+    							row.addClass('ocms-list-selected');
+    						}
+    					}
+    				});
+
+    				rowList[rowList.length] = {
+    					'row' 		: row,
+    					'checkbox' 	: checkbox,
+    					'userid' 	: row.find('.ocms-checkbox').attr('id')
+    				}
+
+    				subcheckboxes[subcheckboxes.length] = { 'checkbox' : checkbox }
+
+    			});
+
+    			$('<div id="ocmsCheckboxTree"></div>').ocmsCheckboxTree({
+    				'top' : [
+    					{
+    						'checkbox': allCheckbox,
+    						'subcheckboxes' : subcheckboxes
+    					}
+    				]
+    			});
+
+    			$('#findUserDialog').data('rowList', rowList);
+
+	    	}
+	  		    		
+    </script>
+  </head>
+
+  <body class="ocms">
+
+  	<c:SetupMenu sname="{!site_name}" activeitem="profiles" />
+
+  	<div style="margin-left: 210px; padding: 10px;">
+
+  		<div class="ocms-setup-breadcrumb">
+		  <div class="ocms-setup-breadcrumb-start"></div>
+		  <div class="ocms-setup-breadcrumb-item">Setup</div>
+		  <div class="ocms-setup-breadcrumb-separator"></div>
+		  <div class="ocms-setup-breadcrumb-item">Manage Profiles</div>
+		  <div class="ocms-setup-breadcrumb-separator"></div>
+		  <div class="ocms-setup-breadcrumb-item">Edit OrchestraCMS Profile</div>
+		  <div class="ocms-setup-breadcrumb-separator-active"></div>
+		  <div class="ocms-setup-breadcrumb-item-active">Manage Users</div>
+		  <div class="ocms-setup-breadcrumb-end"></div>
+		  <div class="ocms-clear"></div>
+		</div>
+
+  		<br />
+
+		<apex:outputPanel id="messages" style="color: #990000">
+  			<apex:outputText escape="false" value="{!message + '<br /><br />'}" rendered="{!IF(message != '', true, false)}" />
+		</apex:outputPanel>
+
+		<apex:form >
+
+			<apex:actionFunction action="{!done}" name="done" />
+			<apex:actionFunction action="{!filterUser}" name="filterUser" rerender="listContainer" oncomplete="refreshList()">
+				<apex:param name="filter" value="" />
+			</apex:actionFunction>
+			<apex:actionFunction action="{!validate}" name="validate" rerender="selectedUsersContainer" oncomplete="refreshList()">
+				<apex:param name="filter" value="" />
+			</apex:actionFunction>
+			<apex:actionFunction action="{!addUsers}" name="addUsers" rerender="add_user_permission_set_container,selectedUsersContainer,listContainer, messages" oncomplete="addPermToUserAjax(),refreshList()">
+				<apex:param name="userlist" value="" />
+			</apex:actionFunction>
+			<apex:actionFunction rerender="selectedUsersContainer" action="{!NoOp}" name="refreshSelectedUsers"/>
+			<apex:actionFunction action="{!deleteUsers}" name="removeUsers" rerender="remove_user_permission_set_container,listContainer, messages,selectedUsersContainer" oncomplete="removePermFromUserAjax(),refreshList()">
+				<apex:param name="userlist" value="" />
+			</apex:actionFunction>
+
+			<div id="findUserDialog" style="display: none;">
+				<div style="padding-top: 5px; width: 325px;">
+			    	Filter <input type="text" id="filterText" />&nbsp;&nbsp;<div id="filterButton" style="height: 17px;">Go</div><div id="loading" style="display: none; float: right;"><img src="{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}" height="20" width="20" /></div><br /><br />
+			    </div>
+				<apex:outputPanel id="listContainer" layout="block" style="padding-top: 5px;">
+			      <table border="0" cellspacing="0" cellpadding="0" class="ocms-list" style="margin: 0px;">
+			      <tr class="list-header">
+			        <td width="25"><div id="allUsers" class="ocms-checkbox"></div></td>
+			        <td width="150">Full Name</td>
+			        <td class="last" width="250">User Name</td>
+			      </tr>
+			      <apex:repeat value="{!availableUsers}" var="availableUser">
+					<tr class="list-row">
+					  <td><div class="ocms-checkbox" id="{!availableUser.Id}"></div></td>
+					  <td>{!availableUser.Name}</td>
+					  <td class="last">{!availableUser.Username}</td>
+					</tr>
+			      </apex:repeat>
+			      <tr class="list-footer">
+			        <td colspan="3"></td>
+			      </tr>
+			      </table>
+			    </apex:outputPanel>
+
+			</div>
+
+			<table border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+			    <td width="725">
+			    	<div id="addUserButton" style="float: left">Add User</div>
+			    	<div id="doneButton" style="margin-left: 10px; float: left">Done</div>
+			    	<div id="validatePermissionsButton" style="float: right">Reapply Permissions</div>
+			   </td>
+			   </tr>
+			</table>
+		
+		 	<apex:outputPanel id="add_user_permission_set_container" style="padding: 2px;">
+				<script type="text/javascript">
+		     
+			      	function addPermToUserAjax(){
+			        	var profile = '{!profile.Name__c}';
+			        	var popup = $('<div></div>').ocmsShowInfoPopup({
+							message: 'Creating Permission Set for User'
+						});
+						
+						var data = {};
+				    	data['action']   		= 'add_perm_to_user';
+					   	data['service']   		= 'ocmsPermissionSetGen';
+					    data['profile_id'] 		= '{!profile.Id}';
+					    data['users']		    = '{!NewUserListJSON}';
+					   	var handler = function(json, result){
+							json = $.orchestracmsUtil.parseJSON(json);
+							if((result.status == true) && (json.isSuccess)) {
+							     popup.message='done';
+							     refreshSelectedUsers();
+							} else {
+							        $('<div></div>').ocmsShowErrorPopup({
+		                   				title: 'error',
+		                   				message : 'Error creating permissions for users: ' + json.message,
+		                   				width: 400
+		            				});
+		            		}
+							popup.ocmsShowInfoPopup('closeMessage');
+						}
+						var options = {};
+						options['cb']     = handler;
+						doServiceRequest(data, options);
+			        }
+		    	</script>
+		</apex:outputPanel>
+		    
+	    <apex:outputPanel id="remove_user_permission_set_container" style="padding: 2px;">
+			<script type="text/javascript">
+		     
+		      function removePermFromUserAjax(){
+		        	var profile = '{!profile.Name__c}';
+		        	var popup = $('<div></div>').ocmsShowInfoPopup({
+						message: 'Creating Permission Set for User'
+					});
+					var data = {};
+			    	data['action']   		= 'remove_user_prof_perm';
+				   	data['service']   		= 'ocmsPermissionSetGen';
+				    data['profile_id'] 		= '{!profile.Id}';
+				    data['users']		    = '{!DeleteUserListJSON}';
+				   	var handler = function(json, result){
+						json = $.orchestracmsUtil.parseJSON(json);
+						if((result.status == true) && (json.isSuccess)) {
+						     popup.message='done';
+						} else {
+						        $('<div></div>').ocmsShowErrorPopup({
+	                   				title: 'error',
+	                   				message : 'Error deleting permissions for user: ' + json.message,
+	                   				width: 400
+	            				});
+	            			}
+						    popup.ocmsShowInfoPopup('closeMessage');
+						}
+						var options = {};
+						options['cb']     = handler;
+						doServiceRequest(data, options);
+		        }
+		    </script>
+	    </apex:outputPanel>
+	    
+	    <br />
+		<apex:outputPanel id="selectedUsersContainer">
+
+			<apex:outputPanel id="selectedUsers" rendered="{!hasUsers}">
+				<div id="loading2" style="display: none;margin:10px "><img src="{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}" height="20" width="20" /></div>
+				<table border="0" cellspacing="0" cellpadding="3" class="ocms-list" style="margin: 0px;">
+				  <tr class="list-header">
+				    <td width="25"></td>
+				    <td width="150">Full Name</td>
+				    <td  width="250">Username</td>
+				    <td class="last" width="250">Missing Permission Sets</td>
+				  </tr>
+				  
+				  <apex:repeat value="{!profileUsersInfo}" var="profileUser">
+				  <tr class="list-row">
+				    <td><apex:outputText rendered="{!allowRemove}"><a href="#" onclick="removeUsers('{!profileUser.User__r.Id}'); $('#loading2').show(); return false;">Remove</a></apex:outputText></td>
+				    <td>{!profileUser.User__r.Name}</td>
+				    <td >{!profileUser.User__r.Username}</td>
+				    <td class="last"> 
+				    	<apex:repeat value="{!MissingPerms[profileUser.User__r.id]}" var="MissingPerm">
+				    		<div>{!MissingPerm}</div> 
+				    	</apex:repeat>
+				    
+				    </td>
+				  </tr>
+				  </apex:repeat>
+				  <tr class="list-footer">
+		        	<td colspan="4"></td>
+		     	  </tr>
+				</table>
+
+			</apex:outputPanel>
+
+			<apex:outputPanel rendered="{!!hasUsers}">
+
+				This OrchestraCMS Profile currently has no selected users.
+
+			</apex:outputPanel>
+
+		</apex:outputPanel>
+
+		</apex:form>
+
+  	</div>
+
+  </body>
+
+</html>
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:page id="nform" controller="cms.MediaManager" showHeader="false" sidebar="false" standardStylesheets="false" cache="false">
+<apex:outputText escape="false" rendered="{!!renderResponse}">
+	<div id="NewFile">
+		<apex:form id="NewFileForm" target="upload_form_iframe">
+			  <apex:inputFile value="{!file.body}" filename="{!file.name}" />
+			  <apex:actionFunction name="addFile" action="{!AddFile}" />
+		</apex:form>
+	</div>
+</apex:outputText>
+<apex:outputText escape="false" rendered="{!renderResponse}"><pre>{!Response}</pre></apex:outputText>
+</apex:page>

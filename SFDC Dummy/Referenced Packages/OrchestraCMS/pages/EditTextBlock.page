@@ -1,0 +1,38 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.TextBlock" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/ToolTip.js')}" />
+  
+		<script type="text/javascript" language="javascript">
+		 	$(document).ready(function(){
+		 		$(document).data('sname', '{!SiteName}');
+		 		$(document).data('namespace', '{!Namespace}');
+		 		$(document).data('tooltipImage', '{!URLFOR($Resource.CmsImages,'/inline_help.png')}');
+
+				CKEDITOR.replace('HTMLContent', {!CKEditorConfig});
+				
+				
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = [];
+					attributes.push({"name":"HTMLContent", "value":CKEDITOR.instances.HTMLContent.getData(), "type":"Rich Text"});
+					return attributes; 		
+				});
+				
+				
+			});
+		</script>
+	
+
+
+	<form>
+ 		<table class="ocmsContentEditor ocmsContentEditorNested">
+			<tr>
+	 			<td>
+	 			<label class="ocmsLabel">Document</label>		
+					<textarea name="HTMLContent" id="HTMLContent" ><apex:outputText value="{!HTML}" /></textarea>
+	 			</td>
+	 		</tr>
+	 	</table>
+	 </form>
+	 
+	 
+</apex:page>

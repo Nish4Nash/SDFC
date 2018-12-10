@@ -1,0 +1,68 @@
+<apex:page controller="cms.ocmsPackageConfigure" action="{!initBatch}" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="OrchestraCMS">
+	<head>
+<title>OrchestraCMS - Refresh OrchestraCMS Profile Permissions</title>
+<style type="text/css">
+ul {
+	margin: 0px;
+	padding: 0px;
+	color: #FF0000;
+	list-style-type: none;
+}
+
+ul li {
+	display: block;
+	margin: 0px;
+	padding: 5px 0px 5px 5px;
+}
+
+.ocms-a {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.ocms-a:hover {
+	text-decoration: none;
+	color: #788E1E;
+}
+
+.ocms td {
+	vertical-align: top;
+}
+</style>
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+	</head>
+
+	<body class="ocms">
+
+		<div class="ocms-header-area" style="margin-top: 20px; height: 50px;">
+			<div class="ocms-header" style="height: 50px; background: none;">
+				<div class="ocms-logos">
+					<a id="stantive-logo" href="http://www.stantive.com"
+						target="StantiveInfo">
+						<div class="ocms-tooltipText">Stantive.com (Opens in new window)</div> <img class="nopadding" align="bottom"
+						src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoStantive.png')}" />
+					</a> <a id="ocms-logo" href="http://www.stantive.com"
+						target="OrchestraInfo">
+						<div class="ocms-tooltipText">OrchestraCMS.com (Opens in new window)</div> <img class="nopadding" align="bottom"
+						src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoOrchestraCMS.png')}" />
+					</a> 
+				</div>
+			</div>
+		</div>
+		<div style="margin-top: 70px; margin-left: 25px; font-size: 12px;">
+			<apex:form >
+				<h2 style="color:#788E1E">Refreshing OrchestraCMS Permission</h2>
+				<br />
+Please wait while we ensure all OrchestraCMS users have access to the system.<br />
+				<br />
+				<br />
+				<apex:outputText escape="false" value="{!status}" id="counter" />
+				<apex:actionPoller action="{!noOp}" reRender="counter" interval="5"
+					enabled="{!enabled}" />
+			</apex:form>
+		</div>
+		</body>
+		
+</apex:page>

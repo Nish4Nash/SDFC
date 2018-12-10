@@ -1,0 +1,9 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" contentType="text/plain">
+	This has been turned into a ServiceInterface -- we no longer need this
+</apex:page>
+
+<!-- 
+
+<apex:page controller="cms.CachingTools" action="{!loadResponse}" showHeader="false" sidebar="false" standardStylesheets="false" contentType="text/plain">{!JSONResponse}</apex:page>
+
+-->

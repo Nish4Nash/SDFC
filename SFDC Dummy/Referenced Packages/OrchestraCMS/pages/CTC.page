@@ -1,0 +1,381 @@
+<apex:page controller="cms.CTC" sidebar="false" standardStylesheets="false" cache="false"   showHeader="false">
+    <html>
+        <head>
+            <title>Manage Content Layouts</title>
+                        
+            <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.css')}" />
+             
+            <c:CmsScripts />    
+            <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/ctc/vendor/lazyload.min.js')}" />   
+            <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryFileUpload.js')}" />   
+            
+            <script>
+                $(document).data('cms', {
+                    'context'      : 'orchestracms',
+                    'namespace'    : '{!namespace}',
+                    'hasCTCAccess' : {!hasCTCAccess}
+                });
+            
+                var nsPrefix;
+            
+                $(document).ready(function() {
+                    $.orchestracmsUtil.loadScript('ui','ctc/ctc.js');
+                    $('.ocms-progress').hide(); 
+                    
+                    //load the content layout
+                    nsPrefix = $(document).data('cms')['namespace'] == '' ? '' : $(document).data('cms')['namespace']+'__';
+                    
+                    updateAttributeList('{!currentLayout.Attribute_List__c}');
+                        
+                    $('#mapAttributesBtn').button().click(function(){
+                        mapContentTemplateAttributes(); 
+                    });
+                                    
+                    window.app = new window.cms_ctc.LayoutGen('.ctGen', {
+                        id:               '{!JSENCODE(currentLayout.Id)}',
+                        name:             '{!JSENCODE(currentLayout.Name__c)}',
+                        label:            '{!JSENCODE(currentLayout.Label__c)}',
+                        description:      '{!JSENCODE(currentLayout.Description__c)}',
+                        definition:       '{!JSENCODE(currentLayout.Attribute_Definition__r.Definition_Json__c)}',
+                        attributeList:    '{!JSENCODE(currentLayout.Attribute_List__c)}',
+                        generateTemplate: '{!JSENCODE(currentLayout.Generate_Template__c)}',
+                        types:            '{!JSENCODE(attributeTypesJson)}',
+                        iconId:           '{!JSENCODE(currentLayout.Thumbnail_Id__c)}'
+                    });
+                    
+                    if($('#customSearchIndexFields > option').length < 1){
+                        
+                        $('#siAttributeMapping').remove();
+                        
+                    }
+                });
+                
+                function generateAttributeList(attributeList){
+                
+                    var templateAttributeList = $('.templateAttributeList');
+                    
+                    if($('#customSearchIndexFields > option').length < 1 || attributeList === null || attributeList === undefined || attributeList.length === 0){
+                        
+                        $('#siAttributeMapping').remove();
+                        
+                    }else{
+                    
+                        getAttributeMapping();
+                        attributeList = attributeList.split(";");
+                        
+                        $('#templateAttributeList .templateAttributeList option').filter(function(){ 
+                            var index = $.inArray($(this).val(), attributeList);
+                            if(index > -1){
+                                attributeList.splice(index, 1);
+                            }
+                        });
+                        
+                        $.each(attributeList, function(index, attr){
+                          templateAttributeList.append("<option value="+attr+">"+attr+"</option>");
+                        });
+                    }
+                }    
+            
+	            function deleteAttribute (e){
+	            
+	                $(e.toElement.parentElement).remove();
+	                updateAttributeList();
+	            }
+	        
+	            function addAnotherAttribute (){
+	            
+	                if ($('#templateAttributeList .templateAttributeList').children('option').length > ($('#additionalAttributes').children('span').length + 2)){
+	                
+	                    var deleteAttributeSelection = $('<a href="#" onclick="deleteAttribute(event)" class="ocms-icon-20-delete" title="Delete Attribute" style="display: inline-block; vertical-align: super; height: 1.7em; text-indent: -999em; width: 25px; margin-left: 3px; padding-bottom: 2px;">Delete Attribute</a>');
+	                    var attributeWrapper = $('<span style="display: block;" />');
+	                    
+	                    $('#templateAttributeList').find('.templateAttributeList').parent().clone().appendTo(attributeWrapper);
+	                    attributeWrapper.append(deleteAttributeSelection);
+	                    $("#additionalAttributes").append(attributeWrapper);
+	                }
+	            }
+	            
+	            function updateAttributeList (){
+	                
+	                var attList;
+	                
+	                $('.templateAttributeList option:selected').filter(function(){ 
+	                
+	                    if(attList === undefined || attList === null){
+	                        attList  = $(this).val();
+	                    }else{
+	                        attList += ';' + $(this).val();
+	                    }
+	                });
+	                
+	                $('.templateAttributeList option').filter(function(){ 
+	                
+	                    if (attList.indexOf($(this).val()) >= 0){
+	                        $(this).prop('disabled', true);
+	                    } else {
+	                        $(this).prop('disabled', false);
+	                    }
+	                });
+	            }
+	            
+	            function getAttributeMapping(){
+	                
+	                var data = {};                            
+	                data['sname']   = '{!siteName}';
+	                data['action']  = 'getAttributeMapping';
+	                data['service'] = 'SetupService';   
+	                data['clname']  = '{!currentLayout.Install_External_Id__c}'; 
+	                data['fname']   = $('#customSearchIndexFields option:selected').val();   
+	                
+	                var options = {};
+	                options['cb']     = cbHandler;
+	                options['bAsync'] = true;
+	                doServiceRequest(data, options);
+	            
+	            }
+	            
+	                        
+	            function mapContentTemplateAttributes(){
+	        
+	                $('.ocms-progress').show();
+	                
+	                var attList; 
+	                $('.templateAttributeList option:selected').filter(function(){ 
+	                    
+	                    if ($(this).val() !== 'none'){
+	                        if(attList === undefined || attList === null){
+	                            attList  = $(this).val();
+	                        }else{
+	                            attList += ';' + $(this).val();
+	                        }
+	                    }
+	                });
+	                
+	                var data = {};                            
+	                data['sname']   = '{!siteName}';
+	                data['action']  = 'saveAttributeMapping';
+	                data['service'] = 'SetupService';   
+	                data['clname']  = '{!currentLayout.Install_External_Id__c}'; 
+	                data['aname']   = attList;
+	                data['fname']   = $('#customSearchIndexFields option:selected').val();
+	                data['flabel']  = $('#customFieldLabel').val();
+	                data['cfgId']   = $('#customSearchIndexFields option:selected').attr('cfgId');
+	                
+	                var options = {};
+	                options['cb']     = cbHandler;
+	                options['bAsync'] = true;
+	                doServiceRequest(data, options);
+	                
+	            }
+	            
+	            var cbHandler = function (json, success){
+	                 
+	                 $('#additionalAttributes').children().remove();
+	                 updateAttributeList();
+	                
+	                json = $.orchestracmsUtil.parseJSON(json);
+	                if (success.status && (json.error === undefined)){
+	                    
+	                    var fieldMapRecord = json.success.message;
+	                    if(fieldMapRecord !== undefined && fieldMapRecord !== null){
+	                    
+	                           var attrList = fieldMapRecord[nsPrefix+'Name__c'].split(";");
+	                           var label    = fieldMapRecord[nsPrefix+'Label__c'];
+	                           
+	                           if(label === undefined || label === null){
+	                               $('#customFieldLabel').val("");
+	                           }else{
+	                               $('#customFieldLabel').val(label);
+	                           }
+	                           
+	                           $('#customSearchIndexFields option:selected').attr('cfgId', fieldMapRecord.Id);
+	                           
+	                           if(attrList.length > 0){
+	                               for( i = 0; i < attrList.length; i++){
+	                                   
+	                                    if (i == 0){
+	                                    
+	                                        $('#templateAttributeList .templateAttributeList option').filter(function(){ return $(this).val() == attrList[i]; }).prop('selected', true);
+	                                    }else{
+	                                    
+	                                        addAnotherAttribute();
+	                                        $($('#additionalAttributes .templateAttributeList')[i-1]).children('option').filter(function(){ return $(this).val() == attrList[i]; }).prop('selected', true);
+	                                    }
+	                               }
+	                           } else {
+	                               $('#templateAttributeList .templateAttributeList option').filter(function(){ return $(this).val() == "none"; }).prop('selected', true);
+	                           }
+	                           
+	                           updateAttributeList();
+	                           $('.ocms-progress').hide();
+	                           
+	                    } else {
+	                        $('#templateAttributeList .templateAttributeList option').filter(function(){ return $(this).val() == "none"; }).prop('selected', true);
+	                        $('#customFieldLabel').val("");
+	                        
+	                        $('.ocms-progress').hide();
+	                    }
+	                } else {
+	                    $('.ocms-progress').hide();
+	                }
+	            };
+            </script>
+            
+        </head>
+    
+        <body class="ocms">
+            
+            <c:SetupMenu sname="{!SiteName}" activeitem="manage-content-layout-generator" />
+            
+            <div style="margin-left: 210px; padding: 10px;">
+            
+                <div class="ctGen">
+                    <div class="ocms-setup-breadcrumb">
+                        <div class="ocms-setup-breadcrumb-start"></div>
+                        <div class="ocms-setup-breadcrumb-item">Setup</div>
+                        <div class="ocms-setup-breadcrumb-separator"></div>
+                        <div class="ocms-setup-breadcrumb-item">Content Templates</div>
+                        <div class="ocms-setup-breadcrumb-separator-active"></div>
+                        <div class="ocms-setup-breadcrumb-item-active">Content Template Creator</div>
+                        <div class="ocms-setup-breadcrumb-end"></div>
+                        <div class="ocms-clear"></div>
+                    </div>
+        
+                    <h1>Content Template Creator</h1>
+                    <div class="row">
+                        <div class="column contentTemplateInputs">
+                            <div class="row">
+                                <div class="column contentTemplateLabel">
+                                    <label for="ctName">Name</label>
+                                </div>
+                                <div class="column contentTemplateInput">
+                                    <input type="text" class="ctName" id="ctName" placeholder="Content Template Name" value="{!currentLayout.Name__c}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column contentTemplateLabel">
+                                    <label for="ctLabel">Label</label>
+                                </div>
+                                <div class="column contentTemplateInput">
+                                    <input type="text" class="ctLabel" id="ctLabel" placeholder="Content Template Label" value="{!currentLayout.Label__c}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column contentTemplateLabel">
+                                    <label for="ctDescription">Description</label>
+                                </div>
+                                <div class="column contentTemplateInput">
+                                    <textarea class="ctDescription" placeholder="(optional but recommended)">{!HTMLENCODE(currentLayout.Description__c)}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column contentTemplateInputs">
+                            <apex:outputText escape="false" rendered="{!currentLayout.Id != null}">
+	                        	<div>
+	                            	<button class="deleteCTC">Delete</button> <br /><br /><br />
+	                            </div>
+                            </apex:outputText>
+                            <div>
+								<label class="ocmsLabel">Thumbnail (optional)</label>
+								<div class="contentTemplateImageContainer">
+									<apex:outputText escape="false" rendered="{!currentLayout.cms__Thumbnail_Id__c != ''}">
+										<img src="/servlet/servlet.FileDownload?file={!currentLayout.Thumbnail_Id__c}" />
+									</apex:outputText>
+								</div>
+								<div class="thumbnailUploadContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="siAttributeMapping">
+	                    <h2>Map Attributes</h2>         
+	                    <div class="row">
+	                        <div class="column"  style = "width: 120px; text-align: end;">
+	                            <label for="customSearchIndexFields">Search Index Custom Field</label>
+	                        </div>
+	                        <div class="column">
+	                            <div id="CustomFieldList"   style="width: 150px;">
+	                                <select id="customSearchIndexFields" onchange="getAttributeMapping();">
+	                                    <apex:repeat value="{!CustomSearchIndexFields}" var="field"> 
+	                                        <option value="{!field}" cfgId=""> {!field} </option>
+	                                    </apex:repeat>
+	                                </select>
+	                            </div>
+	                        </div>
+	                        <div class="column"  style = "width: 85px; text-align: end;">
+	                            <label for="customFieldLabel">Custom Label</label>
+	                        </div>
+	                        <div class="column">
+	                            <input id="customFieldLabel" name="fieldLabel" type="text" style="width: 150px;"/>
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                        <div class="column" style = "width: 120px; text-align: end;">
+	                            <label for="templateAttributeList">Attribute</label>
+	                        </div>
+	                        <div class="column">
+	                            <div id="templateAttributeList" >
+	                                <div style="width: 150px; display: inline-block;">
+	                                    <select class="templateAttributeList" onchange="updateAttributeList()">
+	                                        <option value="none"> ----- </option>
+	                                    </select>
+	                                </div>
+	                                <a href="#" onclick="addAnotherAttribute()" class="ocms-icon-20-NewMenuItem" title="Add Attribute" style="display: inline-block; vertical-align: super; height: 1.7em; text-indent: -999em; width: 25px; padding-bottom: 2px;">Add Attribute</a>
+	                            </div>
+	                            <div id="additionalAttributes" />
+	                        </div>
+	                        <div class="column">
+		                        <div class="buttons" style="margin-left: 65px;">     
+		                            <div id="mapAttributesBtn">Map</div>
+		                        </div>
+	                        </div>
+	                     </div>
+                     </div>
+        
+                    <div class="row editorButtons">
+                        <a href="#" class="button saveLayout">Save</a>
+                        <a href="/apex/ContentLayoutInstaller?sname={!SiteName}" class="button cancelLayout">Cancel</a>
+                    </div>
+        
+                    <h2>Attributes and Editor Settings</h2>
+                    <p class="helpText">Modifying an in-use content template will affect your site's timeline and is not advised.</p>
+                    <ul class="attributeSections"></ul>
+        
+                    <h2>Markup</h2>
+                    <apex:outputPanel rendered="{!hasCTCAccess}">
+	                    <div>
+	                        <div class="generateQuickButtons">
+	                            <ul class="attributes"></ul>
+	                        </div>
+	                        <textarea rows="10" placeholder="Generate Template" id="generateTemplate"></textarea>
+	                        <div class="generateQuickButtons">
+								<ul class="ids">
+	                                <li>Insert ID</li>
+	                                <li><button class="addToken" data-name="contentId">Content ID</button></li>
+	                                <li><button class="addToken" data-name="contentOriginId">Content Origin ID</button></li>
+	                                <li><button class="addToken" data-name="cliId">Content Layout Instance ID</button></li>
+	                                <li><button class="addToken" data-name="pcliId">Page Content Layout Instance ID</button></li>
+	                            </ul>	                        
+	                        </div>
+	                    </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!!hasCTCAccess}">
+                        <div>
+                            <textarea rows="10" placeholder="Generate Template" id="generateTemplate" disabled="disabled"></textarea>
+                        </div>
+                    </apex:outputPanel>
+                    <div class="row editorButtons">
+                        <a href="#" class="button saveLayout">Save</a>
+                        <a href="/apex/ContentLayoutInstaller?sname={!SiteName}" class="button cancelLayout">Cancel</a>
+                    </div>
+                </div>
+            </div>
+	        <div class="ocms-progress">
+	            <img src="{!URLFOR($Resource.jqueryui, '/css/images/General/80px_AnimatedIndeterminateProgress.gif')}" />
+	            <span class="ocms-progress-text">
+	                <div>Please</div><div>wait</div>
+	            </span>
+	        </div>
+        </body>
+    </html>
+</apex:page>

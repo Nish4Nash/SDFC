@@ -1,0 +1,24 @@
+<!--***********************************************************************************
+* Component: LRC_GEN_CL_lookUpDialogComponent
+* CreatedBy: Nishit Kedia
+* Description: This is the final component that uses Lookup Component
+* Revision History
+***********************************************************************************-->
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="sLookupContactId" type="String" default="{!v.recordId}"/>
+    <aura:attribute name="contactLookUpColumns" type="String[]" default="['Name','Email','Department','Description']"/>
+    <aura:attribute name="contactSearchFields" type="String[]"  default="['Name']"/>
+   <div class="slds-col">                       
+      <c:LRC_GEN_CL_typeAheadComponent sLookupSelectedId ="{!v.sLookupContactId}" 
+                                    label="Contact" 
+                                    pluralLabel="Contact"   
+                                    sObjectAPIName="Contact"
+                                    searchField="Name" 
+                                    DisplayField="Name"
+                                    listIconSVGPath="/resource/slds103/assets/icons/standard-sprite/svg/symbols.svg#contact" 
+                                    listIconClass="slds-icon-standard-product" 
+                                    lstLookUpColumns="{!v.contactLookUpColumns}" 
+                                    lstSearchFields="{!v.contactSearchFields}"/>
+     </div>
+</aura:component>

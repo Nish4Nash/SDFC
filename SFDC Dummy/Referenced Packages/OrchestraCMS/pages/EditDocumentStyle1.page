@@ -1,0 +1,49 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.DocumentStyle1"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/ToolTip.js')}" />
+
+  <script type="text/javascript" language="javascript">
+
+		$(document).ready(function(){
+			$(document).data('sname', '{!SiteName}');
+	 		$(document).data('namespace', '{!Namespace}');
+	 		$(document).data('tooltipImage', '{!URLFOR($Resource.CmsImages,'/inline_help.png')}');
+			CKEDITOR.replace('DocumentContent', {!CKEditorConfig});
+
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"DocumentTitle", "value":$('#DocumentTitle').val(), "type":"Rich Text"});
+				attributes.push({"name":"DocumentContent", "value":CKEDITOR.instances.DocumentContent.getData(), "type":"Rich Text"});
+				return attributes;		
+			}); 
+            $(".ocmsTextInputLrg").keydown(function (event) {
+                if (event.which == 13) {
+                    event.preventDefault();
+                }
+            });
+		});
+	</script>
+
+  	<form>
+   		<table class="ocmsContentEditor ocmsContentEditorNested">
+			<tr>
+				<td>
+					<label class="ocmsLabel">Title</label>
+					<apex:outputText escape="false" rendered="{!!disableAll}" >
+   					  <input class="ocmsTextInputLrg" type="text" id="DocumentTitle" name="DocumentTitle" value="{!DocumentTitle}" />
+   					</apex:outputText>
+   					<apex:outputText value="{!DocumentTitle}" rendered="{!disableAll}" />
+   				</td>
+   			</tr>
+   			<tr class = "ocmsBodyText">
+   				<td>
+		 			<label class="ocmsLabel" >Document</label>
+		 	
+					<textarea id="DocumentContent" name="DocumentContent"><apex:outputText escape="false" value="{!DocumentContent}" /></textarea>
+	     		</td>
+   			</tr>
+   			<tr>
+    			<td colspan="2"></td>
+   			</tr>
+   		</table>
+   	</form>
+</apex:page>

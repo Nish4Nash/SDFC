@@ -1,0 +1,388 @@
+<apex:page controller="cms.UiController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+	<head>
+ 		<title>Edit Content Template</title>
+    	
+    	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+		<c:CmsScripts /> 
+		
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryFileUpload.js')}" />
+				
+		<script type="text/javascript">
+
+			$(document).data('cms', {
+				'context' 	: 'orchestracms',
+				'namespace' : '{!namespace}'
+			});
+			
+			var clInstallExternalId;
+			var nsPrefix;
+				
+			$(document).ready(function(){
+				
+				//load the content layout
+				nsPrefix = $(document).data('cms')['namespace'] == '' ? '' : $(document).data('cms')['namespace']+'__';
+				
+				var params = {};
+				params['service'] = 'SetupService';
+				params['action']  = 'loadContentTemplate';
+				params['sname'] = '{!siteName}';
+				params['id'] = '{!id}';
+					
+				doServiceRequest(params, {cb:
+					
+					function(response){				
+					
+						var response = JSON.parse(response);
+					
+						var layout = response['cl'];
+						var taxonomies = response['taxonomies'];
+	
+						$('#templateName').val(layout[nsPrefix+'Name__c']);
+						$('#templateLabel').val(layout[nsPrefix+'Label__c']);
+						$('#templateDescription').val(layout[nsPrefix+'Description__c']);
+						clInstallExternalId = layout[nsPrefix+'Install_External_Id__c'];  
+						
+						var selected;
+						
+						try {
+							selected = layout[nsPrefix+'Taxonomies__c'].split(/\s*;\s*/);				
+						} catch (e) {
+							console.log('Taxonomies value is: '+layout[nsPrefix+'Taxonomies__c']);
+							selected = []; 
+						}	
+										
+						var taxonomySelectorContainer = $('#taxonomySelectorContainer');
+						var taxonomySelector = $('<select multiple></select>');
+						
+						$.each(taxonomies, function(id, name){
+							taxonomySelector.append('<option value="'+id+'" '+($.inArray(id,selected) < 0 ? '' : 'selected')+'>'+name+'</option>');
+						});
+							
+						taxonomySelectorContainer.append(taxonomySelector);	
+						
+                        var templateAttributeList = $('.templateAttributeList');
+                        var res = layout[nsPrefix+'Attribute_List__c'];
+                        if($('#customSearchIndexFields > option').length < 1 || res === null || res === undefined){
+                            
+                            $('#mapAttributesBtn').parent().parent().parent().remove();
+                            $('#customSearchIndexFields').parent().parent().remove();
+                            
+                        }else{
+                        
+                            getAttributeMapping();
+
+                            res = res.split(";");
+						    $.each(res, function(index, attr){
+						      templateAttributeList.append("<option value="+attr+">"+attr+"</option>");
+						    });
+						}
+							
+						var thumbnailContainer = $('#thumbnailContainer');
+												
+						if(layout[nsPrefix+'Thumbnail_Id__c'] !== undefined && layout[nsPrefix+'Thumbnail_Id__c'] != null && layout[nsPrefix+'Thumbnail_Id__c'] != ''){			
+							thumbnailContainer.prepend('<div id="selectedLayoutImage" style="display: block; width: 194px; height: 144px; background-image: URL(\'/servlet/servlet.FileDownload?file=' + layout[nsPrefix+'Thumbnail_Id__c']+'\')">&nbsp;</div>');
+						} else {
+							thumbnailContainer.prepend('<div id="selectedLayoutImage" style="display: block; width: 194px; height: 144px; background-image: URL(\'/resource/'+nsPrefix+'CmsImages/layout.png\')">&nbsp;</div>');
+						}
+					
+						$('#uploadNewImage').fileUpload({
+							 'parentId': layout['Id'],
+							 'currentId': layout[nsPrefix+'Thumbnail_Id__c'],
+							 'onLoadComplete': function(attachmentId) {
+							 	thumbnailContainer.find('#selectedLayoutImage').remove(); 
+							 	thumbnailContainer.prepend('<div id="selectedLayoutImage" style="display: block; width: 194px; height: 144px; background-image: URL(\'/servlet/servlet.FileDownload?file=' + attachmentId+'\')">&nbsp;</div>');
+							 }
+						});
+						
+						var saveContentTemplate = function(){
+					
+							var params = {};
+							params['service'] = 'SetupService';
+							params['id'] = layout['Id'];
+							params['action'] = 'saveContentTemplate'; 
+							params['name'] = $('#templateName').val();
+							params['label'] = $('#templateLabel').val(); 
+							params['description'] = $('#templateDescription').val();
+							
+							var test = $('#uploadNewImage');
+							var thumbnailId = test.fileUpload('getUploadId');
+							if(thumbnailId != null)
+								params['thumbnail'] = thumbnailId;
+							
+							var selectedTaxonomies = taxonomySelector.find('option:selected');
+							var selectedTaxonomyString = '';
+							
+							$.each(selectedTaxonomies, function(index, option){
+								if(selectedTaxonomyString != '') 
+									selectedTaxonomyString += ';';
+								selectedTaxonomyString += $(option).attr('value');
+							});
+							
+							params['taxonomies'] = selectedTaxonomyString; 
+							
+							doServiceRequest(params, {cb: function(response){
+								window.location = '/apex/ContentLayoutInstaller?sname={!siteName}';
+							}});
+							
+						};
+                        
+						$('#saveContentTemplateBtn').button().click(function(){
+							saveContentTemplate(); 
+						});
+						
+                        $('#mapAttributesBtn').button().click(function(){
+                            mapContentTemplateAttributes(); 
+                        });
+						
+						$('.ocms-progress').hide(); 
+						$('.editForm').show(); 
+	
+					}
+				
+				});
+				
+				
+				
+																
+			});
+			
+			function deleteAttribute (e){
+			
+                $(e.toElement.parentElement).remove();
+                updateAttributeList();
+            }
+		
+            function addAnotherAttribute (){
+            
+                if ($('#templateAttributeList > .templateAttributeList').children('option').length > ($('#additionalAttributes').children('span').length + 2)){
+                
+	                var deleteAttributeSelection = $('<a href="#" onclick="deleteAttribute(event)" class="ocms-icon-20-delete" title="Delete Attribute" style="display: inline-block; vertical-align: super; height: 1.7em; text-indent: -999em; width: 25px; margin-left: 3px; padding-bottom: 2px;">Delete Attribute</a>');
+	                var attributeWrapper = $('<span style="display: block;" />');
+	                
+	                $('#templateAttributeList').find('.templateAttributeList').clone().appendTo(attributeWrapper);
+	                attributeWrapper.append(deleteAttributeSelection);
+	                $("#additionalAttributes").append(attributeWrapper);
+	            }
+            }
+            
+            function updateAttributeList (){
+                
+                var attList;
+                
+                $('.templateAttributeList option:selected').filter(function(){ 
+                
+                    if(attList === undefined || attList === null){
+                        attList  = $(this).val();
+                    }else{
+                        attList += ';' + $(this).val();
+                    }
+                });
+                
+                $('.templateAttributeList option').filter(function(){ 
+                
+                    if (attList.indexOf($(this).val()) >= 0){
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).prop('disabled', false);
+                    }
+                });
+            }
+            
+            function getAttributeMapping(){
+	            
+	            var data = {};                            
+	            data['sname']   = '{!siteName}';
+	            data['action']  = 'getAttributeMapping';
+	            data['service'] = 'SetupService';   
+	            data['clname']  = clInstallExternalId 
+	            data['fname']   = $('#customSearchIndexFields option:selected').val();   
+	            
+	            var options = {};
+	            options['cb']     = cbHandler;
+	            options['bAsync'] = true;
+	            doServiceRequest(data, options);
+            
+            }
+            
+                        
+            function mapContentTemplateAttributes(){
+        
+                $('.ocms-progress').show();
+                
+                var attList; 
+                $('.templateAttributeList option:selected').filter(function(){ 
+                    
+                    if ($(this).val() !== 'none'){
+	                    if(attList === undefined || attList === null){
+		                    attList  = $(this).val();
+	                    }else{
+	                        attList += ';' + $(this).val();
+	                    }
+	                }
+                });
+                
+                var data = {};                            
+                data['sname']   = '{!siteName}';
+                data['action']  = 'saveAttributeMapping';
+                data['service'] = 'SetupService';   
+                data['clname']  = clInstallExternalId; 
+                data['aname']   = attList;
+                data['fname']   = $('#customSearchIndexFields option:selected').val();
+                data['flabel']  = $('#customFieldLabel').val();
+                data['cfgId']   = $('#customSearchIndexFields option:selected').attr('cfgId');
+                
+                var options = {};
+                options['cb']     = cbHandler;
+                options['bAsync'] = true;
+                doServiceRequest(data, options);
+                
+            }
+            
+            var cbHandler = function (json, success){
+                 
+                 $('#additionalAttributes').children().remove();
+                 updateAttributeList();
+                
+                json = $.orchestracmsUtil.parseJSON(json);
+                if (success.status && (json.error === undefined)){
+                    
+                    var fieldMapRecord = json.success.message;
+                    if(fieldMapRecord !== undefined && fieldMapRecord !== null){
+                    
+                           var attrList = fieldMapRecord[nsPrefix+'Name__c'].split(";");
+                           var label    = fieldMapRecord[nsPrefix+'Label__c'];
+                           
+                           if(label === undefined || label === null){
+                               $('#customFieldLabel').val("");
+                           }else{
+                               $('#customFieldLabel').val(label);
+                           }
+                           
+                           $('#customSearchIndexFields option:selected').attr('cfgId', fieldMapRecord.Id);
+                           
+                           if(attrList.length > 0){
+	                           for( i = 0; i < attrList.length; i++){
+	                               
+	                                if (i == 0){
+	                                
+	                                    $('#templateAttributeList > .templateAttributeList option').filter(function(){ return $(this).val() == attrList[i]; }).prop('selected', true);
+	                                }else{
+	                                
+	                                    addAnotherAttribute();
+	                                    $($('#additionalAttributes .templateAttributeList')[i-1]).children('option').filter(function(){ return $(this).val() == attrList[i]; }).prop('selected', true);
+	                                }
+	                           }
+	                       } else {
+	                           $('#templateAttributeList > .templateAttributeList option').filter(function(){ return $(this).val() == "none"; }).prop('selected', true);
+	                       }
+                           
+                           updateAttributeList();
+                           $('.ocms-progress').hide();
+                           
+                    } else {
+	                    $('#templateAttributeList > .templateAttributeList option').filter(function(){ return $(this).val() == "none"; }).prop('selected', true);
+                        $('#customFieldLabel').val("");
+                        
+                        $('.ocms-progress').hide();
+                    }
+                } else {
+                    $('.ocms-progress').hide();
+                }
+            };
+		</script>
+	</head>
+
+
+	<body class="ocms">	
+
+		<c:SetupMenu sname="{!siteName}" activeitem="manage-content-layouts" />
+
+		<div style="margin-left: 210px; padding: 10px;">	
+				<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+					<div class="ocms-setup-breadcrumb-item">Setup</div>
+					<div class="ocms-setup-breadcrumb-separator-active"></div>		  
+					<div class="ocms-setup-breadcrumb-item-active">Content Templates</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+					<div class="ocms-clear"></div>
+				</div>
+		</div>
+			
+		<div class="editForm" style="display:none;">
+			<table border="0" cellspacing="0" cellpadding="5">
+				<tr>
+					<td>Name:</td>
+					<td><input id="templateName" name="templateName" type="text" /></td>
+				</tr>
+				<tr>
+					<td>Label:</td>
+				    <td><input id="templateLabel" name="templateLabel" type="text" /></td>
+				</tr>
+				<tr>
+					<td>Description:</td>
+				    <td><textarea id="templateDescription" name="templateDescription"></textarea></td>
+				</tr>
+				<tr>
+					<td>Connected Taxonomies</td>
+					<td id="taxonomySelectorContainer"></td>
+				</tr>
+				<tr>
+				    <td>Map Attributes</td>
+				    <td>
+				        <label for="customSearchIndexFields"> Search Index Custom Field </label> <br />
+				        <select id="customSearchIndexFields" onchange="getAttributeMapping();">
+	                        <apex:repeat value="{!CustomSearchIndexFields}" var="field"> 
+                                <option value="{!field}" cfgId=""> {!field} </option>
+	                        </apex:repeat>
+				        </select>
+	                </td>
+                    <td>
+                        <label for="customFieldLabel"> Custom Label </label> <br />
+                        <input id="customFieldLabel" name="fieldLabel" type="text" style="  width: 150px;"/>
+                    </td>
+				</tr>
+				<tr>
+				    <td />
+                    <td>
+                        <div id="templateAttributeList" >
+                            <label > Attribute </label> <br />
+                            <select class="templateAttributeList" onchange="updateAttributeList()">
+                                <option value="none"> ----- </option>
+                            </select>
+                            <a href="#" onclick="addAnotherAttribute()" class="ocms-icon-20-NewMenuItem" title="Add Attribute" style="display: inline-block; vertical-align: super; height: 1.7em; text-indent: -999em; width: 25px; padding-bottom: 2px;">Add Attribute</a>
+                        </div>
+                        <div id="additionalAttributes" />
+				    </td>
+                    <td style = "vertical-align: baseline;">
+                        <div class="buttons" style="margin-top: 12px;">     
+                            <div id="mapAttributesBtn">Map</div>
+                        </div>
+                    </td>
+				</tr>
+			</table>
+		  
+		  	<table border="0" cellspacing="0" cellpadding="5" style="margin-top: 10px; margin-bottom: 10px;">
+				<tr>
+					<td id="thumbnailContainer">
+						<span style="font-size: 10px; font-family: arial;">Width: 194px - Height: 144px</span>
+					</td>
+				</tr>
+			</table>
+		   
+			<div id="uploadNewImage"></div>
+		
+			<div class="buttons" style="margin-top: 12px;">		
+				<div id="saveContentTemplateBtn">Save</div>
+			</div>
+		</div>
+		<div class="ocms-progress">
+			<img src="{!URLFOR($Resource.jqueryui, '/css/images/General/80px_AnimatedIndeterminateProgress.gif')}" />
+			<span class="ocms-progress-text">
+				<div>Please</div><div>wait</div>
+			</span>
+		</div>
+	</body>
+</html>
+</apex:page>

@@ -1,0 +1,4 @@
+<!--This is a component Event used to capture selected page details.-->
+<aura:event type="COMPONENT">
+    <aura:attribute name="page" type="Integer"/>
+</aura:event>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>37.0</apiVersion>
+    <description>This is a component event (related to LRC_CL_typeAheadComponent ) used to pass the Id of the selected SObject.</description>
+</AuraDefinitionBundle>

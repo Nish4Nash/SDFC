@@ -1,0 +1,157 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.SimpleHorizontalMenu" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	
+	<style type="text/css">
+		.jPicker .Icon { top: -5px;}
+		#LinkColor, #LinkHoverColor {width: 45px;}
+	</style>
+
+	<script type="text/javascript" language="javascript" >
+		
+			$(document).ready(function(){
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array(); 
+					attributes.push({"name":"LinkColor", "value":$('#LinkColor').val(), "type":"Text", "lang": ""});
+					attributes.push({"name":"LinkHoverColor", "value":$('#LinkHoverColor').val(), "type":"Text", "lang": ""});
+					attributes.push({"name":"LinkFontSize", "value":$('#LinkFontSize').val(), "type":"Text", "lang": ""});
+					attributes.push({"name":"Divider", "value":$('#Divider').val(), "type":"Text", "lang": ""});
+					return {'cli':attributes};
+				});
+
+				
+				var location = "{!URLFOR($Resource.OrchestraCMSUI, '/selector/color/images/Bars.png')}";
+
+				var path = location.substr(0, location.length-8);
+
+				var cssPath = location.substr(0, location.length-15) + 'css/jPicker-1.1.6.min.css';
+				
+				var jPickerCss = $('<link />');
+				jPickerCss.addClass('user').attr('href', cssPath).attr('rel', 'stylesheet').attr('type', 'text/css');
+				$('head').append(jPickerCss);
+				
+
+				$('#LinkColor').jPicker({
+						window: {
+							position: {
+								x: 'screenCenter',
+								y: 'bottom'
+							}
+						},
+						images:	{
+							clientPath: path, /* Path to image files */
+						}
+					},
+			        null,
+			        function(color, context) { $('#LinkColor').trigger('colorUpdate'); },
+			        function(color, context) { $('#LinkColor').trigger('colorUpdate'); }
+			        );
+				$('#LinkHoverColor').jPicker({
+						window: {
+							position: {
+								x: 'screenCenter',
+								y: 'bottom'
+							}
+						},
+						images:	{
+							clientPath: path, /* Path to image files */
+						}
+					},
+			        null,
+			        function(color, context) { $('#LinkHoverColor').trigger('colorUpdate'); },
+			        function(color, context) { $('#LinkHoverColor').trigger('colorUpdate'); }
+			        );   					
+				}); 
+
+				// don't allow modification unless in edit mode!
+			    if ('{!multilingualAccessLevel}' !== 'EDIT') {
+			    	setTimeout(function(){
+			    		$('.jPicker *[title="Click To Open Color Picker"]').off('click');},
+			    		250);
+			    }     					
+
+	</script>
+	
+	<div style="width: 400px; padding-right: 10px; margin-right: 15px; float: left;">
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.menueditor.css')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/editor/TreeEditor.js')}" />
+		<script type="text/javascript">
+				$(document).ready(function() {
+	                var afterLoad = function() {
+	                    if (typeof parent.resizeEditorFrames == 'function') {
+	                        parent.resizeEditorFrames();
+	                    }
+	                }
+                	var menuEditor = $("#EditorContainer").tree_editor({
+                     		menu_id : '{!JSENCODE(content.Id)}',
+                            sname: $(document).data('cms').site_name,
+                          	afterLoadItems: afterLoad					
+                   });
+                       
+                });
+        </script>
+        <div id="EditorContainer"/>
+        <div id="content-selector-container"/>
+        
+        <script type="text/javascript" language="javascript" >
+            $("#content-selector-container").gwt_content_selector();
+        </script>
+	</div>
+		
+		
+	<div style="float: left;">
+		<form>
+			<table class="ocmsContentEditor ocmsContentEditorNested autoWidth noMinWidth">
+		         <tr class="ocmsEditorSubtitle">
+		            <td>
+		               Menu Settings
+		            </td>
+		         </tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Link Color</label>
+						<apex:outputText escape="false" rendered="{!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkColor" id="LinkColor" value="{!LinkColor}" onchange="$('#LinkColorBox').css('background-color','#' + $('#LinkColor').val());" disabled="disabled" />
+						</apex:outputText>
+						<apex:outputText escape="false" rendered="{!!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkColor" id="LinkColor" value="{!LinkColor}" onchange="$('#LinkColorBox').css('background-color','#' + $('#LinkColor').val());" />
+						</apex:outputText>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Link Hover Color</label>
+						<apex:outputText escape="false" rendered="{!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkHoverColor" id="LinkHoverColor" value="{!LinkHoverColor}" onchange="$('#LinkHoverColorBox').css('background-color','#' + $('#LinkHoverColor').val());" disabled="disabled" />
+						</apex:outputText>
+						<apex:outputText escape="false" rendered="{!!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkHoverColor" id="LinkHoverColor" value="{!LinkHoverColor}" onchange="$('#LinkHoverColorBox').css('background-color','#' + $('#LinkHoverColor').val());" />
+						</apex:outputText>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Link Font Size</label>
+						<apex:outputText escape="false" rendered="{!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkFontSize" id="LinkFontSize" value="{!LinkFontSize}" disabled="disabled" />
+						</apex:outputText>
+						<apex:outputText escape="false" rendered="{!!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="LinkFontSize" id="LinkFontSize" value="{!LinkFontSize}" /> px
+						</apex:outputText>					
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Divider Character</label>
+						<apex:outputText escape="false" rendered="{!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="Divider" id="Divider" value="{!Divider}" disabled="disabled" />
+						</apex:outputText>
+						<apex:outputText escape="false" rendered="{!!disableAll}">
+							<input type="text" class="ocmsTextInputSml ocmsLanguageNeutral" name="Divider" id="Divider" value="{!Divider}" />
+						</apex:outputText>
+					</td>
+				</tr>
+			</table>
+					
+		</form>
+
+	</div>
+</apex:page>

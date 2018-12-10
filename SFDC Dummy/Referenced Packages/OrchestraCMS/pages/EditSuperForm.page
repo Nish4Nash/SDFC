@@ -1,0 +1,488 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.FormController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+
+	<head>
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui,  '/css/ocms.controls.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.tableeditor.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.fieldselector.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.icons.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/editor/TableEditor.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/UniversalLookup.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/DateTimeSelector.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/ToolTip.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/PickList.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/MultiPickList.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUtil, '/content.utils.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/editor/SuperForm.js')}" />
+
+		<script type="text/javascript">	 			
+ 			$(document).ready(function(){
+ 			
+	 			ce.content_editor('registerSaveFunction', function(){
+					var attributes = [];
+					
+					// treating these as language specific
+					attributes.push({"name":"ConfirmationLink", "value":$('#ConfirmationLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					attributes.push({"name":"DuplicateLink", "value":$('#DuplicateLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					attributes.push({"name":"InvalidURLLink", "value":$('#InvalidURLLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					attributes.push({"name":"SaveEmailTemplate", "value":$('#SaveEmailTemplate').page_selector_input('getSerializedLink'), "type":"Text"});
+					
+					// treating these as language neutral
+					attributes.push({"name":"TableDefinition", "value":$('.ocms-form-edit').formeditor('serializeTable'), "type":"Text", "lang": ""});
+					attributes.push({"name":"InlineErrors", "value":$('#InlineErrors:checked').length > 0, "type":"Text", "lang": ""});	
+					return attributes; 
+				});  			
+ 			
+ 				$('#ConfirmationLink').page_selector_input({
+	 				input_field: 'ConfirmationLinkVal',
+	 				input_id: 'ConfirmationLink_selector_input',
+					dialog_id: 'ConfirmationLinkDlg_selector_dialog',
+					selected: {!IF(OR(ConfirmationLinkObj.LinkJSON == null,ConfirmationLinkObj.LinkJSON == ''), 'null',ConfirmationLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ConfirmationLinkObj.LinkName)}',
+					className:'ocmsTextInputMed ocmsLanguageSpecific'
+ 				}); 
+ 				
+ 				
+ 				$('#DuplicateLink').page_selector_input({
+	 				input_field: 'DuplicateLinkVal',
+	 				input_id: 'DuplicateLink_selector_input',
+					dialog_id: 'DuplicateLinkDlg_selector_dialog',
+					selected: {!IF(OR(DuplicateLinkObj.LinkJSON == null,DuplicateLinkObj.LinkJSON == ''), 'null',DuplicateLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(DuplicateLinkObj.LinkName)}',
+					className:'ocmsTextInputMed ocmsLanguageSpecific'
+ 				}); 
+ 				
+ 				$('#InvalidURLLink').page_selector_input({
+	 				input_field: 'InvalidURLLinkVal',
+	 				input_id: 'InvalidURLLink_selector_input',
+					dialog_id: 'InvalidURLLinkDlg_selector_dialog',
+					selected: {!IF(OR(InvalidURLLinkObj.LinkJSON == null,InvalidURLLinkObj.LinkJSON == ''), 'null',InvalidURLLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(InvalidURLLinkObj.LinkName)}',
+					className:'ocmsTextInputMed ocmsLanguageSpecific'
+ 				}); 
+ 				
+ 				$('#SaveEmailTemplate').page_selector_input({
+	 				input_field: 'SaveEmailTemplateVal',
+	 				input_id: 'SaveEmailTemplate_selector_input',
+					dialog_id: 'SaveEmailTemplateDlg_selector_dialog',
+					selected: {!IF(OR(SaveEmailTemplateObj.LinkJSON == null,SaveEmailTemplateObj.LinkJSON == ''), 'null',SaveEmailTemplateObj.LinkJSON)},
+					selected_name: '{!JSENCODE(SaveEmailTemplateObj.LinkName)}',
+					className:'ocmsTextInputMed ocmsLanguageSpecific'
+ 				}); 
+	 			
+	 					
+				$('.ocms-form-edit').formeditor({
+					initFields:				{!SelectedFieldData},
+					objectFieldsMapJSON:	{!ObjectFieldsMapJSON},
+					published:				{!published},
+					contentId:				'{!Content.Id}',
+					sname:					'{!JSENCODE(Content.Site_Name__c)}',
+					defaultCellWidth:		'{!DefaultCellWidth}',
+					defaultCellHeight:		'{!DefaultCellHeight}',
+					defaultCellPadding:		'{!DefaultCellPadding}',
+					token:					'{!token}',
+					bMultilingual:			{!showLanguages},
+					languageCode:			'{!languageInUse.LanguageCode}',
+					languageName:			'{!languageInUse.LanguageName}',
+					languageId:				'{!JSENCODE(languageInUse.Id)}',
+					translationView:		'{!multilingualAccessLevel}'
+					
+				});
+				
+		
+				
+			});
+ 			
+		</script>
+		
+		<style type="text/css">
+			table.ocmsContentEditor tr td {
+				float: none;
+			}
+			table.ocmsContentEditor {
+				height: auto;
+			}
+			span.ocms-instructional-text {
+				display: block;
+				margin-top: 0.5em;
+			}
+			span.ocms-instructional-text {
+				width: 265px;
+			}
+			.ocmsTextInputMed {
+				display: inline-block;
+			}
+		</style>
+	</head>
+
+<body>
+	    <table class="ocms-form-edit ocmsContentEditor ocmsContentEditorNested">
+	        <tr>
+	            <td>
+	                <form>
+	                    <div>
+	                        <table class="inputForm ocmsContentEditor ocmsContentEditorNested">
+	                            <tr>
+	                            	<td>
+										<label class="ocmsLabel">Confirmation Page</label>
+	                                    <div id="ConfirmationLink" />
+	                                </td>
+	                            	<td>
+										<label class="ocmsLabel">Duplicate Page</label>
+	                                   <div id="DuplicateLink" />
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                            	<td>
+										<label class="ocmsLabel">Invalid URL Page</label>
+	                                        <div id="InvalidURLLink" />
+	                                    				
+	                                </td>
+	                            	<td rowspan="2">
+										<label class="ocmsLabel">Save Form Email Template</label>
+	                                    <div id="SaveEmailTemplate" />
+	                                    <span class="ocms-instructional-text">Email sent to the user that provides a link to resume completing the form when it is saved.</span>
+	                                </td>
+	                            </tr>
+				    			<tr class="ocmsCheckForm">
+				    				<td>
+										<ul><li>
+		                                    <apex:outputText escape="false" rendered="{!!disableAll}">
+		                                        <apex:outputText escape="false" rendered="{!!InlineErrors}">
+		                                            <input type="checkbox" class="ocmsLanguageNeutral" name="InlineErrors" id="InlineErrors" value="{!InlineErrors}" />
+		                                        </apex:outputText>
+		                                        <apex:outputText escape="false" rendered="{!InlineErrors}">
+		                                            <input type="checkbox" class="ocmsLanguageNeutral" name="InlineErrors" id="InlineErrors" value="{!InlineErrors}" checked="checked" />
+		                                        </apex:outputText>
+		                                    </apex:outputText>
+		                                    <apex:outputText escape="false" rendered="{!disableAll}">
+		                                        <apex:outputText escape="false" rendered="{!!InlineErrors}">
+		                                            <input type="checkbox" class="ocmsLanguageNeutral" name="InlineErrors" id="InlineErrors" value="{!InlineErrors}" disabled="disabled" />
+		                                        </apex:outputText>
+		                                        <apex:outputText escape="false" rendered="{!InlineErrors}">
+		                                            <input type="checkbox" class="ocmsLanguageNeutral" name="InlineErrors" id="InlineErrors" value="{!InlineErrors}" checked="checked" disabled="disabled" />
+		                                        </apex:outputText>
+		                                    </apex:outputText>
+											<label style="margin: 0 10px 0 -9px;" for="InlineErrors">Show Inline Errors</label>
+										</li></ul>
+				    				</td>
+				    				<td></td>
+				    			</tr>
+	                        </table>
+	                    </div>
+	                </form>
+	            </td>
+	        </tr>
+		    <tr>
+		    	<td>
+
+					<div id="hiddenfields" class="ui-widget ui-widget-content ui-helper-clearfix" style="border: 1px dashed #ccc;">
+					    <apex:repeat value="{!hiddenFields}" var="field">
+					        <div id="{!field.field.Id}" class="form-item tableitem" style="text-align: inherit;">
+					            <!--  Overlay for hovers -->
+					            <div class="form-item-hover">
+					                <div class="ocms-actions">
+					                    <apex:outputText escape="false" rendered="{!field.field_type != 'ATTACHMENT'}">
+					                        <a class="edit" onclick="return false;" href="#">
+					                            <img border="0" src="{!URLFOR($Resource.jqueryui,'/css/images/cleardot.gif')}" class="ocms-icon-20 ocms-icon-20-edit" />
+					                        </a>
+					                    </apex:outputText>
+					                    <a class="delete" onclick="return false;" href="#">
+					                        <img border="0" src="{!URLFOR($Resource.jqueryui,'/css/images/cleardot.gif')}" class="ocms-icon-20 ocms-icon-20-delete" />
+					                    </a>
+					                </div>
+					                <div class="form-item-handle" style="border: none;">
+					                    <span class="handle ocms-draghandle"><img src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}" border="0" /></span>
+					                </div>
+					            </div>
+					            <div class="form-item-cell sample" style="text-align: inherit;">
+					                <apex:outputText escape="false" rendered="{!OR(field.field_type == 'STRING', field.field_type == 'URL', field.field_type == 'EMAIL', field.field_type == 'CURRENCY', field.field_type == 'DOUBLE', field.field_type == 'PERCENT', field.field_type == 'PHONE', field.field_type == 'INTEGER')}">
+					                    <input type="text" value="{!field.label}" disabled="true" style="width:{!IF(ISBLANK(field.width), '200', field.width)}px;" />
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'DATE'}">
+					                     <input type="hidden" id="placeholder_{!field.field.Id}" />
+					                     <script type="text/javascript">	
+					                    	$(jq('sample_{!field.field.Id}_selector')).datetime_selector({
+												passThruId: jq('placeholder_{!field.field.Id}'),
+												type: 'date',
+												showlabel: 'false'
+												
+											});
+					                    </script>
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'DATETIME'}">
+					                   <input type="hidden" id="placeholder_{!field.field.Id}" />
+					                     <script type="text/javascript">	
+					                    	$(jq('sample_{!field.field.Id}_selector')).datetime_selector({
+												passThruId: jq('placeholder_{!field.field.Id}'),
+												type: 'datetime',
+												showlabel: 'false',
+												timezone: '{!timezone}'
+											});
+					                    </script>
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'PICKLIST'}">
+					                    <div class="sample_{!field.field.id} picklist {!field.picklistType}" id="sample_{!field.field.id}_picklist"></div>
+                                        <script type="text/javascript">
+	                                         $(jq('sample_{!field.field.id}_picklist')).picklist({
+													passThruId: jq('sample_{!field.field.id}'),
+													type: '{!field.picklistType}',
+													value: '',
+													disabled: false,
+													object_name: '{!field.objectName}',
+													field_name: '{!field.name}'
+											});
+						               </script>
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'MULTIPICKLIST'}">
+					                    <div class="sample_{!field.field.id} multipicklist {!field.picklistType}" id="sample_{!field.field.id}_multipicklist"></div>
+					                    <script type="text/javascript">
+						                    $(jq('sample_{!field.field.id}_multipicklist')).multipicklist({
+												passThruId: jq('sample_{!field.field.id}'),
+												type: '{!field.picklistType}',
+												value: '',
+												disabled: false,
+												object_name: '{!field.objectName}',
+												field_name: '{!field.name}'
+											});
+										 </script>
+					                   
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'BOOLEAN'}">
+					                    <input type="checkbox" disabled="true" />
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'TEXTAREA'}">
+					                    <textarea disabled="true" rows="3" width="{!field.width}px"></textarea>
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'REFERENCE'}">
+					                    <div>
+					                        <span>REFERENCE: {!field.label}</span>
+					                    </div>
+					                </apex:outputText>
+					                <apex:outputText escape="false" rendered="{!field.field_type == 'ID'}">
+					                    <div>
+					                        <span>ID: {!field.label}</span>
+					                    </div>
+					                </apex:outputText>
+					            </div>
+					            <div style="clear: both;"></div>
+					        </div>
+					    </apex:repeat>
+					</div>
+
+					<div class="tablelayout">
+					    <table style="{!formTable.tableStyles}">
+					        <tbody>
+					            <apex:repeat value="{!FormRows}" var="row">
+					                <tr>
+					                    <apex:repeat value="{!row.columns}" var="col">
+					                        <apex:outputText rendered="{!col.fields.size == 0}">
+					                            <td style="{!col.column.style}" colspan="{!col.column.colspan}" rowspan="{!col.column.rowspan}" class="empty-cell"></td>
+					                        </apex:outputText>
+					                        <apex:outputText rendered="{!col.fields.size > 0}">
+					                            <td style="{!col.column.style}" colspan="{!col.column.colspan}" rowspan="{!col.column.rowspan}" class="non-empty-cell">
+					                                <apex:repeat value="{!col.fields}" var="field">
+					                                    <div id="{!field.field.Id}" class="form-item tableitem" style="{!IF(OR(field.field_type == 'OCMSRICHTEXT', field.field_type == 'OCMSPLAINTEXT'), 'height: auto;', '')} text-align: inherit; overflow: hidden;">
+					                                        <!--  Overlay for hovers -->
+					                                        <div class="form-item-hover">
+					                                            <div class="ocms-actions">
+					                                                <apex:outputText escape="false" rendered="{!AND(field.field_type != 'ATTACHMENT', field.field_type != 'RECAPTCHA')}">
+					                                                    <a class="edit" onclick="return false;" href="#">
+												                        	<img border="0" src="{!URLFOR($Resource.jqueryui,'/css/images/cleardot.gif')}" class="ocms-icon-20 ocms-icon-20-edit" />
+					                                                    </a>
+					                                                </apex:outputText>
+					                                                <a class="delete" onclick="return false;" href="#">
+					                        							<img border="0" src="{!URLFOR($Resource.jqueryui,'/css/images/cleardot.gif')}" class="ocms-icon-20 ocms-icon-20-delete" />
+					                                                </a>
+					                                            </div>
+					                                            <div class="form-item-handle" style="border: none;">
+												                    <span class="handle ocms-draghandle"><img src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}" border="0" /></span>
+					                                            </div>
+					                                        </div>
+					
+					                                        <div class="form-item-cell sample" style="text-align: inherit;">
+					                                            <apex:outputText escape="false" rendered="{!OR(field.field_type == 'STRING', field.field_type == 'URL', field.field_type == 'EMAIL', field.field_type == 'CURRENCY', field.field_type == 'DOUBLE', field.field_type == 'PERCENT', field.field_type == 'PHONE', field.field_type == 'INTEGER')}">
+					                                                <input type="text" value="{!field.label}" disabled="true" style="width:{!IF(ISBLANK(field.width),'200',field.width)}px;" />
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'DATE'}">
+					                                                <input type="hidden" id="placeholder_{!field.field.Id}" />
+					                                                <div id="sample_{!field.field.id}_selector"></div>
+					                                            	<script type="text/javascript">	
+												                    	$(jq('sample_{!field.field.Id}_selector')).datetime_selector({
+																			passThruId: jq('placeholder_{!field.field.Id}'),
+																			type: 'date',
+																			showlabel: 'false',
+																			timezone: '{!timezone}'
+																		});
+												                    </script>
+					                                            
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'DATETIME'}">
+					                                                <input type="hidden" id="placeholder_{!field.field.Id}" />
+					                                                <div id="sample_{!field.field.id}_selector"></div>
+					                                            	<script type="text/javascript">	
+												                    	$(jq('sample_{!field.field.Id}_selector')).datetime_selector({
+																			passThruId: jq('placeholder_{!field.field.Id}'),
+																			type: 'datetime',
+																			showlabel: 'false',
+																			timezone: '{!timezone}'
+																		});
+												                    </script>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'PICKLIST'}">
+					                                                <div class="sample_{!field.field.id} picklist {!field.picklistType}" id="sample_{!field.field.id}_picklist"></div>
+					                                                <script type="text/javascript">
+						                                                $(jq('sample_{!field.field.id}_picklist')).picklist({
+																			passThruId: jq('sample_{!field.field.id}'),
+																			type: '{!field.picklistType}',
+																			value: '',
+																			disabled: false,
+																			object_name: '{!field.objectName}',
+																			field_name: '{!field.name}'
+																		});
+					                                                </script>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'MULTIPICKLIST'}">
+					                                                <div class="sample_{!field.field.id} multipicklist {!field.picklistType}" id="sample_{!field.field.id}_multipicklist"></div>
+												                    <script type="text/javascript">
+													                    $(jq('sample_{!field.field.id}_multipicklist')).multipicklist({
+																			passThruId: jq('sample_{!field.field.id}'),
+																			type: '{!field.picklistType}',
+																			value: '',
+																			disabled: false,
+																			object_name: '{!field.objectName}',
+																			field_name: '{!field.name}'
+																		});
+																	 </script>
+					                                               </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'BOOLEAN'}">
+					                                                <input type="checkbox" disabled="true" />
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'TEXTAREA'}">
+					                                                <textarea disabled="true" rows="3" width="{!field.width}px"></textarea>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'ATTACHMENT'}">
+					                                                <input type="file" disabled="true" />
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!OR(field.field_type == 'OCMSPLAINTEXT', field.field_type == 'OCMSRICHTEXT')}">
+					                                                <apex:outputText escape="false" value="{!IF(field.value == '', '&nbsp;', field.value)}" />
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!OR(field.field_type == 'SUBMITBUTTON', field.field_type == 'LINKBUTTON')}">
+					                                                <apex:outputText escape="false">
+					                                                    <input type="submit" value="{!field.value}" disabled="disabled" />
+					                                                </apex:outputText>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'RESETBUTTON'}">
+					                                                <apex:outputText escape="false">
+					                                                    <input type="reset" value="{!field.value}" disabled="disabled" />
+					                                                </apex:outputText>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'SAVEBUTTON'}">
+					                                                <apex:outputText escape="false">
+					                                                    <input type="submit" value="{!field.value}" disabled="disabled" />
+					                                                </apex:outputText>
+					                                            </apex:outputText>
+					                                            <apex:outputText escape="false" rendered="{!field.field_type == 'RECAPTCHA'}">
+					                                                <div class="recaptcha">reCAPTCHA</div>
+					                                            </apex:outputText>
+					                                        </div>
+					                                        <div style="clear: both;"></div>
+					                                    </div>
+					                                </apex:repeat>
+					                            </td>
+					                        </apex:outputText>
+					                    </apex:repeat>
+					                </tr>
+					            </apex:repeat>
+					        </tbody>
+					    </table>
+					    <br />
+					</div>
+					
+		    	</td>
+		    </tr>
+		</table>
+		
+		
+
+
+		<div style="display:none" id="sfInfo">
+			<select id="selObjects" name="selObjects" size="1">
+				<option value="___NULL___">Select Object</option>
+				<option value="___formElements___">Form Elements</option>
+				<option value="___NULL___" class="separator">----------------------</option>
+				<apex:repeat value="{!objectSelectOptions}" var="option">
+					<apex:outputText rendered="{! NOT(ISNULL(option)) && NOT(ISNULL(option.so)) && NOT(ISNULL(option.so.Value)) && option.so.Value != ''}"> 
+						<option value="{!option.so.Value}"><apex:outputText value="{!option.so.Label}" /></option>
+					</apex:outputText>
+				</apex:repeat>
+			</select>
+			<div id="formElements">
+				<h3><a href="#">Form Elements</a></h3>
+				<div>
+					<ul id="form_elements_container" class="available_container ui-sortable" style="width: 100%">
+						<li class="sortitem tableitem" id="field-rich-text">
+							<span class="draggable-label">Text</span>
+							<span class="ocmsForm_addElement">Add Element</span>
+						</li>
+						<li class="sortitem tableitem" id="submit-button">
+							<span class="draggable-label">Submit Button</span>
+							<span class="ocmsForm_addElement">Add Element</span>
+						</li>
+						<li class="sortitem tableitem" id="reset-button">
+							<span class="draggable-label">Reset Button</span>
+							<span class="ocmsForm_addElement">Add Element</span>
+						</li>
+						<li class="sortitem tableitem" id="save-button">
+							<span class="draggable-label">Save Button</span>
+							<span class="ocmsForm_addElement">Add Element</span>
+						</li>						
+						<apex:outputText escape="false" rendered="{!hasRecaptcha==false}">
+							<li class="sortitem tableitem" id="RECAPTCHA">
+								<span class="draggable-label">reCAPTCHA</span>
+								<span class="ocmsForm_addElement">Add Element</span>
+							</li>
+						</apex:outputText>
+					</ul>
+				</div>
+			</div> <!-- formElements -->
+			
+			<div id="objectsUsed">
+				<apex:repeat value="{!fieldSets}" var="obj">
+					<div id="{!obj.ObjectName}_container" class="objectContainer">
+						<h3><a href="#"><apex:outputText value="{!obj.ObjectLabel+' Fields'}" /></a></h3>
+						<div style="max-height: 300px; overflow: auto; padding-right: 10px;">
+							<ul id="{!obj.ObjectName}_fields" class="available_container ui-sortable" style="width: 100%">
+									<apex:repeat value="{!obj.fields}" var="field">
+										<apex:outputText escape="false" rendered="{!!field.isSelected}">
+										<li class="field-row tableitem" id="{!obj.ObjectName}:{!field.FieldName}">
+											<span class="draggable-label" style="width: 220px;"><apex:outputText value="{!field.FieldLabel}" /></span>
+											<span class="draggable-label" style="width: 100px;"><apex:outputText value="{!field.FieldType}" /></span>
+											<span class="draggable-label" style="width: 40px;">
+
+												<apex:outputText escape="false" rendered="{!field.isRequired}">
+													<input type="checkbox" value="req"  disabled="true" checked="true" />
+												</apex:outputText>
+												<apex:outputText escape="false" rendered="{!!field.isRequired}">
+													<input type="checkbox" value="req"  disabled="true" />
+												</apex:outputText>
+
+											</span>
+											<span class="ocmsForm_addField">Add Field</span>
+										</li>
+										</apex:outputText>
+									</apex:repeat>
+							</ul>
+
+							<ul class="available_container ui-sortable" style="width: 100%">
+									<li class="sortitem tableitem" id="{!obj.ObjectName}-inputFile">
+										<span class="draggable-label" style="width: 300px;">Attachment</span>
+										<span class="ocmsForm_addAttachment">Add Attachment</span>
+									</li>
+							</ul>
+						</div>
+					</div>
+				</apex:repeat>
+			</div> <!-- objectsUsed -->
+		</div> <!--  sInfo -->
+	</body>
+</apex:page>

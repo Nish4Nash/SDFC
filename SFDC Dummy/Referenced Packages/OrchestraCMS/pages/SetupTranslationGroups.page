@@ -1,0 +1,181 @@
+<apex:page controller="cms.SetupTranslationGroups" showHeader="false"
+    sidebar="false" standardStylesheets="false">
+    <html>
+
+<head>
+<title>Manage Translation Groups</title>
+
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.edit.css')}" />
+
+<c:CmsScripts />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/multilingual/TranslationGroups.js')}" />
+
+
+<script type="text/javascript">
+	    $(document).data('cms', {
+	        'context'   : 'orchestracms',
+	        'namespace' : '{!namespace}',
+	        'csrf_token': '{!token}',
+	        'site_name' : '{!SiteName}'
+	    });
+		
+		$(document).ready(function() {
+            var cms = $(document).data('cms');
+            var package_prefix = '';
+            if(cms.namespace !== '' && cms.namespace !== null && cms.namespace !== undefined){
+                package_prefix = cms.namespace + '__';
+            }
+
+			var translationGroupList = $('#translationGroupTableContainer');
+			var languageGroupMembers = {!TranslationGroupList};
+            	
+			var translationGroupTable = function(lgm){
+				translationGroupList.ocmsList({
+					title: '',
+					headers: 'Name,Language,Members',
+					useCheckBoxes: false,
+					hideBreadCrumb: true,
+					selectable: false,
+					imageAttribute: '',
+					idField: 'groupId',
+					
+					fieldRenderer: function(sType, data, index){
+						if (sType == 'Name'){
+							return $('<div>'+data.groupName+'</div>');
+						
+						} else if (sType == 'Language'){
+							return $('<div>'+data.languageName+'</div>');
+						
+						} else {
+							var memberList = '';
+							var memberListIds = [];
+							var saveGroup = function(widget){
+								$('#progessPlaceholder').css('display', 'inline-block');
+								$('.editTranslationGroup').button("disable");
+								
+								var userList = widget.getSelected();
+								var userIdList = [];
+								for (i = 0; i < userList.length; i++) {
+									userIdList.push(userList[i].Id);
+								}
+
+								var lma_data = {};
+								    lma_data['action']  = 'saveLanguageGroup';
+								    lma_data['service'] = 'LanguageManagerAjax';
+								    lma_data['token']   = '{!token}';
+								    lma_data['sname']   = '{!SiteName}';
+								    lma_data['groupId'] = data.groupId;
+								    lma_data['userIdList'] = JSON.stringify(userIdList);
+
+								var handler = function(json, bSuccess){
+                                    json = $.orchestracmsUtil.parseJSON(json);
+				                    if ((!bSuccess.status) || (json.error !== undefined)) {
+				                    		var response = json;
+				                    		$('<div></div>').ocmsShowErrorPopup({
+												message: response.error.message,
+												width: 300
+											});
+				                        return false;
+				                    } else {
+				                    	var response = json;
+				                        if(response.success !== undefined){
+				                        	translationGroupTable(response.success.message);
+				                        }else{
+				                    		$('<div></div>').ocmsShowErrorPopup({
+												message: 'A problem was encountered while waiting for the save to respond',
+												width: 300
+											});
+				                        }
+				                    }
+				                    
+				                    $('#progessPlaceholder').css('display', 'none');
+				                    $('.editTranslationGroup').button("enable");
+				                    
+				                  }
+				                var options = {};
+				                options['cb']     = handler;
+				                doServiceRequest(lma_data, options);
+							};
+							
+							var isFirst = true;
+							for (var count = 0; count < data.languageMembers.length; count++) {
+								memberListIds.push(data.languageMembers[count][package_prefix+'User__r']);
+								if (isFirst) {
+									isFirst = false;
+								} else {
+									memberList += ', ';
+								}
+								memberList += data.languageMembers[count][package_prefix+'User__r'].FirstName + ' ' + data.languageMembers[count][package_prefix+'User__r'].LastName;
+							}
+							var memberTableCell = $('<div style="max-width: 700px; width: 100%;"><div class="translationMemberList" style="display: table-cell; width: 100%; white-space: normal;">'
+													+memberList+
+													'</div><div class="editButtonContainer" style="display: table-cell;"></div></div>');
+							
+							var editButton = $('<div class="editTranslationGroup" style="margin-left: 30px;">Edit</div>');
+							editButton.button().click(function(event){
+								$('<div id="translationGroupUserSelector" class="translationGroupUserSelector"></div>').TranslationGroups({
+									selectedUsersHeading: data.groupName,
+									selectedUsers: memberListIds,
+									allOrchestraUsers: {!allSiteUsersJSON},
+									okCallback: saveGroup
+								
+								});
+							});
+							
+							memberTableCell.find('.editButtonContainer').append(editButton);
+							
+							return memberTableCell;
+							
+						}
+					},
+					
+					model: {children: lgm}
+	
+				});
+			}
+			
+			translationGroupTable(languageGroupMembers);
+
+		});
+</script>
+
+</head>
+
+<body class="ocms">
+
+    <apex:outputPanel rendered="{!hasAccess}">
+
+        <c:SetupMenu sname="{!SiteName}" activeitem="translationGroups" />
+
+        <div style="margin-left: 210px; padding: 10px;">
+
+            <apex:outputPanel id="translationGroupContainer" layout="block">
+
+                <div class="ocms-setup-breadcrumb">
+                    <div class="ocms-setup-breadcrumb-start"></div>
+                    <div class="ocms-setup-breadcrumb-item">Setup</div>
+                    <div class="ocms-setup-breadcrumb-separator-active"></div>
+                    <div class="ocms-setup-breadcrumb-item-active">Manage Translation Groups</div>
+                    <div class="ocms-setup-breadcrumb-end"></div>
+                    <div class="ocms-clear"></div>
+                </div>
+
+                <br />
+
+                <span style="font-size:1.4em">Manage Translation Groups<div id="progessPlaceholder" class="ocms-icon-progress-16" style="width: 16px; line-height: normal; display: none; margin-left: 10px;"></div></span>
+                <div id="translationGroupTableContainer" style="display: table;"></div>
+                
+            </apex:outputPanel>
+    </div>
+
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!!hasAccess}">
+        <div style="padding: 10px;">You do not have Setup > Manage Translation Groups permission</div>
+    </apex:outputPanel>
+
+</body>
+
+    </html>
+</apex:page>

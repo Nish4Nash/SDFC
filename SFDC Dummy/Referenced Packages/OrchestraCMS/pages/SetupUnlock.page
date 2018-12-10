@@ -1,0 +1,347 @@
+<apex:page controller="cms.setupUnlock" showHeader="false"
+	sidebar="false" standardStylesheets="false">
+	<html>
+
+<head>
+<title>Find Locked Pages and Content</title>
+
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.edit.css')}" />
+
+<c:CmsScripts />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+
+<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+	
+	</script>
+
+</head>
+
+<body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+		<c:SetupMenu sname="{!SiteName}" activeitem="unlock" />
+
+		<div style="margin-left: 210px; padding: 10px;">
+
+			<apex:outputPanel >
+
+				<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+					<div class="ocms-setup-breadcrumb-item">Setup</div>
+				    <div class="ocms-setup-breadcrumb-separator-active"></div>
+				    <div class="ocms-setup-breadcrumb-item">Utilities</div>
+				     <div class="ocms-setup-breadcrumb-separator-active"></div>
+					<div class="ocms-setup-breadcrumb-item-active">Unlock</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+					<div class="ocms-clear"></div>
+				</div>
+
+				<br />
+
+				
+                 <div style="font-size: 1.4em; padding-bottom: 8px; padding-right: 25px;">Manage Locked Content and Pages</div>
+             	
+					<table id="unlockFilterOptions" style="padding-bottom:10px;">
+						<tr id="filterStatus" >
+							<td style="text-align:left">Type</td>
+							<td>
+								<select id="filterTypeSelect" size="1" >
+									<option selected="true" value="All">All</option>
+									<option value="content">Content</option>
+									<option value="page">Pages</option>
+								</select><span>  AND</span>
+							</td>
+							
+						</tr>
+						
+						<tr id="filterLockedSince">
+							<td><span>Locked since</span></td>
+							<td id="locked_since" style="width: 575px;"></td>
+						</tr>
+						<tr>
+							<td style="text-align:left">Name</td>
+							<td><input id="filterName" type="text"  style="width: 275px;color:#788E1E"></input><span>  AND</span></td>
+						</tr>
+						<tr>
+							<td style="text-align:left">Locked By</td>
+							<td><input id="filterLockedBy" type="text"  style="width:275px;color:#788E1E"></input></td>
+						</tr>
+					</table>
+					<div class="unlockButton" >Unlock</div> 
+					<table id="unlockFilterContentList" cellpadding="5" cellspacing="0" class="ocms-list" style="margin-left:0px; margin-top:10px;" width="600"><tr class="list-header"><td ><input id="lockedContentSelectAll" type="checkbox"/></td><td style="text-align:left; width: 350px;">Name</td><td>Type</td><td style="text-align:left;">Locked Date</td><td style="text-align:left;">Locked By</td>
+						</tr>
+					</table>
+					
+					<table id="unlockFilterPageList" cellpadding="5" cellspacing="0" class="ocms-list" style="margin-left:0px; margin-top:20px;" width="600"><tr class="list-header"><td ><input id="lockedPageSelectAll" type="checkbox"/></td><td style="text-align:left; width: 350px;">Name</td><td>Type</td><td style="text-align:left;">Locked Date</td><td style="text-align:left;">Locked By</td>
+						</tr>
+					</table>
+					 <div class="unlockButton" >Unlock</div> 
+					<script>
+						 var prefix = '';
+						 var pkg_namespace = '{!namespace}';	
+  						 if(pkg_namespace != '')
+  							prefix = pkg_namespace + '__';
+						
+						$(document).ready(function() {
+							
+							$('#lockedContentSelectAll').click(function() {
+								if ($('#lockedContentSelectAll').is(':checked')) {
+									$('#unlockFilterContentList .lockedItemsSelectItem').prop('checked', true);
+									$('.unlockButton').button("enable");
+								} else {
+									$('#unlockFilterContentList .lockedItemsSelectItem').prop('checked', false);
+									$('.unlockButton').button("disable"); 
+								}
+							});
+							$('#lockedPageSelectAll').click(function() {
+								if ($('#lockedPageSelectAll').is(':checked')) {
+									$('#unlockFilterPageList .lockedItemsSelectItem').prop('checked', true);
+									$('.unlockButton').button("enable");
+								} else {
+									$('#unlockFilterPageList .lockedItemsSelectItem').prop('checked', false);
+									$('.unlockButton').button("disable"); 
+								}
+							});
+							
+							$('.unlockButton').button().click(function(){
+								//find all the selected stuff
+								var content_ids='';
+								var first=true;
+								$('.unlockButton').button("disable");
+								$.each($('#unlockFilterContentList .lockedItemsSelectItem:checked'),function(index,element) {
+									if(!first)
+										content_ids +=',';
+									content_ids += $(element).data('id');
+									first=false;
+									
+								});
+								if(content_ids !=''){
+									var data={};
+									data['action'] 	 	= "unlockContent";
+									data['service']     = 'LockingManagerService';
+									data['sname'] 	 	= '{!SiteName}';
+									data['content_ids'] = content_ids;
+									
+									var handler = function(json, result){
+                                        json = $.orchestracmsUtil.parseJSON(json);
+										if((result.status ==true) && (json.error === undefined)){
+											$('#unlockFilterContentList tr.unlockRow').remove();
+											search("content");
+											}
+										else{
+												showError('Display Content Unlock Error',json.error.message,function(){
+													location.reload(true);
+												});
+											} 
+									 }
+					                var options = {};
+					                options['cb']     = handler;
+					                doServiceRequest(data, options);
+								}
+								
+								var page_ids='';
+								first=true;
+								$.each($('#unlockFilterPageList .lockedItemsSelectItem:checked'),function(index,element) {
+									if(!first)
+										page_ids +=',';
+									page_ids += $(element).data('id');
+									first=false;
+									
+								});
+								if(page_ids !=''){
+									var data={};
+									data['action'] 	= "unlockPage";
+									data['service'] = 'LockingManagerService';
+									data['sname'] 	= '{!SiteName}';
+									data['page_ids']=  page_ids;
+									
+									var handler = function(json, result){
+	                                    json = $.orchestracmsUtil.parseJSON(json);
+										if((result.status ==true) && (json.error === undefined)){
+											$('#unlockFilterPageList tr.unlockRow').remove();
+											search('page');
+										}
+										else{
+											showError('Display Content Unlock Error',json.error.message,function(){
+												location.reload(true);
+											});
+										} 
+									 }
+					                var options = {};
+					                options['cb']     = handler;
+					                doServiceRequest(data, options);
+								}
+							});
+						 	
+							
+							$('#locked_since').datetime_selector({
+								type: 'datetime',
+								showlabel: false
+							});
+							
+							self.defaultInputMessage = 'Start typing to filter the list';
+							
+							search(null);
+							
+							
+							$("#filterName").val(defaultInputMessage);
+							$("#filterLockedBy").val(defaultInputMessage);
+							
+							$('#filterName, #filterLockedBy').click(function() {
+								if (!$(this).hasClass('focused')) { // already have focus?
+									$(this).select();				// no - select all text in input
+									$(this).addClass('focused');	// and add class as a flag
+								}
+							});
+							
+							$("#filterName, #filterLockedBy").blur(function() {
+  								if($(this).val() ==''){
+  									$(this).val(defaultInputMessage);
+  									$(this).css('color','#788E1E');
+  								}
+  								$(this).removeClass('focused');		// remove our flag
+							});
+
+							
+							$('#filterName, #filterLockedBy').keyup(function(){search(null);});
+							$('#filterTypeSelect').change(function(){search(null);});
+							$('#locked_since').change(function(){search(null);});
+							$('.dt-clear-cell').click(function(){search(null);});
+							$('.unlockButton').button("disable");
+							
+						});
+						
+						
+						function search(objType) {
+							var itemType;
+							if(objType !=null)
+								itemType= objType;
+							else
+								itemType = $('#filterTypeSelect').val();
+							if(itemType=='content' || itemType=='All'){
+								var data={};
+								data['action'] 	 	= "getFilteredLockedContent";
+								data['service']     = 'LockingManagerService';
+								data['sname'] 	 	= '{!SiteName}';
+								if($('#filterName').val() != defaultInputMessage)
+									data['name']=$('#filterName').val();
+								if($('#filterLockedBy').val() != defaultInputMessage)
+									data['LockedBy']=$('#filterLockedBy').val();
+								data['lockedSince']=$('#locked_since').datetime_selector('getValue');
+								
+								var handler = function(json, result){
+                                    json = $.orchestracmsUtil.parseJSON(json);
+									if((result.status ==true) && (json.error === undefined))
+										updateContentListRows(json);
+									else{
+											showError('Display Unlock Error',json.error.message);
+										} 
+								 }
+				                var options = {};
+				                options['cb']     = handler;
+				                doServiceRequest(data, options);
+							}
+							
+							if(itemType=='page' || itemType=='All'){
+								var data={};
+								data['action'] 	 	= "getFilteredLockedPages";
+								data['service']     = 'LockingManagerService';
+								data['sname'] 	 	= '{!SiteName}';
+								if($('#filterName').val() != defaultInputMessage)
+									data['name']=$('#filterName').val();
+								if($('#filterLockedBy').val() != defaultInputMessage)
+									data['LockedBy']=$('#filterLockedBy').val();
+								data['lockedSince']=$('#locked_since').datetime_selector('getValue');
+								
+								var handler = function(json, result){
+                                    json = $.orchestracmsUtil.parseJSON(json);
+									if((result.status ==true) && (json.error === undefined))
+										updatePageListRows(json);
+									else{
+											showError('Display Unlock Page Error',json.error.message);
+										} 
+								 }
+				                var options = {};
+				                options['cb']     = handler;
+				                doServiceRequest(data, options);
+							}
+						}
+						
+						function updateContentListRows(newUnlockItems) {
+							//Clear old values if any
+							$('#unlockFilterContentList tr.unlockRow').remove();
+							var trId = 0;
+							$.each(newUnlockItems, function(index, element) {
+								var Today = new Date();
+								var rowDate = new Date(element[prefix +'LockedForEditDate__c']);
+								
+								var rowDateStr = '' + rowDate.getDate() + ' '+ monthNames[rowDate.getMonth()] + ', ' + rowDate.getFullYear();
+								 $('#unlockFilterContentList').append('<tr class="list-row unlockRow"><td ><input class="lockedItemsSelectItem" data-id="'+element.Id +'" type="checkbox"/></td><td>'+element[prefix +'Name__c']+'</td><td>'+element[prefix +'Content_Type__r'][prefix+'Label__c'] +
+									'</td><td>'+rowDateStr+'</td><td>'+element[prefix+'LockedForEditBy__r']['Name']+'</td></tr>');
+								
+								trId++;
+							});
+							$('#unlockFilterContentList').append('<tr class="list-footer unlockRow"><td class="last" colspan="5">&nbsp;</td></tr>');
+							$('.lockedItemsSelectItem').change(function(){
+						 		if ($('.lockedItemsSelectItem').is(':checked')) {
+									$('.unlockButton').button("enable");
+								} else {
+									$('.unlockButton').button("disable");
+								}
+						 	});
+						}
+						
+						function updatePageListRows(newUnlockItems) {
+							//Clear old values if any
+							$('#unlockFilterPageList tr.unlockRow').remove();
+							var trId = 0;
+							$.each(newUnlockItems, function(index, element) {
+								var Today = new Date();
+								var rowDate = new Date(element[prefix +'LockedForEditDate__c']);
+								
+								var rowDateStr = '' + rowDate.getDate() + ' '+ monthNames[rowDate.getMonth()] + ', ' + rowDate.getFullYear();
+								 $('#unlockFilterPageList').append('<tr class="list-row unlockRow"><td ><input class="lockedItemsSelectItem" data-id="'+element.Id +'" type="checkbox"/></td><td>'+element[prefix +'Name__c']+'</td><td>Page'+
+									'</td><td>'+rowDateStr+'</td><td>'+element[prefix+'LockedForEditBy__r']['Name']+'</td></tr>');
+								trId++;
+							});
+							$('#unlockFilterPageList').append('<tr class="list-footer unlockRow"><td class="last" colspan="5">&nbsp;</td></tr>');
+							$('.lockedItemsSelectItem').change(function(){
+						 		if ($('.lockedItemsSelectItem').is(':checked')) {
+									$('.unlockButton').button("enable");
+								} else {
+									$('.unlockButton').button("disable");
+								}
+						 	});
+						}
+						
+						var monthNames = [ "January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December" ];
+						
+						function showError(title,message,func){
+							$('<div></div>').ocmsShowErrorPopup({
+	                        	title : title,
+	                           message : message,
+	                           onClose: func
+	                         }); 
+                        } 
+				</script>
+					
+			</apex:outputPanel>
+	</div>
+
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+		<div style="padding: 10px;">You do not have Setup > Manage
+			Access Levels permission</div>
+	</apex:outputPanel>
+
+</body>
+
+	</html>
+</apex:page>

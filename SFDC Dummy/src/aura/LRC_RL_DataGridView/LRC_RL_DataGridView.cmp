@@ -1,0 +1,107 @@
+<!--***********************************************************************************
+* Component: LRC_RL_DataGridView
+* CreatedBy: Nishit Kedia
+* Description: This is a Main component for the Related List Markup Display
+* Revision History
+***********************************************************************************-->
+
+
+<aura:component controller="LRC_RL_DataGridViewController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="inputChildMetadata" type="String" />
+    <aura:attribute name="inputPageSize" type="Integer" />
+    <aura:attribute name="totalItems" type="Integer" />
+    <aura:attribute name="itemsPerPage" type="Integer" />
+    <aura:attribute name="buttons" type="Aura.Component[]"/>
+    <aura:attribute name="optionbuttons" type="Aura.Component[]"/>
+    <aura:attribute name="bIsButtonFacetSet" type="Boolean" default="false"/>
+    <aura:attribute name="bIsOptionFacetSet" type="Boolean" default="false"/>
+    <aura:attribute name="bIsTileView" type="Boolean" default="true"/>
+    <aura:attribute name="totalTableRecords" type="Object[]" />
+    <aura:attribute name="tableRecords" type="Object[]" />
+    <aura:attribute name="tableheadersMap" type="Map" />
+    <aura:attribute name="sizePerPage" type="Integer" />
+    <aura:attribute name="openItem" type="String" />
+    <aura:attribute name="visitedItem" type="Boolean[]" />
+    <aura:attribute name="selectItem" type="Object[]" />  
+    <aura:attribute name="selectedTile" type="Object" />  
+    
+    <aura:attribute type="List" name="lstHeaders" default="[]" />
+    <aura:attribute type="List" name="lstRecords" default="[]" />
+    
+  <aura:handler name="paginateEvent" event="c:LRC_CL_showPage" action="{!c.handlePaginateEvent}"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <div class="slds-box" aura:id="main" >
+        
+        <lightning:layout horizontalAlign="space" multipleRows="true" aura:id="panelList">
+            <aura:if isTrue="{!v.bIsButtonFacetSet}">
+            <lightning:layoutItem flexibility="auto" padding="around-small" size="12" class="slds-text-align_right">
+                <aura:iteration items="{!v.buttons}" var="button" indexVar="i">
+                    <lightning:button variant="brand" label="{!button}" />
+                </aura:iteration>
+            </lightning:layoutItem>
+            </aura:if>            
+            <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+               <aura:if isTrue="{!v.bIsTileView}">
+                <lightning:layout horizontalAlign="center" multipleRows="true">
+                                     
+                   <aura:if isTrue="{!v.totalTableRecords.length}">
+                    <aura:iteration items="{!v.tableRecords}" var="childrecord" indexVar="i">
+                        <!--<c:LRC_RL_TileContent aura:id="tile" 
+                                              bIsOptionFacetSet="{!v.bIsOptionFacetSet}"
+                                              optionbtns ="{!v.optionbuttons}"
+                                              openItem="{!v.openItem}"
+                                              tileHeader="{!childrecord.childrecordName}"
+                                              tileHeaderLink ="{!childrecord.childDetailLink}"
+                                              detailFieldList="{!childrecord.fieldsWrapper}"
+                                              item ="{!i}"
+                                              itemJSON="{!childrecord}"
+                                              selectedTile="{!v.selectedTile}"
+                                              tileSelection="{!c.tileSelected}"/>-->
+                        <c:LRC_RL_TileContent aura:id="tile" 
+                                              bIsOptionFacetSet="{!v.bIsOptionFacetSet}"
+                                              optionbtns ="{!v.optionbuttons}"
+                                              openItem="{!v.openItem}"
+                                              tileHeader="{!childrecord.Name}"
+                                              tileHeaderLink ="{!childrecord.Id}"
+                                              detailFieldList="{!childrecord}"
+                                              mapHeaders = "{!v.tableheadersMap}"
+                                              item ="{!i}"
+                                              itemJSON="{!childrecord}"
+                                              selectedTile="{!v.selectedTile}"
+                                              tileSelection="{!c.tileSelected}"/>
+                    </aura:iteration>
+                    
+                    <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+                         <c:LRC_CL_pagination totalItems="{!v.totalItems}" itemsPerPage="{!v.itemsPerPage}"/>
+                        
+                    </lightning:layoutItem>
+                       </aura:if>
+                </lightning:layout>
+                </aura:if>
+                 
+                <aura:if isTrue="{!!v.bIsTileView}">
+                    <c:LRC_PaginationTable 
+                        MasterRecordList="{!v.lstRecords}"
+	                    ColumnHeaders="{!v.lstHeaders}"
+	                    RecordCountPerPage="10"
+	                    PageCountPerScreen="3"
+	                    /> 
+                </aura:if>
+            </lightning:layoutItem>
+            
+            
+            <div class="slds-spinner_container" aura:id="spinner">
+                <div class="slds-spinner--brand slds-spinner slds-spinner--medium" aria-hidden="false" role="alert">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+            
+            
+        </lightning:layout>
+    </div>
+    
+</aura:component>

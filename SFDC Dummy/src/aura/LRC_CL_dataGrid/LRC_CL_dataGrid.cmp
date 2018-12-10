@@ -1,0 +1,84 @@
+<!--***********************************************************************************
+* Component: LRC_CL_dataGrid
+* CreatedBy: Ajay Agnihotri
+* Description: This is a reusable Lightning component used to render the data grid with pagination.
+* Revision History
+***********************************************************************************-->
+<aura:component controller="LRC_CL_dataController">
+    <aura:attribute name="sObjectAPI" type="String"/>
+    <aura:attribute name="sObjectLookUpColumn1" type="String"/>
+    <aura:attribute name="sObjectLookUpColumn2" type="String"/>
+    <aura:attribute name="sObjectLookUpColumn3" type="String"/>
+    <aura:attribute name="sObjectLookUpColumn4" type="String"/>
+    <aura:attribute name="dataGridSearchText" type="String"  />
+    <!--<aura:attribute name="products" type="List" />-->
+    <aura:attribute name="sObjectAPIFieldLabel" type="String[]" description="The resulting Array will consist of Field Labels"/>
+	<aura:attribute name="sObjectRecordWrap" type="c.LRC_CL_dataGridWrapper[]" description="The resulting wapper returned by the Apex controller." />
+	<aura:attribute name="displaysObjectRecordWrap" type="c.LRC_CL_dataGridWrapper[]" description="The resulting wapper returned by the Apex controller." />
+    <!--<aura:attribute name="displayProducts" type="List" />-->
+    <aura:attribute name="listIconSVGPath" type="String"/>
+    <aura:attribute name="totalItems" type="Integer" />
+    <aura:attribute name="itemsPerPage" type="Integer" default="10" />
+    
+    
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="paginateEvent" event="c:LRC_CL_showPage" action="{!c.handlePaginateEvent}"/>
+    <aura:handler event="c:LRC_CL_searchText" action="{!c.handleSearchEvent}"/>
+    
+    <!-- Use the Apex model and controller to fetch server side data -->
+    <div>
+        <div class="slds-grid pad-bottom-20">  
+        	<div class="slds-container--left slds-container--small">
+              <c:LRC_CL_typeSearch SearchText="{!v.dataGridSearchText}"/>
+        	</div>
+            <div class="slds-container--right slds-container--small">
+                <a id="CancelLink" role="option" onclick="{!c.CancelPopup}"><img src="/img/entitlement/expired_entitlement_status.png" id="Cancel"  style="cursor:pointer;"/></a>
+            </div>
+        </div>
+        
+        <aura:if isTrue="{!v.sObjectRecordWrap.length}">
+            <table class="slds-table slds-table--bordered slds-table--striped">
+              <thead>
+                <tr>
+                   <th scope="col"><span class="slds-truncate">Action</span></th> 
+                   <th scope="col"><span class="slds-truncate">Name</span></th>
+                    <th scope="col"><span class="slds-truncate">{!v.sObjectAPIFieldLabel[0]}</span></th>
+				   <th scope="col"><span class="slds-truncate">{!v.sObjectAPIFieldLabel[1]}</span></th>
+				   <th scope="col"><span class="slds-truncate">{!v.sObjectAPIFieldLabel[2]}</span></th>
+                   <th scope="col"><span class="slds-truncate">{!v.sObjectAPIFieldLabel[3]}</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <aura:iteration items="{!v.displaysObjectRecordWrap}" var="wrapRec" indexVar="index">
+                 <tr>
+                   <td>
+                       
+                      <!--<ui:button aura:id="{wrapRec.sObjectRecId+'_'+wrapRec.sObjectName}" label="Select" press="{!c.selectedsObject}"/>-->
+                      <c:LRC_CL_button class="slds-button slds-button-neutral" 
+                         label="Select" 
+                         svgXlinkHref="{!v.listIconSVGPath}" 
+                         svgClass="slds-icon slds-icon-text-default"
+                         onclick="{!c.selectedsObject}"
+                         data="{!wrapRec.sObjectRecId+'_'+wrapRec.sObjectName}"
+                      />
+                   </td>
+                   <td>{!wrapRec.sObjectName}</td>                 
+                   <td>{!wrapRec.sObjectColumn1}</td>
+				   <td>{!wrapRec.sObjectColumn2}</td>
+				   <td>{!wrapRec.sObjectColumn3}</td>
+                   <td>{!wrapRec.sObjectColumn4}</td>
+                 </tr>
+                </aura:iteration>
+              </tbody>
+            </table>
+            
+            <div class="pad-top-20">
+                <c:LRC_CL_pagination totalItems="{!v.totalItems}" itemsPerPage="{!v.itemsPerPage}"/>
+            </div>
+            
+        </aura:if>
+       
+    </div>
+     
+</aura:component>

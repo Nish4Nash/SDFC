@@ -1,0 +1,14 @@
+<apex:page controller="cms.FileUploadService" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" contentType="{!IF(uploadComplete == true, 'text/plain', 'text/html')}">	
+	<apex:outputText escape="false" rendered="{!uploadComplete == false}">
+		<apex:form >
+			<apex:inputFile value="{!attachment.body}" filename="{!attachment.name}" />
+			<apex:inputHidden id="parentId" value="{!parentId}" />
+			<apex:actionFunction name="uploadAttachment" action="{!uploadAttachment}" />
+		</apex:form>
+	</apex:outputText>
+	
+	<apex:outputText escape="false" rendered="{!uploadComplete == true}">
+		<apex:outputText escape="false" value="{!response}" />
+	</apex:outputText>
+	
+</apex:page>

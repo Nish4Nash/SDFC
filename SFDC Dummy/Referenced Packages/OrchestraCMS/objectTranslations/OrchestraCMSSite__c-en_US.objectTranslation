@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>OrchestraCMSSite</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>OrchestraCMSSite</value>
+    </caseValues>
+    <fields>
+        <label><!-- Always Use User Language --></label>
+        <name>Always_Use_User_Language__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnableCaseSensitiveURLs --></label>
+        <name>EnableCaseSensitiveURLs__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnableSDL --></label>
+        <name>EnableSDL__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnableSingleURL --></label>
+        <name>EnableSingleURL__c</name>
+    </fields>
+    <fields>
+        <label><!-- Enable Language Cookie --></label>
+        <name>Enable_Language_Cookie__c</name>
+    </fields>
+    <fields>
+        <label><!-- Multilingual Enabled --></label>
+        <name>MultilingualEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- PageTargetingEnabled --></label>
+        <name>PageTargetingEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- SiteId --></label>
+        <name>SiteId__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetingEnabled --></label>
+        <name>TargetingEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- TurnOffSpans --></label>
+        <name>TurnOffSpans__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseAsyncSessionSave --></label>
+        <name>UseAsyncSessionSave__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseControllerRendering --></label>
+        <name>UseControllerRendering__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseFilterIndexKey --></label>
+        <name>UseFilterIndexKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- UsePageIndex --></label>
+        <name>UsePageIndex__c</name>
+    </fields>
+    <fields>
+        <label><!-- UsePageSOSL --></label>
+        <name>UsePageSOSL__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseTargetingIndex --></label>
+        <name>UseTargetingIndex__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseTargetingRedirect --></label>
+        <name>UseTargetingRedirect__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseTaxonomyIndex --></label>
+        <name>UseTaxonomyIndex__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseUserSession --></label>
+        <name>UseUserSession__c</name>
+    </fields>
+    <fields>
+        <label><!-- UseVersionIndex --></label>
+        <name>UseVersionIndex__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

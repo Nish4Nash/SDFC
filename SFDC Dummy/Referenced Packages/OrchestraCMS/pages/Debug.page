@@ -1,0 +1,3 @@
+<apex:page id="m" docType="{!doc_type}" apiVersion="27" readOnly="true"  controller="cms.CoreController" showHeader="false" sidebar="false" cache="{!page_cache}" expires="{!page_expires}" title="{!page_title}" standardStylesheets="false">
+    <apex:composition template="{!page_layout_reference}" /> 
+</apex:page>

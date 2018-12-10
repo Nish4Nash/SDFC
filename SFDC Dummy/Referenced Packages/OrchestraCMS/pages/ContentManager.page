@@ -1,0 +1,64 @@
+<apex:page controller="cms.ContentManagerService" id="m" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="ContractTracker" >
+    <html style="height: 100%;">
+    <head>
+        <meta name="gwt:property" content="locale={!clientLocale}" />     
+        
+        <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/gwtui.css')}" />	   
+        <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.gwt.css')}" />	
+        <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.contentmanager.css')}" />	
+        
+           
+        <c:CmsScripts />        
+        <script language="JavaScript1.5" type="text/javascript">
+            var GWTUILocalization = {!localizationJSON};
+     
+            var M__PKG_NAMESPACE = "{!pkgNamespace}";
+            var data = {!dataJSON};
+            data.resourceURL = "{!URLFOR($Resource.ContentManagerGWT)}";
+            
+            if($(document).data("cms") === undefined) {
+	            $(document).data("cms", {
+	                "context" : "orchestracms",
+	                "namespace": "{!namespace}"
+	            });
+	        }
+
+            /**
+             * Performs an Ajax Remoting call to a service.
+             * @param params Is a javascript array of parameters, which one must be "service"-ServiceClass to invoke.
+             * @param cb The callback, which takes two parameters,
+             *      result  - The response from the service, which should be a JSON response.
+             *      event   - The event from the server, if event.status then request was successful, else there was
+             *                  an error, use event.message for the message and event.where for the trace if available.
+             */
+            function doServiceRequest(params, cb) {
+                var main = window.top;
+                if(main != null) {
+                
+                    if (typeof cb === 'object'){
+                        main.doServiceRequest(params, cb);
+                    }else{
+		                var options = {};
+		                options['cb'] = cb;
+	                    main.doServiceRequest(params, options);
+                    }
+                }
+            }
+
+          
+
+        </script>
+        
+        <apex:includeScript value="{!URLFOR($Resource.cms__ContentManagerGWT, '/ContentManager/ContentManager.nocache.js')}" />
+       
+
+
+    
+    </head>
+
+    <body class="ocms" id="cta-main" style="margin:0;padding:0;overflow:hidden">
+    <div id="gwtuiProgressBox" class="ocms-progress" style=""><img src="{!URLFOR($Resource.ContentManagerGWT, '/ContentManager/images/Icons/LoaderBar128_15.gif')}"/></div>
+    </body>
+    </html>
+</apex:page>

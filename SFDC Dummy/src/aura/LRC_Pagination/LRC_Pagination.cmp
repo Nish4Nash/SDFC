@@ -1,0 +1,98 @@
+<!--********************************************************************************************
+ * NAME         :  ISD_GenericPagination 
+ * DESCRIPTION  :  Lightning component for Pagination
+ *
+ * @AUTHOR Gayatri
+ * @DATE 25/10/2017
+ *
+ * MODIFICATION LOG:
+ * DEVELOPER                   DATE                        DESCRIPTION
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * Gayatri                    25/10/2017                  Initial creation 
+ *********************************************************************************************** -->
+
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="LRCServerSidePaginationController"> <!-- extends="c:ISD_BaseSuper" -->
+    <aura:attribute name="compFunctionality" type="String" /> 
+    <aura:attribute name="tableDataList" type="Integer" /> 
+    <aura:attribute name="needServerCall" type="boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:attribute name="settings" type="LRCPaginationSettings__c" /> 
+    <aura:attribute name="offSetVal" type="Integer" default="0"/>
+    <aura:attribute name="noOfPages" type="Integer" default="0" />
+    <aura:attribute name="sizePerPage" type="Integer" default="-1" />
+    <aura:attribute name="totalSizeAcrossPages" type="Integer" default="0" />
+    <aura:attribute name="pages" type="Integer[]" default="" />
+    <aura:attribute name="currentPage" type="Integer" default="1" />
+    <aura:attribute name="lastPage" type="Integer" default="0"/>
+    <aura:attribute name="firstPage" type="Integer" default="-1" />
+    <aura:attribute name="disableFwd" type="boolean" default="false" />
+    <aura:attribute name="disablesinglearrowFwd" type="boolean" default="false" />
+    <aura:attribute name="disablesinglearrowbwd" type="boolean" default="false" />
+    <aura:attribute name="recDirection" type="String"/>
+    <aura:attribute name="backImgAltText" type="Object[]" />
+    <aura:attribute name="nextImgAltText" type="Object[]" />
+    <aura:attribute name="tableDataIndex" type="Integer" default="-1"/>
+    <aura:registerEvent name="ChangePageRecordsEvent" type="c:LRC_ChangeHandlerforPageRecords" />
+     <aura:handler action="{!c.handleRecordUpdates}" event="c:LRC_HandleRecordDeleteInsert" />
+    <aura:handler action="{!c.handleserverRecordUpdates}" event="c:Irc_HandleServerSidePagination" />
+    <aura:registerEvent name="fireGetRecordSetCall" type="c:LRC_PaginationGetRecordSet" />
+    <aura:method name="rerenderPagination" action="{!c.refreshPagination}" access="PUBLIC" />
+    <!-- added for -->
+    <aura:attribute name="paginationStartMob" type="Integer" /><!-- Added by RD for mobile pagination -->
+    <aura:attribute name="paginationEndMob" type="Integer" /><!-- Added by RD for mobile pagination -->
+    
+    <div class="pagination-wrapper" role="navigation">
+        <aura:if isTrue="{!v.tableDataList > 0}">
+            <ul>  
+                <li class="{!v.needServerCall == false? 'slds-hide':''}">
+                    <a href="" onclick="{!c.getpreviousServerRecords}" class="{!'prev-btn' + v.pages[0] == 1 ? ' btn-inactive': ' btn-active'}">
+                    	<aura:if isTrue="{!v.pages[0] == 1}">
+                        	<img class="double-prev-arrow" alt="{!v.backImgAltText[0]}" src="{!$Resource.Assets_Pagination+'/double-grey-left-arrow.svg'}" />
+                        <aura:set attribute="else">
+                        	<img class="double-prev-arrow" alt="{!v.backImgAltText[1]}" src="{!$Resource.Assets_Pagination+'/double-blue-left-arrow.svg'}" />
+                        </aura:set>
+                        </aura:if>
+                    </a>
+                </li> 
+                <li>
+                   <a id="prevBtn" href="javascript:void(0)" onclick="{!c.showRecordSetonarrowClick}" class="{!'prev-btn' + (v.disablesinglearrowbwd ? ' btn-inactive': ' btn-active')}">
+                    <aura:if isTrue="{!v.disablesinglearrowbwd}">
+                        <img class="prev-arrow" alt="Previous Record" src="{!$Resource.Assets_Pagination+'/grey-left-arrow.svg'}" />
+                        
+                        <aura:set attribute="else">
+                        	<img class="prev-arrow" alt="Previous Record" src="{!$Resource.Assets_Pagination+'/left-arrow.svg'}"/> 
+                            
+                        </aura:set>
+                    </aura:if>
+                    </a>
+                </li>
+				
+                <aura:iteration items="{!v.pages}" var="item" indexVar="index" start="{!v.paginationStartMob}" end="{!v.paginationEndMob}">
+                    <li class="page-number-container"><a href="" class="{!v.currentPage == item?'page-number active': 'page-number inactive'}" onclick="{!c.showRecordSet}" data-currentPage="{!item}" data-index="{!item}" aria-label="{!'Page number ' + item}" aura:id="pageNumber"> {!item} </a></li>
+                </aura:iteration> 
+                <li>
+                    <a href="javascript:void(0)"  id="nextBtn" onclick="{!c.showRecordSetonarrowClick}" class="{!v.disablesinglearrowFwd?'next-btn btn-inactive': 'next-btn btn-active'}" > 
+                       <aura:if isTrue="{!v.disablesinglearrowFwd}">
+                        	<img class="next-arrow" alt="Next Record" src="{!$Resource.Assets_Pagination+'/grey-right-arrow.svg'}" />                           
+                        <aura:set attribute="else">
+                        	 <img class="next-arrow" alt="Next Record" src="{!$Resource.Assets_Pagination+'/right-arrow.svg'}"/>                            
+                        </aura:set>
+                    </aura:if>
+                    </a>
+                </li>
+               
+               <li class="{!v.needServerCall == false? 'slds-hide': v.disableFwd ? 'btn-inactive':'btn-active'}">
+                    <a href="" onclick="{!c.getnextServerRecords}" class="next-btn btn-active"> 
+                    	 <aura:if isTrue="{!v.disableFwd}">
+                             <img class="double-next-arrow" alt="{!v.nextImgAltText[0]}" src="{!$Resource.Assets_Pagination+'/double-grey-right-arrow.svg'}" />
+                        <aura:set attribute="else">
+                        	<img class="double-next-arrow" alt="{!v.nextImgAltText[1]}" src="{!$Resource.Assets_Pagination+'/double-blue-right-arrow.svg'}" />
+                        </aura:set>
+                        </aura:if>
+                    </a>
+                </li>
+            </ul>
+        </aura:if>
+    </div>
+    
+</aura:component>

@@ -1,0 +1,206 @@
+<apex:page controller="cms.ManageProfileController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+  
+    <title>Manage Profiles</title>
+ 	
+    <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />	
+	<c:CmsScripts />
+	<script type="text/javascript">
+	  timerEventHandle = null;           // for our two filter boxes - using a timer to avoid firing a search on every keystroke
+      doingSearch = false;               // search is in progress flag
+      cancelSearch = false;              // want to cancel current search flag
+	  
+	  $(document).ready(function(){
+	    
+	    self.defaultInputMessage = 'Start typing to filter the list';
+	 	$("#profileName").val(defaultInputMessage);
+	 	$("#filterOptions td > select").css('width', '250px'); 
+	 	
+	 	$('#profileName').click(function() {
+            if (!$(this).hasClass('focused')) { // already have focus?
+                $(this).select();               // no - select all text in input
+                $(this).addClass('focused');    // and add class as a flag
+                $(this).val('');                // remove default text
+                $(this).css('color','#000000'); // change imput text colour to black                
+            }
+        });
+        
+        $("#profileName").blur(function() {
+            if($(this).val() ==''){
+                $(this).val(defaultInputMessage);
+                $(this).css('color','#788E1E');
+            }
+            $(this).removeClass('focused');     // remove our flag
+        });
+
+
+        // handle filter box keystrokes
+        $('#profileName').keyup(function(){
+            // if we had a recent keypress "cancel" the filtering action based on it and we'll timeout on this new one
+            if (timerEventHandle !== null) {
+                clearTimeout(timerEventHandle);
+            }
+         
+            // we want a 0.4 second delay before we apply the filter -- allows time for user to "complete" typing his/her string           
+            timerEventHandle = setTimeout(function() {
+                timerEventHandle = null;
+                initiateSearch();
+            }, 400);
+        });
+
+        // following routines need to be in global scope as they are used within ocmsTarget widget
+        // initiate a new search -- cancel existing search if one is in progress
+        function initiateSearch() {
+            if (doingSearch) {
+                cancelSearch = true;
+                setTimeout(initiateSearch, 100);
+            } else {
+                doingSearch = true;
+                cancelSearch = false;
+                search(0);
+            }
+        } // initiateSearch
+        
+        
+        function search(offset) {
+            if($('#profileName').val() != defaultInputMessage){
+                filterProfiles($('#profileName').val());
+            }
+            doingSearch = false;
+        }
+	 	
+	 	$('#newProfile').button().click(function(){
+		  newProfile('Standard');
+	    });
+	
+	    $('#newPortalProfile').button().click(function(){
+	      newProfile('role.externalPreview');
+	    });
+	  
+	  });
+	  
+	  function setupDeleteProfile(profileId){
+	  	$('<div></div>').ocmsShowConfirmationDlg({
+			message: 'Are you sure you want to delete this OrchestraCMS User Profile? This cannot be undone.',
+			onOK: function(dialog, cb) {
+					deleteProfile(profileId);
+					dialog.closeDialog();
+			},
+			onCANCEL: function(dialog, cb) {
+					dialog.closeDialog();	
+			}
+		});
+	}
+	
+	</script>
+
+  </head>
+
+  <body class="ocms">
+  
+  <apex:outputPanel rendered="{!hasAccess}">
+  
+  	<c:SetupMenu sname="{!site_name}" activeitem="profiles" />
+  
+  	<div style="margin-left: 210px; padding: 10px;">     
+
+		<div class="ocms-setup-breadcrumb">
+		  <div class="ocms-setup-breadcrumb-start"></div>
+		  <div class="ocms-setup-breadcrumb-item">Setup</div>
+		  <div class="ocms-setup-breadcrumb-separator-active"></div>		  
+		  <div class="ocms-setup-breadcrumb-item-active">Manage Profiles</div>
+		  <div class="ocms-setup-breadcrumb-end"></div>
+		  <div class="ocms-clear"></div>
+		</div>
+		
+		<br />
+  
+  		<apex:outputText escape="false" value="{!message + '<br /><br />'}" rendered="{!IF(message != '', true, false)}" />
+  				
+		<apex:form >
+		
+			<apex:actionFunction action="{!newProfile}" name="newProfile" rerender="garbage">
+              <apex:param name="profiletype" value="" />
+            </apex:actionFunction>
+			<apex:actionFunction action="{!deleteProfile}" name="deleteProfile" rerender="profileList">
+			  <apex:param name="profileid" value="" />
+			</apex:actionFunction>
+			
+			
+            <apex:actionFunction action="{!filterProfiles}" name="filterProfiles" rerender="profileList" status="search_status">
+              <apex:param name="profilename" value="" />
+            </apex:actionFunction>
+
+			<div id="newProfile">New Profile</div>
+			<apex:outputPanel rendered="{!hasPortalLicense}">
+	            <div id="newPortalProfile">New Portal Profile</div>
+	        </apex:outputPanel>
+			
+			<br /><br />
+			
+	        <table id = "filterOptions" border="0" cellspacing="0" cellpadding="5">
+	        
+	          <tr>
+	            <td style="text-align:left">OrchestraCMS User License</td>
+	            <td>
+	              <apex:selectList value="{!orchestra_license_identifier}" size="1" onchange="filterProfiles();" multiselect="false">
+	                <apex:selectOptions value="{!orchestra_licenses}" />
+	              </apex:selectList>
+	            </td>
+                <td>
+                  <span>  AND</span>
+                </td>
+	          </tr>
+	          <tr>
+	            <td style="text-align:left">Profile Name</td>
+	            <td><input id="profileName" type="text"  style="width: 230px; color:#788E1E;"></input></td>
+	          </tr>
+	        </table>
+
+        </apex:form>             
+               
+        <br /><br />       
+		<apex:outputPanel id="profileList">
+			<table border="0" cellspacing="0" cellpadding="5" style="width: 600px;">
+			<tr>
+			    <td></td><td></td>
+	            <td>
+	                <apex:actionStatus id="search_status">
+	                    <apex:facet name="start"><img src="{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}" height="20" width="20" /></apex:facet>
+	                    <apex:facet name="stop"></apex:facet>
+	                </apex:actionStatus>
+	            </td>
+            </tr>
+			<tr style="background-color: #E7E7E8;">
+				<td style="padding: 2px; width: 60px;"></td>
+				<td style="padding: 2px;">Name</td>
+				<td style="padding: 2px;">Description</td>
+				<td style="padding: 2px;">License</td>
+			</tr>
+			<apex:repeat value="{!profiles}" var="profile">
+			 <tr>
+				<td style="padding: 5px 2px 5px 2px;"><a href="/apex/SetupProfile?sname={!URLENCODE(site_name)}&pid={!profile.id}&profiletype={!profile.license_identifier}" class="setup-link">Edit</a> <apex:outputText rendered="{!profile.allowDelete}"> | <a href="#" onclick="setupDeleteProfile('{!profile.id}'); return false;" class="setup-link">Del</a></apex:outputText></td>
+				<td style="padding: 5px 2px 5px 2px;">{!profile.name}</td>
+				<td style="padding: 5px 2px 5px 2px;">{!profile.description}</td>
+				<td style="padding: 5px 2px 5px 2px;">{!profile.license_name}</td>			 
+			 </tr>
+			</apex:repeat>
+			</table>
+		</apex:outputPanel>
+				
+    </div>
+
+  </apex:outputPanel>
+  
+  <apex:outputPanel rendered="{!!hasAccess}">
+  	<div style="padding: 10px;">
+  		You do not have Setup > Manage -> Profiles permission
+   	</div>
+  </apex:outputPanel>
+  
+  </body>
+
+</html>
+</apex:page>

@@ -1,0 +1,112 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.ClassStyledMenu" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+
+ 	<script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+			
+			ce.content_editor('registerSaveFunction',function(){
+				var attributes = new Array();
+
+				// these two are language neutral	
+				attributes.push({"name":"SubLabelPosition", "value":$('#sub_label_position').val(), "type":"Text", "lang": ""});
+				attributes.push({"name":"EnableSmartActiveItem", "value":$('#enableSmartActiveItem:checked').length != 0, "type":"Text", "lang": ""});	
+
+				// this one is language specific
+				attributes.push({"name":"MenuTitle", "value":$('#menu_title').val(), "type":"Text"});
+
+				return attributes; 
+			
+			});
+
+			if('{!EnableSmartActiveItem}' == 'true') {
+				$('#enableSmartActiveItem').prop('checked', true);
+			}
+			
+		});
+	</script>
+
+	<div style="width: 400px; padding-right: 10px; margin-right: 15px; float: left;">
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.menueditor.css')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/editor/TreeEditor.js')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/content/GWTContentSelector.js')}" />
+
+        <script type="text/javascript">
+				$(document).ready(function() {
+	                var afterLoad = function() {
+	                    if (typeof parent.resizeEditorFrames == 'function') {
+	                        parent.resizeEditorFrames();
+	                    }
+	                }
+                	var menuEditor = $("#EditorContainer").tree_editor({
+                     		menu_id : '{!JSENCODE(content.Id)}',
+                            sname: $(document).data('cms').site_name,
+                            afterLoadItems: afterLoad
+                   });
+  
+                });
+        </script>
+        <div id="EditorContainer"/>
+ 		<div id="content-selector-container"/>
+ 		
+ 		<script type="text/javascript" language="javascript" >
+ 			$("#content-selector-container").gwt_content_selector();
+		</script>	
+	</div>
+	
+	<div style="float: left;">
+	
+		<form>
+			<table class="ocmsContentEditor ocmsContentEditorNested autoWidth noMinWidth">
+		         <tr class="ocmsEditorSubtitle">
+		            <td>
+		               Menu Settings
+		            </td>
+		         </tr>
+			  <tr class="ocmsCheckForm">
+				<td><ul><li><label><input type="checkbox" id="enableSmartActiveItem" name="enableSmartActiveItem" class="ocmsLanguageNeutral" />Enable Smart Active Items</label></li></ul></td>
+			  </tr>
+			  <tr>
+				<td>
+					<label class="ocmsLabel">Menu Title</label>
+					<apex:outputText rendered="{!disableAll}">
+						<input type="text" name="menu_title" id="menu_title" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!MenuTitle}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+						<input type="text" name="menu_title" id="menu_title" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!MenuTitle}" />
+					</apex:outputText>
+				</td>
+			  </tr>
+			  <tr>
+			    <td>
+			    	<label class="ocmsLabel">Sub Label Position</label>
+					<apex:outputText rendered="{!disableAll}">
+					<select name="sub_label_position" id="sub_label_position" size="1" disabled="disabled" class="ocmsLanguageNeutral">
+						<apex:repeat value="{!SubLabelPositionOptions}" var="option">
+							<apex:outputText escape="false" rendered="{!option.selected}">
+								<option value="{!option.so.value}" selected="selected" ><apex:outputText value="{!option.so.label}" /></option>
+							</apex:outputText>
+							<apex:outputText escape="false" rendered="{!!option.selected}">
+								<option value="{!option.so.value}" ><apex:outputText value="{!option.so.label}" /></option>
+							</apex:outputText>
+						</apex:repeat>
+					</select>
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+					<select name="sub_label_position" id="sub_label_position" size="1" class="ocmsLanguageNeutral">
+						<apex:repeat value="{!SubLabelPositionOptions}" var="option">
+							<apex:outputText escape="false" rendered="{!option.selected}">
+								<option value="{!option.so.value}" selected="selected" ><apex:outputText value="{!option.so.label}" /></option>
+							</apex:outputText>
+							<apex:outputText escape="false" rendered="{!!option.selected}">
+								<option value="{!option.so.value}" ><apex:outputText value="{!option.so.label}" /></option>
+							</apex:outputText>
+						</apex:repeat>
+					</select>
+					</apex:outputText>
+			    </td>
+			  </tr>
+			</table>
+		</form>
+	</div>
+	
+	
+</apex:page>

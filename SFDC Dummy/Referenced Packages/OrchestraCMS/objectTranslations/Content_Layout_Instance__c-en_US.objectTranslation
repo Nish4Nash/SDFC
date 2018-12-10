@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content Layout Instance</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content Layout Instances</value>
+    </caseValues>
+    <fields>
+        <label><!-- Cache Location --></label>
+        <name>Cache_Location__c</name>
+    </fields>
+    <fields>
+        <label><!-- Content Layout --></label>
+        <name>Content_Layout__c</name>
+        <relationshipLabel><!-- Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Dynamic Load --></label>
+        <name>Dynamic_Load__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Key --></label>
+        <name>Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Site Name --></label>
+        <name>Site_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter10 --></label>
+        <name>TargetFilter10__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter11 --></label>
+        <name>TargetFilter11__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter12 --></label>
+        <name>TargetFilter12__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter13 --></label>
+        <name>TargetFilter13__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter14 --></label>
+        <name>TargetFilter14__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter15 --></label>
+        <name>TargetFilter15__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter16 --></label>
+        <name>TargetFilter16__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter17 --></label>
+        <name>TargetFilter17__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter18 --></label>
+        <name>TargetFilter18__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter19 --></label>
+        <name>TargetFilter19__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter1 --></label>
+        <name>TargetFilter1__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter2 --></label>
+        <name>TargetFilter2__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter3 --></label>
+        <name>TargetFilter3__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter4 --></label>
+        <name>TargetFilter4__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter5 --></label>
+        <name>TargetFilter5__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter6 --></label>
+        <name>TargetFilter6__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter7 --></label>
+        <name>TargetFilter7__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter8 --></label>
+        <name>TargetFilter8__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter9 --></label>
+        <name>TargetFilter9__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter --></label>
+        <name>TargetFilter__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Targets --></label>
+        <name>Targets__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Content Sharing Rule --></label>
+        <name>OrchestraCMS_Content_Sharing_Rule</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Managed Share --></label>
+        <name>OrchestraCMS_Managed_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Collaborator Share --></label>
+        <name>OrchestraCMS_Manual_Collaborator_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Visitor Share --></label>
+        <name>OrchestraCMS_Manual_Visitor_Share</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Manual Visitor Single Share --></label>
+        <name>OrchestraCMS_Manual_Visitor_Single_Share</name>
+    </sharingReasons>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

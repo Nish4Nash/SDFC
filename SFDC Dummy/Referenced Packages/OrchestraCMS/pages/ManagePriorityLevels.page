@@ -1,0 +1,430 @@
+<apex:page controller="cms.ManagePriorityLevelsController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+  
+    <title>Manage Priority Levels</title>
+    
+    
+    <c:CmsScripts />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/PrioritySelector.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-migrate.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />     
+    
+    <script type="text/javascript">
+    
+        $(document).ready(function() {
+        
+            $("#priorityDurations .list-row:first").find('a').hide();
+	        
+	        $("#addNewPriorityLevel").click(function(){
+	                addPriorityData("level");
+	        });
+	        
+	        $("#addNewPriorityDuration").click(function(){
+                    addPriorityData("duration");
+            });
+	        
+            $("#priorityLevels .remove-priority-data").click(function(){
+                    removePriorityData("level", $(this.parentElement.parentElement));
+            });
+            
+            $("#priorityDurations .remove-priority-data").click(function(){
+                    removePriorityData("duration", $(this.parentElement.parentElement));
+            });
+            
+            $("#priorityLevels .level_value input").on('blur', savePriorityData);
+            
+            $("#priorityLevels .level_label input").on('blur', savePriorityData);
+            
+            $("#priorityDurations .duration_value input").on('blur', savePriorityData);
+            
+            $("#priorityDurations .duration_label select").change(function(){
+                    savePriorityData($(this.parentElement.parentElement));
+            });   
+            			
+			// Sortable table rows
+            $('#priorityLevels > tbody').sortable({
+              itemSelector: '.list-row',
+              placeholder: 'ocms-placeholder',
+              stop: updatePriorityIndices.bind(this, 'level'),
+              revert: true
+            });
+            
+			$('#priorityDurations > tbody').sortable({
+			  itemSelector: '.list-row',
+			  placeholder: 'ocms-placeholder',
+              stop: updatePriorityIndices.bind(this, 'duration'),
+			  revert: true
+			}); 
+        });
+        
+        
+
+        function updatePriorityIndices(element, type) {
+	        
+	        if(element === "level"){
+                element = $('#priorityLevels > tbody > .list-row > .record_data');
+            }else if(element === "duration"){
+                element = $('#priorityDurations > tbody > .list-row > .record_data');
+                $("#priorityDurations .list-row").find('a').show();
+                $("#priorityDurations .list-row:first").find('a').hide();
+            }else{
+                return;
+            }
+            
+	        var elementArray = [];
+	
+	        $(element).each(function(i, j) {
+	            var recordId    = $(j).find('.record_id').val(); 
+	            var recordValue = $(j).find('.record_value').val();
+            
+                if(recordValue === "Nil"){ i = 100;}
+                
+	            if(recordId !== null && recordId !== undefined && recordId !== ""){
+	                
+                    var recordIndex = $(j).find('.record_index').val(); 
+		            if(recordIndex != (i+1)){
+		              elementArray.push({"id" : recordId, "index":(i+1)});
+		            }
+	            }
+	            
+	            $(j).find('.record_index').val(i+1);
+	        });
+	
+	        if (elementArray.length === 0){
+	           return;
+	        }
+	        
+	        var data = {};
+	        data['action'] = 'savePriorityOrder';
+	        data['order']  = JSON.stringify(elementArray);
+	        
+            doAjaxCall(data, function(json, Success){
+                json = $.orchestracmsUtil.parseJSON(json);
+                if (!Success.status && (json.error !== undefined)){
+                    $('<div></div>').ocmsShowErrorPopup({
+                        title : 'Error Saving Priority Order',
+                        message : json.error.message
+                    }); 
+                }
+            }, false);
+	    }
+        
+        function addPriorityData(type) {
+        
+            var newDataRow;
+            var index = 0;
+            var deleteElement = $('<a class="ocms-icon-20-delete remove-priority-data" title="Delete" style="display: inline-block; vertical-align: super; height: 20px; text-indent: -999em; width: 25px;">Delete</a>');
+            deleteElement.click(function(){
+                              removePriorityData(type, $(this.parentElement.parentElement));
+                          });
+            
+            if (type == "level"){
+                index = $('#priorityLevels .list-row').length + 1;
+                if (index >= 101) { return;}
+                     
+	            newDataRow = $('<tr class="list-row" style="height: 25px;">' +
+                                '<td class="record_data" style="display: none;">'+
+                                    '<input class="record_id"    type="text" value="" />'+
+                                    '<input class="record_index" type="text" value="'+index+'" />'+
+                                    '<input class="record_value" type="text" value="" />'+
+                                    '<input class="record_label" type="text" value="" />'+
+                                '</td>'+
+                                '<td class="level_label"><div class="ocms-draghandle" style="display: inline-block; width: 10px; vertical-align: -4px;" /><input type="text" style="width: 100px;" value=""/></td>'+
+                                '<td class="level_value"><input type="text" style="width: 40px; text-align: right;" value=""/></td>'+
+                                '<td></td>'+
+                            '</tr>'); 
+                
+                newDataRow.find(".level_value input").on('blur', savePriorityData);  
+                newDataRow.find(".level_label input").on('blur', savePriorityData);     
+	            newDataRow.find('td:last').append(deleteElement);                
+	            $('#priorityLevels .list-row:last').before(newDataRow);
+            
+            }else if (type == "duration"){
+                
+                index = $('#priorityDurations .list-row').length + 1;
+	            newDataRow = $('<tr class="list-row" style="height: 25px;">'+
+		                        '<td class="record_data" style="display: none;">'+
+		                            '<input class="record_id"    type="text" value="" />'+
+	                                '<input class="record_index" type="text" value="'+index+'" />'+
+	                                '<input class="record_value" type="text" value="Hour" />'+
+	                                '<input class="record_label" type="text" value="" />'+
+	                            '</td>'+
+                                '<td class="duration_value"><div class="ocms-draghandle" style="display: inline-block; width: 10px; vertical-align: -4px;" /><input type="text" style="width: 50px; text-align: right;"  value=""/></td>'+
+                                '<td class="duration_label">'+
+                                    '<select >'+
+                                        '<option value="Hour" selected="selected">Hour</option>'+
+                                        '<option value="Hours">Hours</option>'+
+                                        '<option value="Day">Day</option>'+
+                                        '<option value="Day">Days</option>'+
+                                    '</select>'+
+                                '</td>'+
+                                '<td></td>'+
+                             '</tr>');  
+	            
+                newDataRow.find(".duration_value input").on('blur', savePriorityData);
+                newDataRow.find('td:last').append(deleteElement);
+                newDataRow.find(".duration_label select").change(function(){
+                    savePriorityData($(this.parentElement.parentElement));
+                });                  
+	            $('#priorityDurations .list-row:last').after(newDataRow);
+            
+            }
+        }// end of add priority data
+        
+        function removePriorityData(type, element) {           
+            
+            var recordId = element.find('.record_id').val(); 
+            
+            if(recordId === null || recordId === undefined || recordId === ""){
+                element.remove();
+            }else{
+                var data = {};
+	            data['action']  = 'removePriorityData';
+                data['id']      = recordId;
+	            
+	            doAjaxCall(data, function(json, Success){
+	                json = $.orchestracmsUtil.parseJSON(json);
+	                if (Success.status && (json.error === undefined)){
+	                    element.remove();
+	                    
+	                }else{
+	                    $('<div></div>').ocmsShowErrorPopup({
+	                        title : 'Remove Priority Data Error',
+	                        message : json.error.message
+	                    }); 
+	                }
+	            }, false);
+            }
+        } // end of removePriorityData()
+        
+        function savePriorityData(element) {          
+            
+            if(element.type === "blur"){
+                element  = $(this.parentElement.parentElement);
+            }
+            var recordId = element.find('.record_id').val();
+            
+            var isDurationTable = true;
+            var value = '';
+            var data = {};
+            
+            var recordValue = element.find('.record_value').val();
+            var recordLabel = element.find('.record_label').val();
+                                  
+            var tmpVar = element.find('.duration_value');
+            if (tmpVar.length == 0){
+                isDurationTable = false;
+            }
+            
+            if(isDurationTable){
+                var duration_val   = checkDuration(element.find(".duration_value input").val());
+                element.find('.duration_value input').val(duration_val);
+                
+                data['value']  = duration_val;            
+                if (data['value'] == ''){
+                    return; // no need to do anything (incomplete data)
+                }else{
+                    data['action'] = 'savePriorityDuration';
+                    data['label']  = element.find('.duration_label option:selected').val();
+                    data['index']  = element.find('.record_index').val();
+                }
+                
+            }else{
+                var rank_val   = checkRank(element.find('.level_value input').val());
+                element.find('.level_value input').val(rank_val);
+                
+                data['value']  = rank_val;
+                data['label']  = element.find('.level_label input').val();            
+                if (data['value'] == '' || data['label'] == ''){
+                    return; // no need to do anything (incomplete data)
+                }else{
+                    data['action'] = 'savePriorityLevel';
+                    data['index']  = element.find('.record_index').val();
+                }
+            }
+            
+            // No need to continue since there are no changes 
+            if((recordValue === data['value']) && (recordLabel === data['label'])){ return;}
+            
+            data['id'] = recordId;
+                
+            doAjaxCall(data, function(json, Success){
+                json = $.orchestracmsUtil.parseJSON(json);
+                if (Success.status && (json.error === undefined)){
+                     element.find('.record_id').val(json.success.message);
+                     element.find('.record_value').val(data['value']);
+                     element.find('.record_label').val(data['label']);
+                }else{
+                    $('<div></div>').ocmsShowErrorPopup({
+                        title : 'Error Saving Priority Data',
+                        message : json.error.message
+                    }); 
+                }
+            }, false);
+            
+        } // end of savePriorityData()
+                   
+           
+        function doAjaxCall(data, cbHandler, bAsync) {
+                    
+            data['service']   = 'ManagePriorityLevelsAjax'; 
+
+            var options = {};
+            options['cb']     = cbHandler;
+            options['bAsync'] = bAsync;
+            doServiceRequest(data, options);
+        }
+    
+	    function checkRank (val) { 
+	        if(!isNaN(val) && val.length > 2){
+	            return val.substring(0,2);
+	        }else if (((!isNaN(val) && (val<=0))) || isNaN(val)){
+	            return '';
+	        }
+	        return val;
+	    }
+    
+        function checkDuration (val) { 
+            if(!isNaN(val) && val.length > 3){
+                return val.substring(0,3);
+            }else if (((!isNaN(val) && (val<=0))) || isNaN(val)){
+                return 1;
+            }
+            return val;
+        }
+      
+    </script>
+
+  </head>
+
+  <body class="ocms">
+  
+  <apex:outputPanel rendered="{!hasAccess}">
+  
+    <c:SetupMenu sname="{!site_name}" activeitem="priorityLevels" />
+  
+    <div style="margin-left: 210px; padding: 10px;">     
+
+        <div class="ocms-setup-breadcrumb">
+          <div class="ocms-setup-breadcrumb-start"></div>
+          <div class="ocms-setup-breadcrumb-item">Setup</div>
+          <div class="ocms-setup-breadcrumb-separator-active"></div>          
+          <div class="ocms-setup-breadcrumb-item-active">Manage Priority Levels</div>
+          <div class="ocms-setup-breadcrumb-end"></div>
+          <div class="ocms-clear"></div>
+        </div>
+        
+        <br />
+                  
+        <span class="priorityLevelsPanel">
+	        <span style="font-size:1.4em">Priority Levels</span>
+	        
+	        <div>
+	           <span>Add, rename, delete and reorder Priority Levels.</span> <br />
+               <span>None (Lowest) can be renamed but not deleted.</span> <br />
+               <span>New levels are added at the end of the list.</span> <br />
+               <span>Rank (1 - 99, where 1 is highest) is used in conjunction with<br /> duration to calculate priority weight.</span> <br />
+	        </div>
+	    
+	        <table id="priorityLevels" width="300" style="margin-top: 10px; border-collapse: collapse;" >
+	            <tr class="list-header" style="background-color: #E7E7E8; font-size: 120%; font-weight: bold; height: 30px;" >
+	                <td style="width: 15%;">Level Name</td>
+	                <td style="width: 5%;">Rank</td>
+                    <td style="width: 3%;"></td>
+                    <td id="addNewPriorityLevel" class="last"  style="width: 3%;"><a class="ocms-icon-20-NewMenuItem" title="Add Level" style="display: inline-block; vertical-align: super; height: 20px; text-indent: -999em; width: 25px;">Add Level</a></td>
+	            </tr>
+	        <apex:repeat value="{!PtiorityLevels}" var="level"> 
+	            <tr class="list-row" style="height: 25px;">
+                    <td class="record_data" style="display: none;">
+                        <input class="record_id"    type="text" value="{!level.Id}" />
+                        <input class="record_index" type="text" value="{!IF(level.Value__c != 'Nil', level.Index__c, 101)}" />
+                        <input class="record_value" type="text" value="{!level.Value__c}" />
+                        <input class="record_label" type="text" value="{!level.Label__c}" />
+                    </td>
+	                <td class="level_label"><div class="{!IF(level.Value__c != 'Nil', 'ocms-draghandle', '')}" style="display: inline-block; vertical-align: -4px; width: 10px;" /><input type="text" style="width: 100px;" value="{!level.Label__c}"/></td>
+	                <apex:outputText escape="false" rendered="{!(level.cms__Value__c != 'Nil')}">
+	                    <td class="level_value"><input type="text" style="width: 40px; text-align: right;" value="{!level.Value__c}"/></td>
+                        <td><a class="ocms-icon-20-delete remove-priority-data" title="Delete" style="display: inline-block; vertical-align: super; height: 20px; text-indent: -999em; width: 25px;">Delete</a></td>
+                    </apex:outputText>
+                    <apex:outputText escape="false" rendered="{!(level.cms__Value__c == 'Nil')}">
+                        <td class="level_value" style="display: none;"><input type="text" style="width: 40px; text-align: right;" value="{!level.Value__c}"/></td>
+                    </apex:outputText>
+	            </tr>
+	        </apex:repeat>
+	        </table>
+	        
+	        <div>
+               <span style="font-size:1.4em">Priority Expiry Durations</span> <br />
+               <span>Define the expiry duration that can be applied to any priority level <br /> except None (Lowest). There must be one priority expiry duration.</span> <br />
+            </div>
+        
+            <table id="priorityDurations" width="300" style="margin-top: 10px; border-collapse: collapse;" >
+                <tr class="list-header" style="background-color: #E7E7E8; font-size: 120%; font-weight: bold; height: 30px;" >
+                    <td>Quantity</td>
+                    <td>Unit of Time</td>
+                    <td></td>
+                    <td><a id="addNewPriorityDuration" class="ocms-icon-20-NewMenuItem" title="Add Duration" style="display: inline-block; vertical-align: super; height: 20px; text-indent: -999em; width: 25px;">Add Duration</a></td>
+                </tr>
+            <apex:repeat value="{!PtiorityDurations}" var="duration">
+                <tr class="list-row" style="height: 25px;">
+                   <td class="record_data" style="display: none;">
+                        <input class="record_id"    type="text" value="{!duration.Id}" />
+                        <input class="record_index" type="text" value="{!duration.Index__c}" />
+                        <input class="record_value" type="text" value="{!duration.Value__c}" />
+                        <input class="record_label" type="text" value="{!duration.Label__c}" />
+                    </td>
+                    <td class="duration_value"><div class="ocms-draghandle" style="display: inline-block; width: 10px; vertical-align: -4px;" /><input type="text" style="width: 50px; text-align: right;"  value="{!duration.Value__c}"/></td>
+                    <td class="duration_label">
+                        <select >
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c == 'Hour')}">
+                                <option value="Hour" selected="selected" >Hour</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c != 'Hour')}">
+                                <option value="Hour">Hour</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c == 'Hours')}">
+                                <option value="Hours" selected="selected" >Hours</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c != 'Hours')}">
+                                <option value="Hours">Hours</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c == 'Day')}">
+                                <option value="Day" selected="selected" >Day</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c != 'Day')}">
+                                <option value="Day">Day</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c == 'Days')}">
+                                <option value="Days" selected="selected" >Days</option>
+                            </apex:outputText>
+                            <apex:outputText escape="false" rendered="{!(duration.cms__Label__c != 'Days')}">
+                                <option value="Days">Days</option>
+                            </apex:outputText>
+                        </select>
+                    </td>
+                    <td><a class="ocms-icon-20-delete remove-priority-data" title="Delete" style="display: inline-block; vertical-align: super; height: 20px; text-indent: -999em; width: 25px;">Delete</a></td>
+                </tr>
+            </apex:repeat>
+            </table>
+            
+            
+	    </span>
+    </div>
+
+  </apex:outputPanel>
+  
+  <apex:outputPanel rendered="{!!hasAccess}">
+    <div style="padding: 10px;">
+        You do not have Setup > Manage -> Profiles permission
+    </div>
+  </apex:outputPanel>
+  
+  </body>
+
+</html>
+</apex:page>

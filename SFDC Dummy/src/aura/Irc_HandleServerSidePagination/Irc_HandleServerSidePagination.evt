@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="newrecordsetlength" type="Integer"/>
+    <aura:attribute name="resetpagination" type="boolean"/>
+</aura:event>

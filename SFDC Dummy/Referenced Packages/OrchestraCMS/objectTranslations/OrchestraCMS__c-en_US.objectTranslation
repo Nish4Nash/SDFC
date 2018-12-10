@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>OrchestraCMS</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>OrchestraCMS</value>
+    </caseValues>
+    <fields>
+        <label><!-- Admin Secret Key --></label>
+        <name>Admin_Secret_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- AmazonS3 --></label>
+        <name>AmazonS3__c</name>
+    </fields>
+    <fields>
+        <label><!-- CSRFKey --></label>
+        <name>CSRFKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- CachingKey --></label>
+        <name>CachingKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- CallbackURL --></label>
+        <name>CallbackURL__c</name>
+    </fields>
+    <fields>
+        <label><!-- ConsumerKey --></label>
+        <name>ConsumerKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- ConsumerSecret --></label>
+        <name>ConsumerSecret__c</name>
+    </fields>
+    <fields>
+        <label><!-- ContextKey --></label>
+        <name>ContextKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- DisableSEOName --></label>
+        <name>DisableSEOName__c</name>
+    </fields>
+    <fields>
+        <label><!-- DmlLockEnabled --></label>
+        <name>DmlLockEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- Edition --></label>
+        <name>Edition__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnableCaseSensitiveURLs --></label>
+        <name>EnableCaseSensitiveURLs__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnablePCLIPerformance --></label>
+        <name>EnablePCLIPerformance__c</name>
+    </fields>
+    <fields>
+        <help><!-- Enable server side dynamic loading. Currently an experimental feature to help with SEO --></help>
+        <label><!-- EnableSDL --></label>
+        <name>EnableSDL__c</name>
+    </fields>
+    <fields>
+        <label><!-- EnableSingleURL --></label>
+        <name>EnableSingleURL__c</name>
+    </fields>
+    <fields>
+        <label><!-- GoogleCS --></label>
+        <name>GoogleCS__c</name>
+    </fields>
+    <fields>
+        <label><!-- Guest Site PermissonSet Error --></label>
+        <name>Guest_Site_PermissonSet_Error__c</name>
+    </fields>
+    <fields>
+        <label><!-- InstanceType --></label>
+        <name>InstanceType__c</name>
+    </fields>
+    <fields>
+        <label><!-- Instance --></label>
+        <name>Instance__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Key --></label>
+        <name>License_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Last Checked --></label>
+        <name>License_Last_Checked__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Secret Key --></label>
+        <name>License_Secret_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- LogBindValues --></label>
+        <name>LogBindValues__c</name>
+    </fields>
+    <fields>
+        <label><!-- LogEnabled --></label>
+        <name>LogEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- Org From Production --></label>
+        <name>Org_Id_Prod_Entered__c</name>
+    </fields>
+    <fields>
+        <label><!-- Org Id --></label>
+        <name>Org_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- PackagePrefix --></label>
+        <name>PackagePrefix__c</name>
+    </fields>
+    <fields>
+        <label><!-- Permission Generation Required --></label>
+        <name>Permission_Generation_Required__c</name>
+    </fields>
+    <fields>
+        <label><!-- PersonalTags --></label>
+        <name>PersonalTags__c</name>
+    </fields>
+    <fields>
+        <label><!-- PublicTags --></label>
+        <name>PublicTags__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sandbox Id --></label>
+        <name>Sandbox_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Scheduler Log Enabled --></label>
+        <name>Scheduler_Log_Enabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- SharingModel --></label>
+        <name>SharingModel__c</name>
+    </fields>
+    <fields>
+        <label><!-- TurnOffSpans --></label>
+        <name>TurnOffSpans__c</name>
+    </fields>
+    <fields>
+        <label><!-- Use Developer LMAPro --></label>
+        <name>UseDeveloperLMAPro__c</name>
+    </fields>
+    <fields>
+        <label><!-- VersionModel --></label>
+        <name>VersionModel__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

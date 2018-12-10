@@ -1,0 +1,5 @@
+<apex:page id="p" docType="{!doc_type}" controller="cms.EditPageController" action="{!initializeInterface}" showHeader="false" sidebar="false" cache="false" standardStylesheets="false" expires="0" title="Edit Page" applyBodyTag="false" applyHtmlTag="false">
+	<apex:outputText escape="false" value="{!htmlTag}" />
+   		<apex:composition template="{!page_layout_reference}" />
+    <apex:outputText escape="false" value="</html>" />
+</apex:page>

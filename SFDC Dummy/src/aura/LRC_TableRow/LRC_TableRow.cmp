@@ -1,0 +1,197 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="column-header" type="List"/>
+    <aura:attribute name="row-data" type="Object"/>
+    <aura:attribute name="rowData" type="Object"/>
+    <aura:attribute name="parentIndex" type="Integer"/>
+    <aura:attribute name="nestedThead" type="List"/>
+    <aura:attribute name="nThead" type="List"/>
+    <aura:attribute name="treeGridLabel" type="String"/>
+    <aura:attribute name="isNestedTable" type="Boolean" default="false"/>
+    <aura:attribute name="nestedData" type="Boolean" default="false"/>
+    <aura:attribute name="colDataArray" type="Object"/>
+    <aura:attribute name="lstColDataArray" type="Object[]" default="[]"/>
+    <aura:attribute name="sectionName" type="String"/>    
+    <aura:attribute name="columnSpan" type="Integer"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="commentPassed" type="String"/>
+    <aura:attribute name="commentType" type="String"/>
+    <aura:attribute name="sShortComment" type="String"/>
+    <aura:attribute name="sfullComment" type="String"/>
+    
+    <aura:registerEvent name="rowAction" type="c:LRC_GenericTableRowEvent" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.isOpen}">
+        <!-- <c:LRC_CommentModal aura:id="commentModal" showModal="{!v.isOpen}" comment="{!v.sfullComment}" commentType="{!v.commentType}"/> -->
+    </aura:if>
+     
+    <tr class="slds-hint-parent">
+       
+           <aura:iteration items="{!v.colDataArray}" var="col" indexVar="index">
+                <td data-label="{!col.name}" role="gridcell" class="slds-cell-wrap" scope="row">
+                    <div data-label="{!col.name}" class="{!col.classCell}">
+                        
+                        
+                        <aura:if isTrue="{!and(or(col.value == 'undefined',col.value == 'null',col.value == ''),col.type != 'icon')}">
+                            <aura:set attribute="else">
+                                 <aura:if isTrue="{!col.type == 'checkbox'}">
+                                     <input type="checkbox" value="{!col.value}" checked="{!col.value}" onchange="{!c.fireCheckboxEvent}" data-checked="{!index}"/>
+                                </aura:if>
+                                <aura:if isTrue="{!and(col.type == 'radioButton',v.nestedData)}">
+                                  
+                                    <!--<ui:inputRadio name="{!'radioButton_'+v.parentIndex}" value="{!v.parentIndex}" change="{!c.fireTableRowEvent}"/>-->
+                                     <!--<lightning:input type="radio" name="{!'radioButton_'+v.parentIndex}" value="{!index}"  onchange="{!c.fireTableRowEvent}" />-->
+                  					<ui:inputRadio value="{!col.value}" text="{!index}" change="{!c.fireRadioButtonEvent}" name="{!'radioButton_'+v.parentIndex}"/>
+                                </aura:if >
+                                <aura:if isTrue="{!and(col.type == 'radioButton',v.nestedData==false)}">
+                                    <ui:inputRadio value="{!col.value}" text="{!index}" change="{!c.fireRadioButtonEvent}" name="radioButton"/>
+                                </aura:if>
+                                 <aura:if isTrue="{!col.type == 'textField'}">
+                              
+                                    <lightning:input  type="{!col.subType}" value="{!col.value}"  name="{!index}"/>
+                                        
+                                </aura:if>
+                                <aura:if isTrue="{!col.type == 'text'}">
+                                    <div>
+                                    {!col.value}
+                                        </div>
+                                </aura:if>
+                                <aura:if isTrue="{!col.type == 'comment'}">
+                                    
+                                    {!col.shortComment}
+                                      
+                                    <aura:if isTrue="{!col.value.length > 25}">
+                                       
+                                        <a href="" onclick="{!c.openCommentModal}"  data-val="{!col.value}" id ="{!index}"> ...</a>
+                                        
+                                        </aura:if>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!col.type == 'link'}">
+                                   
+                                    <lightning:button variant="base" value="{!index}" label="{!col.value}" onclick="{!c.fireTableRowEvent}" />
+                                    
+                                </aura:if>
+                                <aura:if isTrue="{!col.type == 'phone'}">
+                                   
+                                    <lightning:formattedPhone value="{!col.value}"></lightning:formattedPhone>
+                                    
+                                </aura:if>
+                                <aura:if isTrue="{!col.type == 'email'}">
+                                    
+                                    <lightning:formattedEmail value="{!col.value}"/>
+                                        
+                                </aura:if>
+                                <aura:if isTrue="{!col.type == 'link-icon'}">
+                                    
+                                    <lightning:button value="{!index}" label="{!col.value}" iconName="{!col.icon}" onclick="{!c.fireTableRowEvent}" variant="bare"  iconPosition="right"/>
+                                     
+                                    </aura:if>
+                            </aura:set> 
+                        </aura:if>
+                        <aura:if isTrue="{!col.type == 'icon'}">
+                            
+                            <lightning:buttonIcon title="{!col.name}" value="{!index}" iconName="{!col.icon}" variant="bare" alternativeText="{!col.name}" onclick="{! c.fireTableRowEvent }"/>
+                          
+                            </aura:if>
+                        <aura:if isTrue="{!col.type == 'Boolean'}">                                    
+                        	<input type="checkbox" value="{!col.value}" checked="{!col.value}" disabled="true"/>
+                        </aura:if>
+                    </div>
+                </td>
+           
+   
+       </aura:iteration>
+         </tr>
+        
+    <aura:if isTrue="{!v.isNestedTable}">
+          <tr class="slds-hint-parent" >
+    <td colspan="{!v.columnSpan}">
+        <lightning:accordion allowMultipleSectionsOpen="true">
+            <lightning:accordionSection name="{!v.treeGridLabel}" label="{!v.treeGridLabel}">
+                <!--<aura:iteration items="{!v.rowData._children}" var="item" indexVar="index">
+                <c:LRC_GenericTable thead="{!v.nestedThead}" tbody="{!item}" isNestedTable="false"/>
+                </aura:iteration>-->
+                 <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <aura:iteration items="{!v.nestedThead}" var="item">
+                              <th class="slds-text-title_caps" scope="col">
+                              {!item.sColumnName}
+                                </th>
+                            </aura:iteration>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <aura:iteration items="{!v.rowData._children}" var="item" >
+                           
+                                <c:LRC_TableRow column-header="{!v.nThead}" row-data="{!item}" isNestedTable="false" parentIndex="{!v.parentIndex}" nestedData="true"/>
+               
+           				 </aura:iteration>
+                        
+           				
+                    </tbody>
+           
+                </table>
+            </lightning:accordionSection>
+        </lightning:accordion>
+      </td>
+    </tr>
+    </aura:if>
+  
+    <!--<aura:if isTrue="{!v.colDataArray.length>0}">
+        <aura:iteration items="{!v.colDataArray}" var="col" indexVar="index">
+            <div class="slds-panel__section slds-hide_large">
+                <ul>
+                    
+                    <li class="slds-hint-parent slds-border_bottom">
+                        <span class="{!col.classHeader?col.classHeader+' slds-form-element__label slds-text-title_caps':'slds-form-element__label slds-text-title_caps'}">{!col.name}</span>
+                        <div>
+                            
+                            <span class="{!col.classCell?col.classCell+' slds-truncate':'slds-truncate'}">
+                                
+                                <aura:if isTrue="{!and(or(col.value == 'undefined',col.value == 'null',col.value == ''),col.type != 'icon')}">
+                                    
+                                    N/A
+                                    <aura:set attribute="else">
+                                        
+                                        <aura:if isTrue="{!col.type == 'text'}">
+                                            {!col.value}
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!col.type == 'comment'}">
+                                            {!col.shortComment}
+                                            <aura:if isTrue="{!col.value.length > 25}">
+                                                <a href="" onclick="{!c.openCommentModal}"  data-val="{!col.value}" id ="{!v.parentIndex}"> ...</a>
+                                            </aura:if>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!col.type == 'link'}">
+                                            <lightning:button variant="base" value="{!v.parentIndex}" label="{!col.value}" onclick="{!c.fireTableRowEvent}" />
+                                            
+                                        </aura:if>
+                                        <aura:if isTrue="{!col.type == 'icon'}">
+                                            <lightning:buttonIcon title="{!col.name}" value="{!v.parentIndex}" iconName="{!col.icon}" variant="bare" alternativeText="{!col.name}" onclick="{! c.fireTableRowEvent }"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!col.type == 'phone'}">
+                                            <lightning:formattedPhone value="{!col.value}"></lightning:formattedPhone>
+                                            
+                                        </aura:if>
+                                        <aura:if isTrue="{!col.type == 'email'}">
+                                            <lightning:formattedEmail value="{!col.value}"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!col.type == 'link-icon'}">
+                                            <lightning:button value="{!v.parentIndex}" label="{!col.value}" iconName="{!col.icon}" onclick="{!c.fireTableRowEvent}" variant="bare"/>
+                                        </aura:if>
+                                    </aura:set>
+                                </aura:if>
+                            </span>
+                        </div>
+                    </li>
+                    
+                </ul>
+            </div>
+        </aura:iteration>
+    </aura:if>-->
+</aura:component>

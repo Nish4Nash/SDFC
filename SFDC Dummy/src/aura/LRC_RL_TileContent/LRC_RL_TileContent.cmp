@@ -1,0 +1,62 @@
+<!--***********************************************************************************
+* Component: LRC_RL_TileContent
+* CreatedBy: Nishit Kedia
+* Description: This is a component referenced by Related List to show Child records in Tiles/Cards.
+* Revision History
+***********************************************************************************-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global">
+    <!--Attribute Declaration-->
+    <aura:attribute name="optionbtns" type="List" description="Aura Component Html passed as Facet from Related List" />
+    <aura:attribute name="tileHeader" type="String" description="Record header Name to be Displayed on Tile" />
+    <aura:attribute name="tileHeaderLink" type="String" description="Record header Link to be Displayed on Tile" />
+    <aura:attribute name="detailFieldList" type="Object" description="Field name and Label value Pairs" />
+    <aura:attribute name="tileRecordList" type="List" description="Field name and Label value Pairs" />
+    <aura:attribute name="openItem" type="String" description="two way Binding Attriute to store which Option menu is Opened" />
+    <aura:attribute name="item" type="Integer" description="Indexvariable" />
+    <aura:attribute name="itemJSON" type="Object" description="the json feed" />
+    <aura:attribute name="bIsOptionFacetSet" type="Boolean" default="false" description="If the Aura Facets are Defined" />
+    <aura:attribute name="selectedTile" type="Object" />  
+	<aura:attribute name="tileSelection" type="Aura.action" description ="To store the parent method in child and invoke from here"/>
+    <aura:attribute type="Map" name="mapHeaders"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!--Markup Starts-->
+    <lightning:layoutItem flexibility="auto" padding="around-small" size="12" largeDeviceSize="4" mediumDeviceSize="6" smallDeviceSize="12">
+        <div class="slds-card slds-m-around_small" onclick="{!c.recordSelection}" data-record="{!item}">
+            <!-- Markup For Tile header-->
+            <div class="slds-card__header">
+                <h3 class="slds-truncate header-title slds-text-heading_small" title="Name"><a href="{!'/' + v.tileHeaderLink}">{!v.tileHeader}</a></h3>
+                <!-- Markup For Option Menu passed as Facets to the Component-->
+                <aura:if isTrue="{!v.bIsOptionFacetSet}">
+                    <button class="slds-button slds-button--icon-border-filled header-btn" aria-haspopup="true" title="More Options" onclick="{!c.openOptionMenu}" data-record="{!item}">
+                        <lightning:icon iconName="utility:down" size="xx-small" />
+                        <span class="slds-assistive-text">More Options</span>
+                        <div aura:id="closeOptns" tabindex="0" data-details="{!item}" class="slds-dropdown-trigger slds-dropdown-trigger--click">
+                            <div class="slds-dropdown slds-dropdown--right">
+                                <ul class="slds-dropdown__list" role="menu">
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <aura:iteration items="{!v.optionbtns}" var="optnbutton" indexVar="ind">
+                                            {!optnbutton}
+                                        </aura:iteration>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </button>
+                </aura:if>
+            </div>
+            <!-- Markup For Details Of Child-->
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-list_horizontal slds-wrap">
+                    <aura:iteration items="{!v.tileRecordList}" var="columnPairs" indexVar="i">
+                        <dt class="slds-item_label slds-text-color_weak slds-truncate">{!columnPairs.label}</dt>
+                        <dd class="slds-item_detail slds-truncate">{!columnPairs.fieldName}</dd>
+                    </aura:iteration>
+                </dl>
+            </div>
+        </div>
+    </lightning:layoutItem>
+    <!--Markup Ends-->
+</aura:component>

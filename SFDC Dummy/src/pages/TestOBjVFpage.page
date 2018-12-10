@@ -1,0 +1,9 @@
+<apex:page standardController="TestObject__c">
+    <apex:pageBlock title="Hello {!$User.FirstName}!">
+        You are viewing the {!TestObject__c.name} Record
+    </apex:pageBlock>
+    <apex:detail subject="{!TestObject__c}" relatedList="false" title="false"/>
+    <apex:relatedList subject="{!TestObject__c}" list="DetailOfTestObjects__r" />
+    <apex:relatedList subject="{!TestObject__c}" list="CombinedAttachments" />
+
+</apex:page>

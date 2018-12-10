@@ -1,0 +1,64 @@
+<!--***********************************************************************************
+* Component: LRC_GEN_CL_dataGrid
+* CreatedBy: Nishit Kedia
+* Description: This is a reusable Lightning component used to render the data grid with pagination.
+* Revision History
+***********************************************************************************-->
+<aura:component controller="LRC_GEN_CL_dataController">
+    
+    <!--Attribute Declaration-->
+    <aura:attribute name="sObjectAPI" type="String"/>
+    <aura:attribute name="dataGridSearchText" type="String"  />
+    <aura:attribute name="lstLookUpColumns" type="String[]" required="true"/>
+    <aura:attribute name="lstSearchFields" type="String[]" required="true"/>
+    <aura:attribute name="listIconSVGPath" type="String"/>
+    <aura:attribute name="totalItems" type="Integer" />
+    <aura:attribute name="itemsPerPage" type="Integer" default="10" />
+    <aura:attribute name="bShowPopupComponent" type="Boolean"/>
+    <aura:attribute name="sObjectName" type="String"/>
+    <aura:attribute name="sObjectId" type="String"/>
+    <aura:attribute name="updateLookupMethod" type="Aura.action"/>
+    <aura:attribute name="searchColumnList" type="List" />
+    <aura:attribute name="searchData" type="Object" />
+    <aura:attribute type="List" name="lstRecords" default="[]" />
+	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="paginateEvent" event="c:LRC_CL_showPage" action="{!c.handlePaginateEvent}"/>
+    <!-- Spinner Markup Starts -->
+    <aura:attribute name="isSpinnerActive" type="Boolean" default="false" access="Public" />
+	
+    <!--To show the Spinner when search Occurs-->
+    <!--<lightning:overlayLibrary aura:id="overlayLib"/>-->
+    <aura:if isTrue="{!v.isSpinnerActive}">
+        <div class="spinnercls" style="height:120%">
+            <!-- Spinner component -->
+            <lightning:spinner variant="brand" size="medium"/>
+        </div>
+    </aura:if>  
+    <!-- Spinner Markup Ends -->
+    
+    <!-- Use the Apex model and controller to fetch server side data -->
+    <div>
+        <!-- Input Search Box Markup-->
+        <div class="slds-grid pad-bottom-20">  
+        	<div class="slds-container--left slds-container--small">
+              <c:LRC_GEN_CL_typeSearch aura:id="searchComponent" searchText="{!v.dataGridSearchText}"  parentMethodInChild="{!c.handleSearchEvent}"/>
+        	</div>           
+        </div> 
+        
+        <!--Data grid table-->
+        <aura:if isTrue="{!v.lstRecords.length}">
+            <lightning:datatable
+                keyField="id"
+                data="{! v.searchData }"
+                columns="{! v.searchColumnList }"
+                onrowselection="{! c.selectedsObject }"
+            />                      
+            <!-- hideCheckboxColumn="true"/> -->
+        	<div class="pad-top-20 ltg-scroll-x">
+                <c:LRC_CL_pagination totalItems="{!v.totalItems}" itemsPerPage="{!v.itemsPerPage}"/>
+            </div>
+            
+        </aura:if>
+    </div>
+</aura:component>

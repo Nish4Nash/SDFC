@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Shared Library Site</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Shared Library Sites</value>
+    </caseValues>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Library --></label>
+        <name>Library__c</name>
+        <relationshipLabel><!-- Shared Library Sites --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Shared Library Sites --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

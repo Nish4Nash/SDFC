@@ -1,0 +1,7 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.AvailableSubscriptionsController"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+     <style>
+         .ocms-property-viewer {
+             height:inherit !important;
+         }
+     </style>
+</apex:page>

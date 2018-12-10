@@ -1,0 +1,68 @@
+<apex:page controller="cms.BasicController"  showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="LibraryManager">
+
+<head>
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	<c:CmsScripts />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryThumbnailer.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/dam/LibraryManager.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/dam/LibraryManagerDlgs.js')}" />
+	<script type="text/javascript">
+	  	var libMgr;
+	  	var openToFolder = '{!$CurrentPage.parameters.opentofolder}';
+		$(document).data('cms', {
+			"context" : "orchestracms",
+			"namespace" : "{!namespace}",
+			"csrf_token" : "{!token}"
+		});
+	  	$(document).ready(function() {
+	
+	       	libMgr = $('#libMgr').ocmsLibraryManager({
+	              tree    : '#treeNav'
+	        	, list    : '#navfolderscontent'
+	           	, actions : '#navfolderActions'
+	           	, pageHelpText : 'Lib.Manager.Help'.localize()
+	       	});
+	
+	       	$(window).on('resize', function() {
+	           	// Calculate the ocms-content area height, based on the header/footer heights.
+	           	reSizeContent();
+	       	});
+	       	
+	       	// Try opening to the folder if it was specified.
+	       	if (openToFolder != '') {
+	       	   libMgr.ocmsLibraryManager('instance')._treeUI.ocmsTree('instance').loadAllData(false);
+	       	   libMgr.ocmsLibraryManager('instance')._treeUI.ocmsTree('instance').setSelected(openToFolder);
+	       	}
+	
+		});
+	
+	   	/**
+	     * When a layout content is closed or open, then method can be called to resize the content within the library manager.
+	     */
+	   	function reSizeContent() {
+	    	libMgr.ocmsLibraryManager('resize');
+	   	}
+	   		/**
+	             * Performs an Ajax Remoting call to a service.
+	             * @params Is a javascript array of parameters, which one must be "service"-ServiceClass to invoke.
+	             * @cb The callback, which takes two parameters,
+	             *      result  - The response from the service, which should be a JSON response.
+	             *      event   - The event from the server, if event.status then request was successful, else there was
+	             *                  an error, use event.message for the message and event.where for the trace if available.
+	             */
+	            function doServiceRequest(params, options) {
+	                var main = window.top;
+	                if(main != null) {
+	                    main.doServiceRequest(params, options);
+	                }
+	            }
+	        
+	</script>
+</head>
+
+<body class="ocms">
+	<div id="libMgr" class="ocms" style="height:100%"></div>
+</body>
+
+
+</apex:page>

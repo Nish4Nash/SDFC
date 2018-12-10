@@ -1,0 +1,22 @@
+<apex:page controller="cms.StartPageController" showHeader="false" sidebar="false" cache="false" standardStylesheets="false" title="">
+<script type="text/javascript">
+	$(document).data('cms', {
+	    context           : 'orchestracms',
+	    namespace         : '{!namespace}',
+        sname             : '{!SiteName}',
+	    token             : '{!token}',
+	    allowPublicTags   : {!allowPublicTags},
+        allowPersonalTags : {!allowPersonalTags},
+        showLanguages     : {!showLanguages},
+        canCreateContent  : {!canCreateContent},
+        canCreatePages    : {!canCreatePages},
+        canUploadMedia    : {!canUploadMedia},
+        canSendMessages   : {!canSendMessages},
+        canManageContent  : {!canManageContent},
+        canManagePages    : {!canManagePages},
+        canManageLibrary  : {!canManageLibrary}
+
+	});
+</script>
+    <apex:include pageName="{!VFStartPage}" />
+</apex:page>

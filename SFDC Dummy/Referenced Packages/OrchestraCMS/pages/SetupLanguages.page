@@ -1,0 +1,309 @@
+<apex:page controller="cms.SetupLanguages" showHeader="false"
+    sidebar="false" standardStylesheets="false">
+    <html>
+
+<head>
+<title>Manage Languages</title>
+
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.edit.css')}" />
+
+<c:CmsScripts />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/multilingual/LanguageManager.js')}" />
+
+
+<script type="text/javascript">
+
+    $(document).data('cms', {
+        'context'   : 'orchestracms',
+        'namespace' : '{!namespace}',
+        'csrf_token': '{!token}',
+        'site_name' : '{!SiteName}'
+    });
+    
+    
+    var site = {!SiteJSON};
+         
+	$(document).ready(function() {
+	    $('#DisableLanguage').button().on('click', function(){
+	       activateButton('disable');
+        });
+        $('#EditLanguage').button().on('click', function(){
+           activateButton('edit');
+        });
+	    $('#AddLanguage').button().on('click', function(){
+           activateButton('add');
+        });
+        $('#SetDefault').button().on('click', function(){
+           activateButton('newDefault');
+        });
+	    
+	    $('#EditLanguage').button("disable");
+	    $('#DisableLanguage').button("disable");
+        $('#SetDefault').button("disable");
+	    
+	    var enableAdd = {!OCMSLanguageCount} < {!maxOCMSLanguages};
+	    
+	    if(!enableAdd){
+            $('#AddLanguage').button("disable");
+	    }
+	    
+        if({!hasdefaultLanguage}){
+            $('#'+'{!OCMSdefaultLanguage.Id}icon').append('<img class="ocms-icon-16-success" width="16px" height="16px" alt="" src="' + $(document).data('clear_dot_image') + '"/>');
+        }
+	    
+	    //gray out all disabled languages
+	    $('.langCheckbox').filter(function(){
+             if($(this).parent().parent().find('.lang_active').text().trim() == "false"){
+                 $(this).parent().parent().css('color', '#b6b6b6');
+                 $(this).parent().parent().css('background-color', '#f5f5f5');
+             }         
+        });
+	    
+	    $('.langCheckbox').change(function(){
+	        var isDefaultChecked = false;
+            var isActiveChecked  = false;
+	         
+	        var checkCount = $('.langCheckbox').filter(function(){
+	                             if($(this).is(':checked')){
+	                                 if({!hasdefaultLanguage}){
+		                                 if($(this).parent().parent().find('#'+'{!OCMSdefaultLanguage.Id}icon').children().length > 0){
+		                                     isDefaultChecked = true;
+		                                 }
+	                                 }
+	                                 if($(this).parent().parent().find('.lang_active').text().trim() == "true"){
+                                         isActiveChecked = true;
+                                     }
+	                                 $(this).parent().parent().addClass('selected_language');
+	                                 return $(this);
+	                             }else{
+	                               $(this).parent().parent().removeClass('selected_language');
+	                             }	        
+	                         });
+	               
+	        if (checkCount.length > 0){
+	           
+	           if(isDefaultChecked){
+                   $('#DisableLanguage').button("disable");
+	           }else{
+                   $('#DisableLanguage').button("enable");
+                   if(isActiveChecked){
+                        $('#DisableLanguage').button('option', 'label', 'Disable');
+                   }else{
+                        $('#DisableLanguage').button('option', 'label', 'Enable');
+                   }
+	           }
+	           $('#AddLanguage').button("disable");
+	           
+	           if(checkCount.length == 1){
+                    $('#EditLanguage').button("enable");
+                    if(!isDefaultChecked && isActiveChecked){
+                        $('#SetDefault').button("enable");
+                    }
+	           }else{
+                   $('#EditLanguage').button("disable");
+                   $('#SetDefault').button("disable");
+	           }
+	        }else{
+	           $('#DisableLanguage').button("disable");
+	           $('#EditLanguage').button("disable");
+	           if (enableAdd){ $('#AddLanguage').button("enable");}
+               $('#SetDefault').button("disable");
+	        } 
+		});
+		
+		// handle checkbox for forcing use of Salesfore User Language (in production mode)
+		$('#useUserLanguage').change(function() {
+			saveSiteLanguageFlags();
+		}); // useUserLanguage checkbox chnage event
+        
+        // handle checkbox for enabling Language cookie
+        $('#enableLanguageCookie').change(function() {
+            saveSiteLanguageFlags();
+        }); // enableLanguageCookie checkbox chnage event
+		
+	});
+        
+     function saveSiteLanguageFlags() {
+         var data = {};
+         data['action']  = 'setSiteLanguageFlags';
+         data['service'] = 'LanguageManagerAjax';
+         data['token']   = '{!token}';
+         data['sname']   = '{!SiteName}';
+         data['flagValue']    = ($('#useUserLanguage').filter(':checked').length === 1 ? 'true' : 'false');
+         data['enableCookie'] = ($('#enableLanguageCookie').filter(':checked').length === 1 ? 'true' : 'false');
+         var handler = function(json, Success){
+             json = $.orchestracmsUtil.parseJSON(json);
+             if ((!Success.status) && (json.error !== undefined)) {
+                 $('<div></div>').ocmsShowErrorPopup({
+                     title : 'Error setting site language determination rule',
+                     message : json.error.message
+                 });
+             }
+          }
+          var options = {};
+          options['cb']     = handler;
+          doServiceRequest(data, options);
+         
+     } // saveSiteLanguageFlags 
+	
+    function initPage() {        
+        $("#ocmsLanguages .list-row:odd").addClass("list-row-odd");
+        $("#ocmsLanguages .list-row:even").addClass("list-row-even");
+    }
+   
+    function activateButton(action){
+        var langList  = [];
+        var lc;
+        var langcount = 0;
+        var isdefault = false;
+        var id;
+        
+        if (action === 'disable'){
+            action = 'enable';
+            $('.selected_language').filter(function(){
+                   langList.push($(this).find(".lang_code").text());
+                   
+                   if($(this).find('.lang_active').text().trim() == "true"){
+                       action = 'disable';
+                   }
+             });
+             
+             lc = langList;
+             langcount = lc.length;
+        }else{
+            lc = $(".selected_language > .lang_code").text();
+            id = $(".selected_language > .lang_code").attr('id');
+        }
+        
+        if ((action === 'edit') && {!hasdefaultLanguage}){
+            if($('.selected_language > td > #{!OCMSdefaultLanguage.Id}icon').children().length > 0)
+                isdefault = true;
+        }
+        
+        $('<div></div>').ocmsLanguageEditor({
+            languageList     : {!NewLanguages},
+            sname            : "{!SiteName}",
+            siteId           : "{!site.Id}",
+            token            : "{!token}",
+            defaultLanguage  : "{!OCMSdefaultLanguage.Name}",
+            defaultLanguageId: "{!OCMSdefaultLanguage.Id}",
+            action           : action,
+            languageCode     : lc,
+            languageName     : $(".selected_language > .lang_name > span").first().text(),
+            languageLabel    : $(".selected_language > .lang_label").text(),
+            description      : $(".selected_language > .lang_description").text(),
+            priority         : $(".selected_language > .lang_priority").text(),
+            disablefb        : ($(".selected_language > .fb_lang").text().trim() == "true" ? false : true),
+            langcount        : langcount,
+            isdefault        : isdefault,
+            languageId       : id
+            
+            
+        });
+    }
+    
+    function checkPriority (val) { 
+        if(!isNaN(val) && val.length > 3){
+            $('#languagePriority').val(val.substring(0,3) )
+        }else if (((!isNaN(val) && (val<=0))) || isNaN(val)){
+            $('#languagePriority').val('');
+        }
+    }
+    
+
+    
+</script>
+
+</head>
+
+<body class="ocms">
+
+    <apex:outputPanel rendered="{!hasAccess}">
+
+        <c:SetupMenu sname="{!SiteName}" activeitem="languages" />
+
+        <div style="margin-left: 210px; padding: 10px;">
+
+            <apex:outputPanel >
+
+                <div class="ocms-setup-breadcrumb">
+                    <div class="ocms-setup-breadcrumb-start"></div>
+                    <div class="ocms-setup-breadcrumb-item">Setup</div>
+                    <div class="ocms-setup-breadcrumb-separator-active"></div>
+                    <div class="ocms-setup-breadcrumb-item-active">Manage Languages</div>
+                    <div class="ocms-setup-breadcrumb-end"></div>
+                    <div class="ocms-clear"></div>
+                </div>
+
+                <br />
+
+                <span style="font-size:1.4em">Manage Languages</span><br/> <br/> 
+                
+                <span class="defaultLangSet">
+	                <div id="AddLanguage" >Add</div>
+	                <div id="EditLanguage" >Edit</div>
+	                <div id="DisableLanguage" >Disable</div>
+                    <div id="SetDefault" >Set Default</div>
+			    
+				    <table id="ocmsLanguages" class="ocms-list" style="margin-left:0px; margin-top:10px;" cellspacing="0" cellpadding="5" width="600" >
+	                    <tr class="list-header" >
+	                        <td style="width: 2%;"></td>
+	                        <td style="width: 5%">Name</td>
+	                        <td style="display: none;">Label</td>
+                            <td style="display: none;">Code</td>
+                            <td style="display: none;">Active</td>
+	                        <td style="display: none;">Enable Fallback Language</td>
+	                        <td style="width: 20%">Description</td>
+	                        <td class="last" style="width: 4%;"></td>
+	                    </tr>
+	                <apex:repeat value="{!OCMSlanguages}" var="lang">
+	                    <tr class="list-row">
+	                        <td><input class="langCheckbox" type="checkbox" name="editLang"/></td>
+	                        <td class="lang_name"><span>{!lang.name}</span><span id ="{!lang.Id}icon" ></span></td>
+	                        <td class="lang_label" style="display: none;">{!lang.Language__c}</td>
+                            <td class="lang_code" id="{!lang.Id}" style="display: none;">{!lang.Language_Code__c}</td>
+                            <td class="lang_active" style="display: none;">{!lang.Active__c}</td>
+	                        <td class="fb_lang" style="display: none;">{!lang.Allow_Default_Fallback__c}</td>
+	                        <td class="lang_description">{!lang.Description__c}</td>
+	                        <td class="last lang_priority">{!lang.Priority__c}</td>
+	                    </tr>
+	                </apex:repeat>
+	                    <tr class="list-footer">
+	                        <td colspan="4"  class="last">&nbsp;</td>
+	                    </tr>
+	                </table>
+                </span>
+                <div>
+                	<form>
+                		<apex:outputText rendered="{!useUserLanguage}">
+                			<label><input id="useUserLanguage" type="checkBox" checked="checked"></input>Always use Salesforce User Language to determine language.</label>
+                            <span style="padding-left: 180px;">Limit {!OCMSLanguageCount}/{!maxOCMSLanguages}</span>
+                		</apex:outputText>
+                		<apex:outputText rendered="{!!useUserLanguage}">
+                			<label><input id="useUserLanguage" type="checkBox"></input>Always use Salesforce User Language to determine language.</label>
+                			<span style="padding-left: 180px;">Limit {!OCMSLanguageCount}/{!maxOCMSLanguages}</span>
+                		</apex:outputText>
+                		<br />
+                        <apex:outputText rendered="{!enableLanguageCookie}">
+                            <label><input id="enableLanguageCookie" type="checkBox" checked="checked"></input>Enable Language Cookie for this site.</label>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!!enableLanguageCookie}">
+                            <label><input id="enableLanguageCookie" type="checkBox"></input>Enable Language Cookie for this site.</label>
+                        </apex:outputText>
+                	</form>
+                </div>
+            </apex:outputPanel>
+    </div>
+
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!!hasAccess}">
+        <div style="padding: 10px;">You do not have Setup > Manage
+            Languages permission</div>
+    </apex:outputPanel>
+
+</body>
+
+    </html>
+</apex:page>

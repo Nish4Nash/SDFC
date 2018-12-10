@@ -1,0 +1,22 @@
+<!--***********************************************************************************
+* Component: LRC_CL_pagination
+* CreatedBy: Ajay Agnihotri 
+* Description: This is a component referenced by data-grid for pagination
+
+* Revision History
+***********************************************************************************-->
+<aura:component >
+	<aura:attribute name="pages" type="List" />
+    <aura:attribute name="totalItems" type="Integer" />
+    <aura:attribute name="itemsPerPage" type="Integer" />
+    <aura:registerEvent name="paginateEvent" type="c:LRC_CL_showPage" />
+    
+    <aura:handler name="change" value="{!v.totalItems}" action="{!c.handleValueChange}"/>
+    <aura:handler name="change" value="{!v.itemsPerPage}" action="{!c.handleValueChange}"/>
+    
+    <div class="slds-button-group" role="group">
+    	<aura:iteration items="{!v.pages}" var="page" indexVar="index">
+            <button class="slds-button slds-button--neutral" onclick="{!c.paginate}" data-data="{!index + 1}" >{!index + 1}</button>
+        </aura:iteration>
+    </div>
+</aura:component>

@@ -1,0 +1,37 @@
+<apex:page controller="cms.CoreController" id="mlcmppaspgtemplate" showHeader="false" sidebar="false" standardStylesheets="false" docType="html-5.0">
+    <apex:composition template="{!page_template_reference}">
+        <apex:define name="header">
+                  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                   <b>Welcome to OCMS... </b>
+        </apex:define>
+        
+         <apex:define name="body">
+             <div>
+              <a href="http://www.google.com" title="Skip to Google" tabindex="1">
+                     <apex:outputText rendered="{!api.page_mode == 'edit'}">
+                          <br /><br />
+                                <div>
+                                    Skip Content
+                                </div>
+                    </apex:outputText>
+                 <cms:Panel panelname="skipcontent" panelcontroller="{!controller}" panelwidth="200px" panelheight="100px" />
+                </a>
+               </div>
+           
+           <div >
+                <apex:outputText rendered="{!api.page_mode == 'edit'}">
+                  <br /><br />
+                     <div>
+                          This is an empty template
+                          
+                          Create and drop your contents here.
+                      </div>
+                 </apex:outputText>
+                    <cms:Panel panelname="bodypart" panelcontroller="{!controller}" panelwidth="200px" panelheight="500px" />
+           </div>
+           
+           
+          </apex:define>
+      </apex:composition>
+</apex:page>

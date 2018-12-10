@@ -1,0 +1,115 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.CarouselImage"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+ 	
+ 	<script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+			$('#AltText').ocmsInput({instructionalText:'Necessary for accessibility compliance'});
+			$('#TitleText').ocmsInput({instructionalText:'Text that appears when the mouse pointer hovers over the image'});
+
+			$('#carousel-image').image_selector_input({
+				type: 'Image',
+				dialog_id: 'carousel-image',
+				onSelect : function(dialog) {
+					if($('AltText').val() == '' || $('AltText').val() == null)
+						$('#AltText').val(dialog.selected.name);
+				},
+				url: '{!CarouselImage}',
+			});
+
+			$('#carousel-thumbnail-image').image_selector_input({
+				type: 'Image',
+				dialog_id: 'carousel-thumbnail-image',
+				url: '{!CarouselThumbnail}'
+			});
+			 
+		 	$('#CarouselLink').page_selector_input({
+ 				input_field: 'CarouselLinkInput',
+ 				input_id: 'CarouselLink_selector_input',
+				dialog_id: 'CarouselLink_selector_dialog',
+				selected: {!IF(OR(CarouselLinkObj.LinkJSON == null, CarouselLinkObj.LinkJSON == ''), 'null', CarouselLinkObj.LinkJSON)},
+				selected_name: '{!JSENCODE(CarouselLinkObj.LinkName)}'
+ 				
+ 			});
+
+			ce.content_editor('registerSaveFunction', function(){
+
+				var attributes = new Array();
+	
+				attributes.push({"name":"CarouselImage", "value":$('#carousel-image').image_selector_input('getSelected'), "type":"Text"});
+				attributes.push({"name":"CarouselThumbnail", "value":$('#carousel-thumbnail-image').image_selector_input('getSelected'), "type":"Text"});
+				attributes.push({"name":"CarouselLink", "value":$('#CarouselLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				attributes.push({"name":"CarouselDescription", "value":$('#CarouselDescriptionInput').val(), "type":"Rich Text"});
+				attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+				attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+			
+				return attributes; 
+			
+			}); 
+
+		});
+	</script>
+	
+	<style type="text/css">
+		table.ocms-editor td {
+			vertical-align: middle;
+		}
+		table.ocms-editor td:first-child {
+			padding-right: 6px;
+		}
+		table.ocms-editor td {
+			padding-bottom: 4px;
+		}
+	</style>
+
+ 	<form>
+		<table class="ocms-editor">
+			<tr>
+				<td>Carousel Image</td>
+				<td>
+					<div id="carousel-image"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>Carousel Thumbnail</td>
+				<td>
+					<div id="carousel-thumbnail-image"></div>
+				</td>
+			</tr>
+            <tr>
+            	<td style="vertical-align: top;">Alternative Text</td>
+            	<apex:outputText escape="false" rendered="{!disableAll}">
+            		<td style="vertical-align: top;"><input type="text" id="AltText" name="AltText" value="{!AltText}" size="60" disabled="disabled" /></td>
+            	</apex:outputText>
+            	<apex:outputText escape="false" rendered="{!!disableAll}">
+            		<td style="vertical-align: top;"><input type="text" id="AltText" name="AltText" value="{!AltText}" size="60"  /></td>
+            	</apex:outputText>
+            </tr>
+            <tr>
+            	<td style="vertical-align: top;">Title Text</td>
+            	<apex:outputText escape="false" rendered="{!disableAll}">
+            		<td style="vertical-align: top;"><input type="text" id="TitleText" name="TitleText" value="{!TitleText}" size="60" disabled="disabled" /></td>
+            	</apex:outputText>
+            	<apex:outputText escape="false" rendered="{!!disableAll}">
+            		<td style="vertical-align: top;"><input type="text" id="TitleText" name="TitleText" value="{!TitleText}" size="60" /></td>
+            	</apex:outputText>
+            </tr>
+			<tr>
+				<td>Carousel Link</td>
+                <td>
+                   <div id="CarouselLink"></div>
+                </td>
+			</tr>
+			<tr>
+				<td>Carousel Description</td>
+				<td>
+					<apex:outputText escape="false" rendered="{!disableAll}">
+						<textarea name="CarouselDescriptionInput" id="CarouselDescriptionInput" disabled="disabled">{!CarouselDescription}</textarea>
+					</apex:outputText>
+					<apex:outputText escape="false" rendered="{!!disableAll}">
+						<textarea name="CarouselDescriptionInput" id="CarouselDescriptionInput" rows="12" cols="60">{!CarouselDescription}</textarea>
+					</apex:outputText>
+				</td>
+			</tr>
+		</table>
+	</form>
+
+</apex:page>

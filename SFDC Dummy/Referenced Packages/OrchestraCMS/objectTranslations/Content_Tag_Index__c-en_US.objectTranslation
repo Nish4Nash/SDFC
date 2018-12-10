@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content Tag Index</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content Tag Indexes</value>
+    </caseValues>
+    <fields>
+        <label><!-- All Shared With Guest --></label>
+        <name>All_Shared_With_Guest__c</name>
+    </fields>
+    <fields>
+        <label><!-- All Shared With Portal --></label>
+        <name>All_Shared_With_Portal__c</name>
+    </fields>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Content Tag Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- End Date --></label>
+        <name>End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Full Path --></label>
+        <name>Full_Path__c</name>
+    </fields>
+    <fields>
+        <label><!-- Has Children --></label>
+        <name>Has_Children__c</name>
+    </fields>
+    <fields>
+        <label><!-- Index Key --></label>
+        <name>Index_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Not Targeted --></label>
+        <name>Is_Not_Targeted__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+        <relationshipLabel><!-- Content Tag Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Start Date --></label>
+        <name>Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Tag Index --></label>
+        <name>Tag_Index__c</name>
+        <relationshipLabel><!-- Content Tag Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Tag Path Parent --></label>
+        <name>Tag_Path_Parent__c</name>
+        <relationshipLabel><!-- Content Tag Indexes (Tag Path Parent) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Tag Path --></label>
+        <name>Tag_Path__c</name>
+        <relationshipLabel><!-- Content Tag Indexes --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

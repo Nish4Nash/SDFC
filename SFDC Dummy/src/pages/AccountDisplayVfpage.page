@@ -1,0 +1,23 @@
+<apex:page controller="AccountDisplayController">
+<style type="text/css">
+.main{
+height:40px;
+width:800px;}
+.name{float:left;
+height:1%;
+width:50%;}
+.sta{float:left;
+height:1%;
+width:25%;}
+   </style>
+
+<apex:form >
+<apex:repeat value="{!myAccList}" var="acc" id="theRepeat">
+<div class="main"> 
+   <div class="name"> <apex:outputText value="{!acc.Name}"/></div>
+    <div class="sta"><apex:outputText value="{!acc.Status}"/></div>
+     <div class="btn"><apex:commandButton value="RUN" action="{!run}"/></div>
+ </div>
+    </apex:repeat>
+    </apex:form>
+</apex:page>

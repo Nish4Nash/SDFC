@@ -1,0 +1,27 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.LanguageSelector" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function(){
+            ce.content_editor('registerSaveFunction', function(){
+                var attributes = new Array();
+                attributes.push({"name":"SelectorLabel", "value":$('#SelectorLabel').val(), "type":"Text"});
+                return attributes;
+            });
+        }); 
+    </script>
+    <form>
+        <table class="ocmsContentEditor ocmsContentEditorNested">
+            <tr>
+                <td>
+                    <label class="ocmsLabel">Language Selector Label</label>
+                    <apex:outputText escape="false" rendered="{!disableAll}" >
+                        <input  class="ocmsTextInputLrg"  type="text" value="{!SelectorLabel}" name="SelectorLabel" id="SelectorLabel"  disabled="disabled" />
+                    </apex:outputText>
+                    <apex:outputText escape="false" rendered="{!!disableAll}" >
+                        <input  class="ocmsTextInputLrg"  type="text" value="{!SelectorLabel}" name="SelectorLabel" id="SelectorLabel"  />
+                    </apex:outputText>
+                    <p class="ocmsHelpText" >Text that appears next to the the Language Selector.</p>
+                </td>
+            </tr>
+        </table>
+    </form>
+</apex:page>

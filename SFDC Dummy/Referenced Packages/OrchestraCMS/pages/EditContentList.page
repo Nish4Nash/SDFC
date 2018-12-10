@@ -1,0 +1,56 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.ContentList" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+ 	<script type="text/javascript" language="javascript">
+ 	
+		$(document).ready(function(){
+
+			// this disables the "split view" button on the "parent" content editor window
+			$jParent('#contentEditActionBar').ocmsActionBar('disableAction','SplitView');
+			
+			// this disables the langauge selector on the parent content editor window
+			$('.ocmslanguageSelected', window.parent.document).prop('disabled', true);
+
+			$('#DynamicTargetPageLink').ocmsInput({instructionalText:'Link to which any content should point to.', includeBreak: false});
+			
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"DynamicTargetPageLink", "value":$('#DynamicTargetPageLink').page_selector_input('getSerializedLink'), "type":"Text", "lang":""});
+				return attributes; 			
+			});
+			
+			$('#DynamicTargetPageLink').page_selector_input({
+	 				input_field: 'DynamicTargetPageLink',
+	 				input_id: 'DynamicTargetPageLink_selector_input',
+					dialog_id: 'DynamicTargetPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(DynamicTargetPageLinkObj.LinkJSON == null, DynamicTargetPageLinkObj.LinkJSON == ''), 'null', DynamicTargetPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(DynamicTargetPageLinkObj.LinkName)}'
+ 			});
+			
+		});
+	</script>
+	
+	<style type="text/css">
+		table {border-collapse: inherit;}
+		tr, th, td {vertical-align: middle;}
+		input {height:20px;}
+	</style>
+	
+	
+    <apex:outputPanel >
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested autoWidth noMinWidth">
+            	<tr class="ocmsEditorSubtitle">
+	            	<td>
+	               		Content List is used as a placeholder for content sent in email notifications
+	            	</td>
+	         	</tr>
+  				<tr>
+					<td valign="top">
+						<label class="ocmsLabel">Target Page</label>
+						
+                   		<div id="DynamicTargetPageLink"></div>
+                 </td>
+				</tr>
+			</table>
+        </form>
+    </apex:outputPanel>
+</apex:page>

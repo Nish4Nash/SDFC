@@ -1,0 +1,94 @@
+<apex:page controller="cms.SetupComplianceEngine" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+    <title>Manage Compliance Engine</title>
+    
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	
+	<c:CmsScripts />
+ 
+   	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+   	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'compliance/ComplianceEditor.js')}" />
+  
+  
+  	<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+
+		$(document).ready(function(){
+			$('#complianceEditor').ocmsComplianceEditor({
+				complianceOn:   {!complianceEngineOn},
+				accessOn: 	    {!privateSharingOn},
+				groupTypes: 	{!groupTypes},
+				groups: 		{!groups},
+				restrictions: 	{!restrictions},
+				sname: 			"{!site_name}",
+				namespace: 		"{!namespace}"
+			});
+		});
+
+	</script>
+   
+  </head>
+
+  <body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+	  	<c:SetupMenu sname="{!site_name}" activeitem="complianceEngine" />
+	
+	  	<div style="margin-left: 210px; padding: 10px;">
+	
+			<apex:outputPanel rendered="{!complianceEngineOff}">
+	
+		  		<div class="ocms-setup-breadcrumb">
+				  <div class="ocms-setup-breadcrumb-start"></div>
+				  <div class="ocms-setup-breadcrumb-item">Setup</div>
+				  <div class="ocms-setup-breadcrumb-separator-active"></div>
+				  <div class="ocms-setup-breadcrumb-item-active">Manage Compliance Engine</div>
+				  <div class="ocms-setup-breadcrumb-end"></div>
+				  <div class="ocms-clear"></div>
+				</div>
+				
+				<br />
+					
+			</apex:outputPanel>
+	
+			<apex:outputPanel rendered="{!complianceEngineOn}">
+
+			  	<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+				 	<div class="ocms-setup-breadcrumb-item">Setup</div>
+					<div class="ocms-setup-breadcrumb-separator-active"></div>
+					<div class="ocms-setup-breadcrumb-item-active">Manage Access Levels</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+				    <div class="ocms-clear"></div>
+				</div>
+				
+				<br />
+				
+			</apex:outputPanel>
+			<br />
+			<div>
+				
+				<div id="complianceEditor"></div>
+					
+			</div>
+	
+	    </div>
+
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+	  	<div style="padding: 10px;">
+	  		You do not have Setup > Manage Compliance Engine permission
+	   	</div>
+	</apex:outputPanel>  
+	
+  </body>
+
+</html>
+</apex:page>

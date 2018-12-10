@@ -1,0 +1,65 @@
+.THIS .smallIcon{
+    height: 1rem;
+    line-height: 1;
+    width: 1rem;
+}
+.THIS .smallsize{
+    width:25%;
+}
+/*toggleCss.css*/
+.THIS.toggle {
+    display: none;
+}
+
+.THIS .slds-lookup__menu{
+    display:block;
+}
+
+.THIS div.transbox
+{
+    background-color: #d5d5d5;
+    -moz-opacity: 0.90;
+    /* for IE */
+    filter:alpha(opacity=96);
+    /* CSS3 standard */
+    opacity:0.96;
+    z-index: 100;
+}
+
+
+
+.THIS .popupdivCls
+{
+    /*  Below Css will keep it in view even if you scroll down. */
+    border-radius: 1em;
+    background-color : white;
+    background-repeat : repeat;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+    padding: 1em;
+    
+    position:relative;
+    top: 20%;
+    left: 10%;
+    width:80%;
+    height:70%;
+    /*margin-top: -5%; /*set to a negative number 1/2 of your height*/
+    /*margin-left: -25%; /*set to a negative number 1/2 of your width*/
+    border: 1px solid #ccc;
+    
+}
+
+.THIS .slds-modal__container{
+    width:75%;
+    max-width:80%;
+}
+.THIS .ltg-outsideclick{
+   /*background:transparent;
+    border:none;
+    width:100%;
+    */
+}
+@media only screen and (max-device-width: 768px) {
+    .THIS .slds-lookup__menu{
+        position:relative;
+    }
+}

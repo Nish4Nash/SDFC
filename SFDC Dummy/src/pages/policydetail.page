@@ -1,0 +1,34 @@
+<apex:page controller="policyreg"  sidebar="false">
+  	<!-- Page Header -->
+  		<apex:sectionHeader title=" policy Registration " />
+			<style>
+       	 .centerize { 
+            text-align: center;
+			}
+    		</style>		
+  <!-- Begin Form -->
+  <apex:form >
+    
+         
+      <apex:pageBlock title="policy Informations"> 
+        <apex:pageBlockSection title="Information"> 
+        	<apex:inputField id="Name" value="{!policy.Name}" required="true" />
+        	<apex:inputField id="Insured_First_Name" value="{!policy.Insured_First_Name__c}"  required="true" />
+        	<apex:inputField id="Insured_Last_Name" value="{!policy.Insured_Last_Name__c}"  required="true" /> 
+            <apex:inputField id="Policy_Inception_Date_Risk_Start_Date" value="{!policy.Policy_Inception_Date_Risk_Start_Date__c}"  required="true" />
+			<apex:inputField id="Policy_Maturity_Date_Risk_End_Date" value="{!policy.Policy_Maturity_Date_Risk_End_Date__c}"  required="true" />
+        	<apex:inputField id="Policy_Owner_First_Name" value="{!policy.Policy_Owner_First_Name__c}"  required="true" />
+			<apex:inputField id="Policy_Owner_Last_Name" value="{!policy.Policy_Owner_Last_Name__c}"  required="false" />
+			<apex:inputField id="Qualification" value="{!policy.Premium__c}"  required="false" />
+			<apex:inputField id="Premium_Due_date" value="{!policy.Premium_Due_date__c}"  required="true" />
+			<apex:inputField id="Premium_Mode" value="{!policy.Premium_Mode__c}"  required="true" />
+            <apex:inputField id="Source_Agency_Name" value="{!policy.Source_Agency_Name__c}"  required="true" /> 
+		         
+      </apex:pageBlockSection> 
+     	         
+      	<div class="centerize">
+                <apex:commandButton value="Submit"	 action="{!submit}" />
+      	</div>
+          </apex:pageBlock>
+      </apex:form>       
+</apex:page>

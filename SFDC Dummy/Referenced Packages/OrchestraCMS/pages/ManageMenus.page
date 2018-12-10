@@ -1,0 +1,5 @@
+<apex:page controller="cms.ManageMenus" sidebar="false" showHeader="false" standardStylesheets="false" cache="false">
+
+<!-- deprecated -->
+
+</apex:page>

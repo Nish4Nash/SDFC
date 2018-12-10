@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>User Session</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>User Sessions</value>
+    </caseValues>
+    <fields>
+        <label><!-- Target Filters --></label>
+        <name>Target_Filters__c</name>
+    </fields>
+    <fields>
+        <label><!-- Targets --></label>
+        <name>Targets__c</name>
+    </fields>
+    <fields>
+        <label><!-- User --></label>
+        <name>User__c</name>
+        <relationshipLabel><!-- User Sessions --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

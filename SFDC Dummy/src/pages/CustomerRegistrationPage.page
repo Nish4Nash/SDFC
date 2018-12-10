@@ -1,0 +1,130 @@
+<apex:page standardcontroller="Customer__c" extensions="Registration" sidebar="false" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script>
+        var j$=jQuery.noConflict();
+        j$(document).ready(function(){
+            j$('input[id$=ifn]').prop("disabled", true);
+            j$('input[id$=pofn]').prop("disabled", true);
+            j$('input[id$=iln]').prop("disabled", true);
+            j$('input[id$=poln]').prop("disabled", true);
+            
+            
+            j$('input[id$=CName]').blur(function(){
+                j$('input[id$=ifn]').val(j$('input[id$=CName]').val());
+                 j$('input[id$=pofn]').val(j$('input[id$=CName]').val());
+            });
+            
+             j$('input[id$=Lname]').blur(function(){
+                j$('input[id$=iln]').val(j$('input[id$=Lname]').val());
+                 j$('input[id$=poln]').val(j$('input[id$=Lname]').val());
+            });
+        });    
+    </script> 
+  <!-- Page Header -->
+    <apex:pageMessages id="msg" />
+      
+
+       <apex:sectionHeader title="Customer policy Registration portal" />
+	<style>
+       	 .centerize { 
+            text-align: center;
+			}
+     
+    </style>
+   
+    
+   
+    
+  <!-- Begin Form -->
+  <apex:form >
+    <apex:pageBlock title="Customer Informations" id="pb1" rendered="{!!flag}" > 
+        <apex:pageBlockSection title="Information"> 
+               
+        	<apex:inputField id="CName" value="{!customer.Name}" required="true" />
+        
+        	<apex:inputField id="Lname" value="{!customer.Last_Name__c}"  required="true" />
+        	<apex:inputField id="Age" value="{!customer.Age__c}"  required="true" /> 
+            <apex:inputField id="Gender" value="{!customer.Gender__c}"  required="true" />
+			<apex:inputField id="Email_Id" value="{!customer.Email_Id__c}"  required="true" />
+        	<apex:inputField id="Phone_mobile" value="{!customer.Phone_Mobile__c}" required="true" />
+			<apex:inputField id="Annual_Income" value="{!customer.Annual_Income__c}"  required="true" />
+			<apex:inputField id="Qualification" value="{!customer.Qualification__c}"  required="false" />
+			<apex:inputField id="Address" value="{!customer.Resident_Street_Address__c}"  required="true" />
+			<apex:inputField id="State" value="{!customer.State__c}"  required="true" />
+            <apex:inputField id="City" value="{!customer.City__c}"  required="true" /> 
+			<apex:inputField id="Zip_Code" value="{!customer.Zip_Code__c}"  required="true" />  
+             
+      </apex:pageBlockSection>
+   
+        <apex:pageBlockSection title=" policy Information"> 
+        	<apex:inputField id="Policy_Name" value="{!policy.Policy_Name__c}" required="true" />
+            <apex:inputField id="ifn"  value="{!policy.Insured_First_Name__c}" required="true"/>                 
+        	<apex:inputField id="iln" value="{!policy.Insured_Last_Name__c}" required="true"  /> 
+            <apex:inputField id="Policy_Inception_Date_Risk_Start_Date" value="{!policy.Policy_Inception_Date_Risk_Start_Date__c}" required="true"  />
+			<apex:inputField id="Policy_Maturity_Date_Risk_End_Date" value="{!policy.Policy_Maturity_Date_Risk_End_Date__c}"  required="true" />
+        	<apex:inputField id="pofn" value="{!policy.Policy_Owner_First_Name__c}"  required="true" />
+			<apex:inputField id="poln" value="{!policy.Policy_Owner_Last_Name__c}" required="true" />
+			<apex:inputField id="premium" value="{!policy.Premium__c}"  required="true" />
+			<apex:inputField id="Premium_Due_date" value="{!policy.Premium_Due_date__c}"  required="true"/>
+			<apex:inputField id="Premium_Mode" value="{!policy.Premium_Mode__c}"  required="true" />
+            <apex:outputField id="Source_Agency_Name" value="{!policy.Source_Agency_Name__c}"   /> 
+		 </apex:pageBlockSection>   
+        <div  align ="center" draggable="false" >
+                <apex:commandButton value="REGISTER" 	id="reg" action="{!submit}" rerender="msg"/>
+         	 </div>   
+      
+     		 <div align ="right" draggable="false" >
+          		<b>  <apex:outputLink value="https://ap2.salesforce.com" id="bck">BACK TO HOME</apex:outputLink></b>
+          	</div>
+     
+  			</apex:pageBlock>  
+      
+  <apex:pageBlock title="Customer Informations" id="pb2" rendered="{!flag}"> 
+        <apex:pageBlockSection title="Information"> 
+               
+        	<apex:outputField id="CName" value="{!customer.Name}" />
+        
+        	<apex:outputField id="Lname" value="{!customer.Last_Name__c}"  />
+        	<apex:inputField id="Age" value="{!customer.Age__c}"  required="true" /> 
+            <apex:outputField id="Gender" value="{!customer.Gender__c}"  />
+			<apex:outputField id="Email_Id" value="{!customer.Email_Id__c}"  />
+        	<apex:inputField id="Phone_mobile" value="{!customer.Phone_Mobile__c}"  required="true" />
+			<apex:inputField id="Annual_Income" value="{!customer.Annual_Income__c}"  required="true" />
+			<apex:inputField id="Qualification" value="{!customer.Qualification__c}"  required="false" />
+			<apex:inputField id="Address" value="{!customer.Resident_Street_Address__c}"  required="true" />
+			<apex:inputField id="State" value="{!customer.State__c}"  required="true" />
+            <apex:inputField id="City" value="{!customer.City__c}"  required="true" /> 
+			<apex:inputField id="Zip_Code" value="{!customer.Zip_Code__c}"  required="true" />  
+             
+      </apex:pageBlockSection>
+    
+     
+        <apex:pageBlockSection title=" policy Information"> 
+        	<apex:outputField id="pn" value="{!policy.Policy_Name__c}"  />
+            <apex:outputField id="ifn"  value="{!policy.Insured_First_Name__c}" />                 
+        	<apex:outputField id="iln" value="{!policy.Insured_Last_Name__c}"  /> 
+            <apex:outputField id="pid" value="{!policy.Policy_Inception_Date_Risk_Start_Date__c}"  />
+			<apex:outputField id="pmd" value="{!policy.Policy_Maturity_Date_Risk_End_Date__c}"  />
+        	<apex:outputField id="pofn" value="{!policy.Policy_Owner_First_Name__c}"  />
+			<apex:outputField id="poln" value="{!policy.Policy_Owner_Last_Name__c}"   />
+            <apex:outputField id="pr" value="{!policy.Premium__c}"  />
+			<apex:outputField id="pdd" value="{!policy.Premium_Due_date__c}"  />
+			<apex:outputField id="pmode" value="{!policy.Premium_Mode__c}"  />
+            <apex:outputField id="Source_Agency_Name" value="{!policy.Source_Agency_Name__c}"  />  
+      </apex:pageBlockSection>
+        <div class="centerize">
+                <span>
+                <apex:commandButton value="UPDATE"	id="update" action="{!updt}" rerender="msg"/>
+                </span>
+                
+				
+          </div>
+  	</apex:pageBlock>
+    
+    
+          
+  </apex:form>
+    
+
+    
+</apex:page>

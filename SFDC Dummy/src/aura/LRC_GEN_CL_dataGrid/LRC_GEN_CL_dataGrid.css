@@ -1,0 +1,23 @@
+.THIS .pad-top-20 {
+    padding-top: 20px;
+}
+
+.THIS .pad-bottom-20 {
+    padding-bottom: 20px;
+}
+
+.THIS table {
+    border: 1px solid #d8dde6;
+}
+.THIS .slds-table tbody tr{
+    height:35px;
+}
+.THIS .ltg-scroll-x{
+    overflow-x:auto;
+}
+
+.THIS .slds-spinner_container  {
+    background-color: rgba(0, 0, 0, 0.10);
+    margin-top: 200px;
+    margin-bottom: 200px; 
+}

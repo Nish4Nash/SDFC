@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Event template">
+ <aura:attribute name="sortOrder" type="String"/>
+ <aura:attribute name="colField" type="String"/>
+ <aura:attribute name="colLabel" type="String"/>
+</aura:event>

@@ -1,0 +1,47 @@
+<apex:page controller="cms.UiController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+	<head>
+    	<title>Manage Non-OrchestraCMS Pages</title>
+    	
+    	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+		<c:CmsScripts /> 
+		
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryVFPageSelector.js')}" />
+		
+		<script type="text/javascript">
+
+			$(document).data('cms', {
+				'context' 	: 'orchestracms',
+				'namespace' : '{!namespace}'
+			});
+						
+			$(document).ready(function(){	
+				$('#vfPageSelector').vfPageSelector();
+			});
+
+		</script>
+
+	</head>
+
+	<body class="ocms">
+	
+	  	<c:SetupMenu sname="{!SiteName}" activeitem="nonOrchestraCMSPages" />
+	  	<div style="margin-left: 210px; padding: 10px;">	
+
+			<div class="ocms-setup-breadcrumb">
+				<div class="ocms-setup-breadcrumb-start"></div>
+				<div class="ocms-setup-breadcrumb-item">Setup</div>
+				<div class="ocms-setup-breadcrumb-separator-active"></div>
+				<div class="ocms-setup-breadcrumb-item-active">Manage Non-OrchestraCMS Pages</div>
+				<div class="ocms-setup-breadcrumb-end"></div>
+				<div class="ocms-clear"></div>
+			</div>	 
+			<div id="vfPageSelector"></div>
+				   
+	    </div>
+	    
+	</body>
+
+</html>
+</apex:page>

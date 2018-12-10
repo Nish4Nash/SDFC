@@ -1,0 +1,15 @@
+<apex:page controller="test1">
+    <apex:form id="form">
+        <apex:outputLabel value="Contents of array are - "/>
+       <apex:repeat value="{!a}" var="arr">
+           <apex:outputText value="{!arr}" />
+           &nbsp; &nbsp;
+    </apex:repeat> 
+        <br/>
+    <apex:outputLabel value="Please enter a value to search - "/>
+    <apex:inputText value="{!n}" />
+        <apex:commandButton value="Submit" action="{!search}" rerender="form"/>
+
+     <apex:pageMessages ></apex:pageMessages>
+  </apex:form>
+</apex:page>

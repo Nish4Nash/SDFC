@@ -1,0 +1,88 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.Flash" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+ 	<script type="text/javascript" language="javascript">
+
+		$(document).ready(function(){
+			$('#flash-input').image_selector_input({
+				type: 'Flash',
+				ajaxLoader: '{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}',
+				width: '{!Width}',
+				height: '{!Height}',
+				url: '{!Flash}'
+			});
+			
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"Flash", "value":$('#flash-input').image_selector_input('getSelected'), "type":"Id"});
+				attributes.push({"name":"FlashWidth", "value":$('#Width').val(), "type":"Integer", "lang":""});
+				attributes.push({"name":"FlashHeight", "value":$('#Height').val(), "type":"Integer", "lang":""});
+				attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+				attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+				return attributes; 
+			});
+			
+		});
+
+	</script>
+
+    <apex:outputText escape="false">
+        <form>
+
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+            	<tr>
+            		<td>
+            			<div id="flash-input"></div>
+            		</td>
+            	</tr>
+            	<tr>
+           			<td>
+           				<label class="ocmsLabel" for="Width">Width</label>
+           				<apex:outputText escape="false" rendered="{!disableAll}" >
+           					<input class="ocmsTextInputSml ocmsLanguageNeutral" id="Width" name="Width" value="{!Width}" disabled="disabled" />
+           				</apex:outputText>
+           				<apex:outputText escape="false" rendered="{!!disableAll}" >
+           					<input class="ocmsTextInputSml ocmsLanguageNeutral" id="Width" name="Width" value="{!Width}" />
+           				</apex:outputText>
+						<label style="margin: 0 10px 0 0;" for="Width">px</label>
+           			</td>
+           			<td>
+            			<label class="ocmsLabel" for="Height">Height</label>
+            			<apex:outputText escape="false" rendered="{!disableAll}" >
+            				<input class="ocmsTextInputSml ocmsLanguageNeutral" id="Height" name="Height" value="{!Height}" disabled="disabled" />
+            			</apex:outputText>
+            			<apex:outputText escape="false" rendered="{!!disableAll}" >
+            				<input class="ocmsTextInputSml ocmsLanguageNeutral" id="Height" name="Height" value="{!Height}" />
+            			</apex:outputText>
+						<label style="margin: 0 10px 0 0;" for="Height">px</label>
+            		</td>
+            	</tr>
+            	<tr>
+            		<td>
+		               <label class="ocmsLabel" for="AltText">Alternative Text</label>
+		               <apex:outputText escape="false" rendered="{!!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" />
+        		       </apex:outputText>
+        		       <apex:outputText escape="false" rendered="{!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" disabled="disabled" />
+        		       </apex:outputText>
+               			<p class="ocmsHelpText">Words that describe the video that will be read by screen-reading software.</p>
+             		</td>
+            	</tr>
+            	<tr>
+            		<td>
+		               <label class="ocmsLabel" for="TitleText">Title Text</label>
+		               <apex:outputText escape="false" rendered="{!!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" />
+        		       </apex:outputText>
+		               <apex:outputText escape="false" rendered="{!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" disabled="disabled" />
+        		       </apex:outputText>
+               			<p class="ocmsHelpText">Text that appears when the mouse pointer hovers over the video.</p>
+             		</td>
+            	</tr>
+            </table>
+
+			<br />
+
+      	</form>
+   	</apex:outputText>
+</apex:page>

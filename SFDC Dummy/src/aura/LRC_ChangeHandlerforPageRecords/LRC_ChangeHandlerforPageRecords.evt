@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="Fired when any change in the records is captured during pagination">
+    <aura:attribute name="changedTableList" type="Integer" />	
+     <aura:attribute name="aftersplice" type="boolean" default="false" />	
+      <aura:attribute name="currentPage" type="Integer" />	
+      <aura:attribute name="sizePerPage" type="Integer" />	
+</aura:event>

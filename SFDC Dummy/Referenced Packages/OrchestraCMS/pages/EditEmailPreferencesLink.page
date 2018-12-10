@@ -1,0 +1,47 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.EmailPreferencesLinkController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    <script type="text/javascript" language="javascript">
+
+         $(document).ready(function(){
+         	ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"EmailPreferencesLink", "value":$('#EmailPreferencesPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				return attributes;
+			});
+			
+			$('#EmailPreferencesPageLink').page_selector_input({
+	 				input_field: 'EmailPreferencesPageLink',
+	 				input_id: 'EmailPreferencesPageLink_selector_input',
+					dialog_id: 'EmailPreferencesPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(EmailPreferencesLinkObj.LinkJSON == null, EmailPreferencesLinkObj.LinkJSON == ''), 'null', EmailPreferencesLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(EmailPreferencesLinkObj.LinkName)}'
+ 			});
+         }); 
+
+     </script>
+     <style>
+         .ocms-property-viewer {
+             height:inherit !important;
+         }
+     </style>
+
+     <div class="ocms-property-viewer">
+         <div class="ocms-property-viewer-header">Component Properties</div>
+         <div class="ocms-property-viewer-body ocms-property-form" >
+             <div class="ocms-property-form-panel-col" >
+                     <table cellspacing="1" class="ocms-property-table">
+                         <tbody>
+                         <tr class="ocms-property-marker ocms-data-info">
+                             <td class="ocms-param-key  ocms-param-key-top"><span class="">Email Preferences Page</span></td>
+                             <td class="ocms-param-value">
+                                 <div id="EmailPreferencesPageLink"></div>
+                                 <div class="ocms-instructional-text">Reference to an Orchestra Page that is the change password page.</div>
+                             </td>
+                             <span class=""><img class="ocms-input-error" src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}"/></span>
+                         </tr>
+                         </tbody>
+                     </table>
+             </div>
+             <div style="clear:both"></div>
+         </div>
+     </div>
+</apex:page>

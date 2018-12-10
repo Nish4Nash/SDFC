@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Item Restriction</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Item Restrictions</value>
+    </caseValues>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Item Restrictions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Restricted --></label>
+        <name>Is_Restricted__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Page --></label>
+        <name>Page__c</name>
+        <relationshipLabel><!-- Item Restrictions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Restriction Group --></label>
+        <name>Restriction_Group__c</name>
+        <relationshipLabel><!-- Item Restrictions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Restriction Type --></label>
+        <name>Restriction_Type__c</name>
+        <picklistValues>
+            <masterLabel>Custom</masterLabel>
+            <translation><!-- Custom --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Group</masterLabel>
+            <translation><!-- Group --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Restriction --></label>
+        <name>Restriction__c</name>
+        <relationshipLabel><!-- Item Restrictions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Content</masterLabel>
+            <translation><!-- Content --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Page</masterLabel>
+            <translation><!-- Page --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

@@ -1,0 +1,4 @@
+<!-- This is a application event (related to LRC_CL_dataGrid), is is used to pass lookup search text across application-->
+<aura:event type="APPLICATION">
+	<aura:attribute name="text" type="String"/>
+</aura:event>

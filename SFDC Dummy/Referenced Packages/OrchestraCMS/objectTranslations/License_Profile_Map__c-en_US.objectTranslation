@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>License Profile Map</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>License Profile Maps</value>
+    </caseValues>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Profile --></label>
+        <name>License_Profile__c</name>
+        <relationshipLabel><!-- License Profile Maps --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Permission Set --></label>
+        <name>Permission_Set__c</name>
+    </fields>
+    <fields>
+        <label><!-- Salesforce Profile --></label>
+        <name>Salesforce_Profile__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>cms.Core</masterLabel>
+            <translation><!-- cms.Core --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>cms.Custom</masterLabel>
+            <translation><!-- cms.Custom --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>cms.Extensions</masterLabel>
+            <translation><!-- cms.Extensions --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

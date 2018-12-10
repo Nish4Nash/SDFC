@@ -1,0 +1,60 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.Breadcrumb" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+
+	<script type="text/javascript" language="javascript">			
+			$(document).ready(function(){
+				ce.content_editor('registerSaveFunction', function() {
+					var attributes = {};
+					attributes['cli'] = []; 
+					attributes['cli'].push({"name":"Divider", "value":$('#Divider').val(), "type":"Text", "lang": ""});
+					return attributes;  
+				}); 				 			
+	 		}); 
+	</script>
+	
+	
+	<div style="width: 400px; padding-right: 10px; margin-right: 15px; float: left;">
+		
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.menueditor.css')}" />
+		<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/editor/TreeEditor.js')}" />
+		<script type="text/javascript">
+			$(document).ready(function() {
+			    var afterLoad = function() {
+			        if (typeof parent.resizeEditorFrames == 'function') {
+			            parent.resizeEditorFrames();
+			        }
+			    }
+	            var menuEditor = $("#EditorContainer").tree_editor({
+	                menu_id : '{!JSENCODE(content.Id)}',
+                    sname: $(document).data('cms').site_name,
+	                afterLoadItems: afterLoad
+	            });
+	                       
+	      	});
+	   </script>
+       <div id="EditorContainer"/>
+	   <div id="content-selector-container"/>
+		
+	   <script type="text/javascript" language="javascript" >
+	       $("#content-selector-container").gwt_content_selector();
+	   </script>   
+        
+	</div>
+		
+	<div style="float: left;">
+		<form>			
+			<table class="ocmsContentEditor ocmsContentEditorNested autoWidth noMinWidth">
+		         <tr class="ocmsEditorSubtitle">
+		            <td>
+		               Menu Settings
+		            </td>
+		         </tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Hierarchy separator</label>
+						<input type="text" class="ocmsTextInputSml  ocmsLanguageNeutral" value="{!Divider}" id="Divider" name="Divider" />				
+					</td>					
+				</tr>
+			</table>		
+		</form>
+	</div>
+</apex:page>

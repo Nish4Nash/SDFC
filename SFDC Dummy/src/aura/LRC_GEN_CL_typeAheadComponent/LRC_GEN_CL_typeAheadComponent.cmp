@@ -1,0 +1,83 @@
+<!--***********************************************************************************
+* Component: LRC_GEN_CL_typeAheadComponent
+* CreatedBy: Nishit Kedia (Re-Used Existing Component)
+* Description: Lighning component to search a specified SObject for a specific string
+* Revision History : 
+***********************************************************************************-->
+<aura:component controller="LRC_GEN_CL_typeAheadController" implements="flexipage:availableForAllPageTypes" access="global">
+
+    <!-- Attributes -->
+    <aura:attribute name="sObjectAPIName" 	type="String" required="true" description="The API name of the SObject to search" />
+    <aura:attribute name="label" 			type="String" required="true" description="The label to assign to the lookup, eg: Account" />
+    <aura:attribute name="pluralLabel" 		type="String" required="true" description="The plural label to assign to the lookup, eg: Accounts" />
+    <aura:attribute name="listIconSVGPath" 	type="String" default="/resource/slds103/assets/icons/custom-sprite/svg/symbols.svg#custom11" description="The static resource path to the svg icon to use." />
+    <aura:attribute name="listIconClass" 	type="String" default="slds-icon-custom-11" description="The SLDS class to use for the icon." />
+    <aura:attribute name="searchString" 	type="String" description="The search string to find." />
+    <aura:attribute name="matches" 			type="c.LRC_CL_result[]" description="The resulting matches returned by the Apex controller." />
+    <aura:attribute name="searchField" 		type="String" description="Search will be based on the Given search Field" />
+    <aura:attribute name="DisplayField" 	type="String" description="Display will be based on the Given search Field" />
+    <aura:attribute name="sLookupSelectedId" type="String" access="global"  description="Two way Binding Variable containing Lookup Id"/>
+    <aura:attribute name="bShowPopupComponent" type="Boolean" default="false"  description="Attribute to Open Data Grid Extended Search"/>
+    <aura:attribute name="lstLookUpColumns" type="String[]" required="true" description="Comma Sepaarted Field Apis For Data Grid table" />
+    <aura:attribute name="lstSearchFields" 	type="String[]" required="true" description="Comma Sepaarted Field Apis For fields to be Searched on" />
+    <aura:attribute name="AppSearchText" 	type="String"  description="The text sent to the Data Grid for Search"/>
+
+    <!-- On change Event Attribute Fired from Parent -->
+    <aura:attribute name="onChangeAction" type="Aura.action" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div aura:id="lookup-div" class="slds-lookup" data-select="single" data-scope="single" data-typeahead="true">
+
+        <!-- This is the Input Box markup For Lookup-->
+        <div class="slds-form-element ltg-outsideclick1">
+            <label class="slds-form-element__label" for="lookup">{!v.label}</label>
+            <div class=" smallsize slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                <!-- Search Icon Markup-->
+                <c:LRC_CL_svgIcon class="slds-input__icon" svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="small" name="search" />
+                <!-- Input Text box Markup-->
+                <ui:inputText aura:id="lookup" value="{!v.searchString}" class="slds-input" updateOn="keyup" keyup="{!c.search}" />
+            </div>
+        </div>
+
+        <!-- This is the lookup list markup (TypeAhead) Which renders as suggestion. Initially it's hidden -->
+        <div id="searchToOpenPopUp" aura:id="lookuplist" class="smallsize slds-lookup__menu slds-hide" role="listbox">
+
+            <!-- Icon for Extended Search which Enables Data Grid-->
+            <div class=" slds-lookup__item" onclick="{!c.OpenLookupPopUp}">
+                <button class="slds-button">
+                    <c:LRC_CL_svgIcon class="slds-icon slds-icon-text-default slds-icon--small" svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="small" name="search" />
+                    &quot;{!v.searchString}&quot; in {!v.pluralLabel}
+                </button>
+            </div>
+
+            <!-- Markup for List of Search Results As TypeAhead-->
+            <ul aura:id="lookuplist-items" class="slds-lookup__list" role="presentation">
+                <aura:iteration items="{!v.matches}" var="match">
+                    <li class="slds-lookup__item">
+                        <a id="{!match.SObjectId}" role="option" onclick="{!c.selectRecordFromList}">
+                            <c:LRC_CL_svgIcon class="{!'slds-icon ' + v.listIconClass + ' slds-icon--small'}" svgPath="{!v.listIconSVGPath}" category="standard" size="small" name="listIcon" />{!match.SObjectLabel}<br />
+                        </a>
+                    </li>
+                </aura:iteration>
+            </ul>
+
+        </div>
+
+    </div>
+    
+    <!-- Markup to Open Extended Search for the Lookup by Rendering Data-Grid Component-->
+    <aura:if isTrue="{!v.bShowPopupComponent}">
+        <section role="dialog" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close" onclick="{!c.cancelPopup }" alternativeText="close" variant="bare-inverse" class="slds-modal__close" />
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Search {!v.label}</h2>
+                </header>
+                <div class="slds-scrollable--y slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <c:LRC_GEN_CL_dataGrid sObjectAPI="{!v.sObjectAPIName}" dataGridSearchText="{!v.AppSearchText}" listIconSVGPath="{!v.TypeAheadlistIconSVGPath}" bShowPopupComponent="{!v.bShowPopupComponent}" aura:id="datagridComponent" sObjectName="{!v.searchString}" sObjectId="{v.sLookupSelectedId}" updateLookupMethod="{!c.updateLookupNameEventinTypeAhead}" lstLookUpColumns="{!v.lstLookUpColumns}" lstSearchFields="{!v.lstSearchFields}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+</aura:component>

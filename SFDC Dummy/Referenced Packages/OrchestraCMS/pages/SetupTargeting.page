@@ -1,0 +1,325 @@
+<apex:page controller="cms.SetupTargeting" showHeader="false"
+	sidebar="false" standardStylesheets="false">
+	<html>
+
+<head>
+<title>Manage Targeting</title>
+
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+
+<c:CmsScripts />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/targeting/TargetDialogs.js')}" />
+
+
+<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+		
+		var site = {!SiteJSON};
+
+        function activateButton(action, targetId){
+        
+	        $('<div></div>').ocmsTarget({
+	            fieldList : {!TargetUserFields},
+	            fieldMap : {!userFieldMap},
+	            sname   : "{!SiteName}",
+	            token   : "{!token}",
+	            siteId  : "{!tHelper.site.Id}",
+	            action  : action,
+	            targetId: targetId
+	        });
+        }
+		
+	</script>
+
+</head>
+
+<body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+		<c:SetupMenu sname="{!SiteName}" activeitem="targets" />
+
+		<div style="margin-left: 210px; padding: 10px;">
+
+			<apex:outputPanel >
+
+				<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+					<div class="ocms-setup-breadcrumb-item">Setup</div>
+					<div class="ocms-setup-breadcrumb-separator-active"></div>
+					<div class="ocms-setup-breadcrumb-item-active">Manage
+						Targets</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+					<div class="ocms-clear"></div>
+				</div>
+
+				<br />
+
+				<span style="font-size:1.4em">Define Target Criteria Fields</span>
+						<br />
+					<p>Before creating targets, you must define the target criteria fields. Only fields from the User object with data type Text or Picklist can be selected.
+							You must select a minimum of one (1) field and a maximum of twenty (20).
+					</p>
+					<a href="{!$Page.SetupTargetingFields}?sname={!SiteName}" id="SelectTargetFields" >
+								Select Fields
+					</a>
+					<br/>
+					<br/>
+					<br/>		
+                    <div style="height: 6em;">
+                        <div style="font-size: 1.4em; padding-bottom: 8px; padding-right: 25px;">Targets</div>
+                        <div id="addTargetButton" style="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Add Target</div> 
+                    </div> 	
+					<script>
+							$(document).ready(function() {
+								$('#SelectTargetFields').button();
+								$('#addTargetButton').button();
+                                $('#addTargetButton').on('click', function(){
+                                    activateButton('add', null);
+                                });
+							});
+					</script>
+					
+					<p><!-- Maximum 100 targets are displayed in the list.  -->Use the filters to narrow the list of targets.</p>
+					<table id="targetFilterOptions">
+						<tr id="filterStatus" >
+							<td style="text-align:left">Status</td>
+							<td>
+								<select id="filterStatusSelect" size="1" >
+									<option selected="true" value="All">All</option>
+									<option value="Active">Active</option>
+									<option value="Expired">Expired</option>
+								</select><span>  AND</span>
+							</td>
+							
+						</tr>
+						<tr id="filterType">
+							<td style="text-align:left">Type</td>
+							<td>
+								<select id="filterTypeSelect" size="1" >
+									<option selected="true" value="All">All</option>
+									<option value="Predefined">Predefined</option>
+									<option value="Ad Hoc">Ad Hoc</option>
+								</select><span>  AND</span>
+							</td>
+						</tr>
+						<tr id="filterLastUsed">
+							<td><span>Not used since</span></td>
+							<td id="last_used" style="width: 575px;"></td>
+						</tr>
+						<tr>
+							<td style="text-align:left">Target Name</td>
+							<td><input id="filterName" type="text"  style="width: 275px;color:#788E1E"></input><span>  AND</span></td>
+						</tr>
+						<tr>
+							<td style="text-align:left">Modified By</td>
+							<td><input id="filterModifiedBy" type="text"  style="width:275px;color:#788E1E"></input></td>
+						</tr>
+					</table>
+					<table id="targetFilterList" style="min-width:600px"><tr style="background-color: #E7E7E8;"><td style="text-align:left; min-width:100px;">Action</td><td style="text-align:left">Name</td><td style="text-align:left; width: 350px;">Description</td><td style="text-align:left;">Type</td><td style="text-align:left;">Status</td>
+						<td style="text-align:left;">Modified By</td><td style="text-align:left;">Modified Date</td></tr>
+					</table>
+					
+					<script>
+						 var prefix = '';
+						 var pkg_namespace = '{!namespace}';	
+  						 if(pkg_namespace != '')
+  							prefix = pkg_namespace + '__';
+
+						 timerEventHandle = null;			// for our two filter boxes - using a timer to avoid firing a search on every keystroke
+						 doingSearch = false;				// search is in progress flag
+						 cancelSearch = false;				// want to cancel current search flag
+
+						
+						$(document).ready(function() {
+						
+							$('#last_used').datetime_selector({
+								type: 'datetime',
+								showlabel: false
+							});
+							
+							self.defaultInputMessage = 'Start typing to filter the list';
+							
+							initiateSearch();
+							
+							
+							$("#filterName").val(defaultInputMessage);
+							$("#filterModifiedBy").val(defaultInputMessage);
+
+
+							$('#filterName, #filterModifiedBy').click(function() {
+								if (!$(this).hasClass('focused')) { // already have focus?
+									$(this).select();				// no - select all text in input
+									$(this).addClass('focused');	// and add class as a flag
+					                $(this).val('');                // remove default text
+					                $(this).css('color','#000000'); // change imput text colour to black   
+								}
+							});
+							
+							$("#filterName, #filterModifiedBy").blur(function() {
+  								if($(this).val() ==''){
+  									$(this).val(defaultInputMessage);
+  									$(this).css('color','#788E1E');
+  								}
+  								$(this).removeClass('focused');		// remove our flag
+							});
+
+
+							// handle filter box keystrokes
+							$('#filterName, #filterModifiedBy').keyup(function(){
+                             	// if we had a recent keypress "cancel" the filtering action based on it and we'll timeout on this new one
+                             	if (timerEventHandle !== null) {
+                             		clearTimeout(timerEventHandle);
+                             	}
+                             
+                            	// we want a 0.4 second delay before we apply the filter -- allows time for user to "complete" typing his/her string           
+                     			timerEventHandle = setTimeout(function() {
+                                	timerEventHandle = null;
+                                	initiateSearch();
+                  				}, 400);
+							});
+							
+							
+							
+							
+							$('#filterStatusSelect').change(initiateSearch);
+							$('#filterTypeSelect').change(initiateSearch);
+							$('#last_used').change(initiateSearch);
+							$('.dt-clear-cell').click(initiateSearch);
+
+						});
+
+						// following routines need to be in global scope as they are used within ocmsTarget widget
+						// initiate a new search -- cancel existing search if one is in progress
+						function initiateSearch() {
+							if (doingSearch) {
+								cancelSearch = true;
+								setTimeout(initiateSearch, 100);
+							} else {
+								doingSearch = true;
+								cancelSearch = false;
+								search(0);
+							}
+						} // initiateSearch
+					
+					
+						function search(offset) {
+							var data={};
+							data['action'] 	 	= "getFilteredTargets";
+							data['service']     = 'ContentTargetingAjax';
+							data['sname'] 	 	= '{!SiteName}';
+							data['status']		= $('#filterStatusSelect').val();
+							data['type']		=	$('#filterTypeSelect').val();
+							data['offset']		= offset.toString();
+							
+							if($('#filterName').val() != defaultInputMessage)
+								data['name']=$('#filterName').val();
+							if($('#filterModifiedBy').val() != defaultInputMessage)
+								data['ModifiedBy']=$('#filterModifiedBy').val();
+							data['lastUsed']=$('#last_used').datetime_selector('getValue');
+							
+							var handler = function(json, result){
+                                json = $.orchestracmsUtil.parseJSON(json);
+								if((result.status == true) && (json.error === undefined)) {
+									updateTargetListRows(json.targets, offset);
+									if (json.more === true && !cancelSearch) {
+										setTimeout(function(){search(100);}, 55); // go get the rest
+									} else {
+										doingSearch = false;
+									}
+								 } else {
+									doingSearch = false;
+									showError('Display Target Error',json.error.message);
+								} 
+							 }
+			                var options = {};
+			                options['cb']     = handler;
+			                doServiceRequest(data, options);
+						} // search
+					
+					
+						function updateTargetListRows(newTargets, offset) {
+							var trId = offset;
+							if (offset === 0) {
+								//Clear old values if any
+								$('#targetFilterList tr.targetRow').remove();
+							}
+	
+							$.each(newTargets, function(index, element) {
+							
+								// break out of iteration if we need to discard this result and start a new search
+								if (cancelSearch) return false;
+								
+								var Today = new Date();
+							
+								var statusDate = Today;
+								if(element.Target_End_Date__c != null){
+									statusDate = new Date(element.Target_End_Date__c.substr(0, element.Target_End_Date__c.indexOf('+')));
+								}
+								var rowDate = new Date(element.LastModifiedDate.substr(0, element.LastModifiedDate.indexOf('+')));
+								
+								var rowDateStr = '' + rowDate.getDate() + ' '+ monthNames[rowDate.getMonth()] + ', ' + rowDate.getFullYear();
+								 $('#targetFilterList').append('<tr class="targetRow"><td style="padding: 5px 2px 5px 2px;"><a href="#" id="editTarget'+trId+'" class="setup-link" data-id="'+element.Id +'">Edit</a> | <a  href="#" id="cloneTarget'+trId+'" class="setup-link" data-id="'+element.Id +'">Clone</a> | <a href="#" id="deleteTarget'+trId+'" class="setup-link" data-id="'+element.Id +'">Del</a></td><td style="padding: 5px 2px 5px 2px;">'+element[prefix +'Name__c']+'</td><td>'+(element[prefix +'Description__c']?element[prefix +'Description__c']:'') +
+									'</td><td style="padding: 5px 2px 5px 2px;">'+element[prefix +'Type__c']+'</td><td style="padding: 5px 2px 5px 2px;">'+ (Today > statusDate?'Expired':'Active') + '</td><td style="padding: 5px 2px 5px 2px;">'+element.LastModifiedBy.Name+'</td><td style="padding: 5px 2px 5px 2px;">'+rowDateStr+'</td></tr>');
+								$("#editTarget"+trId).click(function(event){
+									event.preventDefault();
+									activateButton('edit', $(this).data('id'));
+									return false;
+								});
+								
+								$("#cloneTarget"+trId).click(function(event){
+									event.preventDefault();
+									activateButton('clone', $(this).data('id'));
+									return false;
+								});
+								
+								$("#deleteTarget"+trId).click(function(event){
+									event.preventDefault();
+									var targetId = $(this).data('id');
+		    						$('<div />').ocmsShowConfirmationDlg({
+									   'title': 'Delete Target',
+									   'message' : 'You are deleting a target. Continue?',
+									   'onYES' : function(){
+											event.preventDefault();
+											activateButton('delete', targetId);
+											return true;
+								   	   },
+								   	   'onNO' : function(dialog, obj){
+								   		   return true;
+								   	   }
+								    });
+									return false;
+								});
+								
+								trId++;
+							});
+						} // updateTargetListRows
+	
+						var monthNames = [ "January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December" ];
+					
+						function showError(title,message){
+							$('<div></div>').ocmsShowErrorPopup({
+	                        	title : title,
+	                           message : message
+	                         }); 
+	                     } 
+				</script>
+					
+			</apex:outputPanel>
+	</div>
+
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+		<div style="padding: 10px;">You do not have Setup > Manage
+			Targets permission</div>
+	</apex:outputPanel>
+
+</body>
+
+	</html>
+</apex:page>

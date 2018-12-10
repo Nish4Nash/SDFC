@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Form Data</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Form Data</value>
+    </caseValues>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Form Data --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Data --></label>
+        <name>Data__c</name>
+    </fields>
+    <fields>
+        <label><!-- Modified Date --></label>
+        <name>Modified_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- PCLI --></label>
+        <name>PCLI__c</name>
+        <relationshipLabel><!-- Form Data --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Username --></label>
+        <name>Username__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

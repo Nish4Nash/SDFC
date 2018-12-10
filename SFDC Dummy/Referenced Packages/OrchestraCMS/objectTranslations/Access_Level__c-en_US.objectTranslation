@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Access Level</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Access Levels</value>
+    </caseValues>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Last Used --></label>
+        <name>Last_Used__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Prevent Level Inheritance --></label>
+        <name>Prevent_Level_Inheritance__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Access Levels --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- TargetEnabled --></label>
+        <name>TargetEnabled__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter10 --></label>
+        <name>TargetFilter10__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter11 --></label>
+        <name>TargetFilter11__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter12 --></label>
+        <name>TargetFilter12__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter13 --></label>
+        <name>TargetFilter13__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter14 --></label>
+        <name>TargetFilter14__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter15 --></label>
+        <name>TargetFilter15__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter16 --></label>
+        <name>TargetFilter16__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter17 --></label>
+        <name>TargetFilter17__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter18 --></label>
+        <name>TargetFilter18__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter19 --></label>
+        <name>TargetFilter19__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter1 --></label>
+        <name>TargetFilter1__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter2 --></label>
+        <name>TargetFilter2__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter3 --></label>
+        <name>TargetFilter3__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter4 --></label>
+        <name>TargetFilter4__c</name>
+        <picklistValues>
+            <masterLabel>255</masterLabel>
+            <translation><!-- 255 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter5 --></label>
+        <name>TargetFilter5__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter6 --></label>
+        <name>TargetFilter6__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter7 --></label>
+        <name>TargetFilter7__c</name>
+        <picklistValues>
+            <masterLabel>255</masterLabel>
+            <translation><!-- 255 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter8 --></label>
+        <name>TargetFilter8__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter9 --></label>
+        <name>TargetFilter9__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll10 --></label>
+        <name>TargetFilterAll10__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll11 --></label>
+        <name>TargetFilterAll11__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll12 --></label>
+        <name>TargetFilterAll12__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll13 --></label>
+        <name>TargetFilterAll13__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll14 --></label>
+        <name>TargetFilterAll14__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll15 --></label>
+        <name>TargetFilterAll15__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll16 --></label>
+        <name>TargetFilterAll16__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll17 --></label>
+        <name>TargetFilterAll17__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll18 --></label>
+        <name>TargetFilterAll18__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll19 --></label>
+        <name>TargetFilterAll19__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll1 --></label>
+        <name>TargetFilterAll1__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll2 --></label>
+        <name>TargetFilterAll2__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll3 --></label>
+        <name>TargetFilterAll3__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll4 --></label>
+        <name>TargetFilterAll4__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll5 --></label>
+        <name>TargetFilterAll5__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll6 --></label>
+        <name>TargetFilterAll6__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll7 --></label>
+        <name>TargetFilterAll7__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll8 --></label>
+        <name>TargetFilterAll8__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll9 --></label>
+        <name>TargetFilterAll9__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilterAll --></label>
+        <name>TargetFilterAll__c</name>
+    </fields>
+    <fields>
+        <label><!-- TargetFilter --></label>
+        <name>TargetFilter__c</name>
+        <picklistValues>
+            <masterLabel>All</masterLabel>
+            <translation><!-- All --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- TargetKey --></label>
+        <name>TargetKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- Target End Date --></label>
+        <name>Target_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Ad Hoc</masterLabel>
+            <translation><!-- Ad Hoc --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Predefined</masterLabel>
+            <translation><!-- Predefined --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Value --></label>
+        <name>Value__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

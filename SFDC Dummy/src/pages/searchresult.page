@@ -1,0 +1,23 @@
+<apex:page standardController="Account" extensions="searchresult">
+    <apex:form >
+       <apex:pageBlock >
+            <apex:pageMessages id="showmsg"></apex:pageMessages>  
+        <apex:pageBlockSection >
+           <apex:outputText >Enter the name</apex:outputText>
+            <apex:inputText value="{!a}"/>
+        <apex:commandButton value="Search" action="{!search}" rerender="showmsg,pb2"/>
+          </apex:pageBlockSection>
+  
+      </apex:pageBlock>   
+    <apex:pageBlock id="pb2" title="{!IF(myAccList != NULL && myAccList.size > 0,'Total Account Records','There are no records to display')}">
+    <apex:pageBlockSection >
+        <apex:pageBlockTable value="{!myAccList}" var="i">
+        <apex:column value="{!i.Name}"/>
+            <apex:column value="{!i.Id}"/>
+           
+            
+        </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+   </apex:form>
+</apex:page>

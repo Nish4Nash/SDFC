@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>LicensedComponent</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>LicensedComponent</value>
+    </caseValues>
+    <fields>
+        <label><!-- Apex Controller --></label>
+        <name>Controller__c</name>
+    </fields>
+    <fields>
+        <label><!-- VisualForce Edit Page --></label>
+        <name>EditPage__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Identifier --></label>
+        <name>License_Identifier__c</name>
+    </fields>
+    <fields>
+        <label><!-- Namespace --></label>
+        <name>Namespace__c</name>
+    </fields>
+    <fields>
+        <label><!-- VisualForce View Page --></label>
+        <name>ViewPage__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

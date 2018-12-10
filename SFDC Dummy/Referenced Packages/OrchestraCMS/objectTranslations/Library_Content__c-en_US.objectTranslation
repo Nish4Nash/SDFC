@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Library Content</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Library Contents</value>
+    </caseValues>
+    <fields>
+        <label><!-- Category --></label>
+        <name>Category__c</name>
+    </fields>
+    <fields>
+        <label><!-- Created --></label>
+        <name>Created__c</name>
+    </fields>
+    <fields>
+        <label><!-- Deleted --></label>
+        <name>Deleted__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- FileSync --></label>
+        <name>FileSync__c</name>
+    </fields>
+    <fields>
+        <label><!-- Key --></label>
+        <name>Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Label --></label>
+        <name>Label__c</name>
+    </fields>
+    <fields>
+        <label><!-- Last Sync --></label>
+        <name>Last_Sync__c</name>
+    </fields>
+    <fields>
+        <label><!-- Library Content --></label>
+        <name>Library_Content__c</name>
+        <relationshipLabel><!-- Library Contents --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Library --></label>
+        <name>Library__c</name>
+        <relationshipLabel><!-- Library Contents --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Missing --></label>
+        <name>Missing__c</name>
+    </fields>
+    <fields>
+        <label><!-- Modified --></label>
+        <name>Modified__c</name>
+    </fields>
+    <fields>
+        <label><!-- OwnerID --></label>
+        <name>OwnerID__c</name>
+    </fields>
+    <fields>
+        <label><!-- SimpleKey --></label>
+        <name>SimpleKey__c</name>
+    </fields>
+    <fields>
+        <label><!-- Size --></label>
+        <name>Size__c</name>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail --></label>
+        <name>Thumbnail__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- isSimple --></label>
+        <name>isSimple__c</name>
+    </fields>
+    <fields>
+        <label><!-- parentKey --></label>
+        <name>parentKey__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

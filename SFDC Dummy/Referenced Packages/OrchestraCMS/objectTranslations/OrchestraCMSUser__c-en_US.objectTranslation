@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>OrchestraCMSUser</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>OrchestraCMSUser</value>
+    </caseValues>
+    <fields>
+        <label><!-- AutoSave --></label>
+        <name>AutoSave__c</name>
+    </fields>
+    <fields>
+        <label><!-- BatchSID --></label>
+        <name>BatchSID__c</name>
+    </fields>
+    <fields>
+        <label><!-- DisablePanelTooltips --></label>
+        <name>DisablePanelTooltips__c</name>
+    </fields>
+    <fields>
+        <label><!-- HideExpiredContent --></label>
+        <name>HideExpiredContent__c</name>
+    </fields>
+    <fields>
+        <label><!-- Last Media Folder --></label>
+        <name>LastMediaFolder__c</name>
+    </fields>
+    <fields>
+        <label><!-- LastSite --></label>
+        <name>LastSite__c</name>
+    </fields>
+    <fields>
+        <label><!-- PageSize --></label>
+        <name>PageSize__c</name>
+    </fields>
+    <fields>
+        <label><!-- Preview Date --></label>
+        <name>PreviewDate__c</name>
+    </fields>
+    <fields>
+        <label><!-- Preview Page --></label>
+        <name>PreviewPage__c</name>
+    </fields>
+    <fields>
+        <label><!-- Production Page --></label>
+        <name>ProductionPage__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

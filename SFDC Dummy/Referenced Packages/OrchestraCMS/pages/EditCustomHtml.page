@@ -1,0 +1,41 @@
+<apex:page controller="cms.CreateContentController"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false" extensions="cms.CustomHtml">
+ 	 	
+ 	<script type="text/javascript" language="javascript">
+
+		$(document).ready(function(){
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"HtmlBlock", "value":$('#HtmlBlock').val(), "type":"Html"});
+				return attributes; 
+			}); 
+		}); 
+
+	</script>
+	
+	
+		<form>
+			<table class="ocmsContentEditor ocmsContentEditorNested autoWidth">
+			  
+		     <tr class="ocmsEditorSubtitle">
+		        <td>
+		            HTML
+		        </td>
+		     </tr>
+			  <tr>	
+				<td>
+					<apex:outputText escape="false" rendered="{!!disableAll}">
+						<textarea id="HtmlBlock" name="HtmlBlock" rows="15" cols="100"><apex:outputText value="{!HtmlBlockEdit}" escape="false" /></textarea>
+					</apex:outputText>
+
+					<apex:outputText escape="false" rendered="{!disableAll}">
+						<div style="border: 1px solid #cccccc; padding: 5px;">
+							<apex:outputText value="{!HtmlBlockEdit}" escape="true" />
+						</div>
+					</apex:outputText>
+
+				</td>
+			  </tr>
+			</table>
+		</form>
+		
+</apex:page>

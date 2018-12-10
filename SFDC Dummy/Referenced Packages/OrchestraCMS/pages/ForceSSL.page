@@ -1,0 +1,36 @@
+<apex:page id="t" controller="cms.CoreController" extensions="cms.ForceSSL" standardStylesheets="false">
+
+<head>
+  <title>{!page_title}</title>
+
+  <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" /> 
+
+  <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+  <!-- This is the jquery cookie extension only -->
+
+  <script type="text/javascript">
+     function jq(myid){
+        return '#'+myid.replace(/:/g,"\\:").replace(/\./g,"\\.");
+     }
+     $(document).ready(function(){
+     
+     	var location = '{!ssldomain}';
+     		
+     	if(location == '') {
+			var regx = new RegExp('^https://([^/]+).*');
+			location = regx.exec($(jq('{!$Component.frmRedirect}')).attr('action'))[1];
+		}
+		
+		if (window.location.replace){ 
+			window.location.replace('https://' + location + '{!redirect_url+page_params_text}'); 
+		} else {; 
+			window.location.href = 'https://' + location + '{!redirect_url+page_params_text}'; 
+		} 
+     });
+  </script>
+  
+</head>
+
+<body><apex:form id="frmRedirect" forceSSL="true"></apex:form></body>
+
+</apex:page>

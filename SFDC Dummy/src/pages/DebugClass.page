@@ -1,0 +1,20 @@
+<apex:page controller="DebugClass">
+    <apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockSection >
+            <apex:outputText >Number 1:</apex:outputText>
+            <apex:inputText value="{!a}"/>
+            <apex:outputText >Number 2:</apex:outputText>
+            <apex:inputText value="{!b}"/>
+            
+        </apex:pageBlockSection>
+        <apex:commandButton value="Add" action="{!deb}" reRender="pb2"/>
+    </apex:pageBlock>
+    <apex:pageBlock id="pb2">
+        <apex:pageBlockSection >
+            <apex:outputText >Sum is</apex:outputText>
+            <apex:inputText value="{!c}"/>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+   </apex:form>
+</apex:page>

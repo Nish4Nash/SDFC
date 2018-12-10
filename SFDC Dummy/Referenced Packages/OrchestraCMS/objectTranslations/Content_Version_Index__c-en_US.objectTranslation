@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content Version Index</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content Version Indexes</value>
+    </caseValues>
+    <fields>
+        <label><!-- All Shared With Guest --></label>
+        <name>All_Shared_With_Guest__c</name>
+    </fields>
+    <fields>
+        <label><!-- All Shared With Portal --></label>
+        <name>All_Shared_With_Portal__c</name>
+    </fields>
+    <fields>
+        <label><!-- End Date --></label>
+        <name>End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Has Children --></label>
+        <name>Has_Children__c</name>
+    </fields>
+    <fields>
+        <help><!-- Version_Origin__c.Id : Language_Index__c.Name : Language__c.Id --></help>
+        <label><!-- Index Key --></label>
+        <name>Index_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Not Targeted --></label>
+        <name>Is_Not_Targeted__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+        <relationshipLabel><!-- Content Version Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Languages --></label>
+        <name>Languages__c</name>
+    </fields>
+    <fields>
+        <label><!-- Latest --></label>
+        <name>Latest__c</name>
+        <relationshipLabel><!-- Version_Indexes (Content) --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Origin --></label>
+        <name>Origin__c</name>
+        <relationshipLabel><!-- Version_Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Original Published Start Date --></label>
+        <name>Original_Published_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Start Date --></label>
+        <name>Start_Date__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

@@ -1,0 +1,106 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.PortalLoginController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    <apex:outputPanel layout="block" style="padding: 5px;">
+
+        <script type="text/javascript" language="javascript">
+			$(document).ready(function(){
+				ce.content_editor('registerSaveFunction', function(){
+				    ce.content_editor('registerValidationRule', 'UsernameLabel', 'REQUIRED', 'Username Label is a required field.');
+				    ce.content_editor('registerValidationRule', 'PasswordLabel', 'REQUIRED', 'Password Label is a required field.');
+				    ce.content_editor('registerValidationRule', 'LoginButtonText', 'REQUIRED', 'Login Button Text is a required field.');
+				    ce.content_editor('registerValidationRule', 'ForgotYourPasswordLinkText', 'REQUIRED', 'Forgot Your Password Link Text is a required field.');
+				    ce.content_editor('registerValidationRule', 'NewUserLinkText', 'REQUIRED', 'New User Link Text is a required field.');
+
+	                var attributes = new Array();
+	                attributes.push({"name":"DefaultStartPage", "value":$('#DefaultStartPage').page_selector_input('getSerializedLink'), "type":"Text"});
+	                attributes.push({"name":"ForgotPasswordPage", "value":$('#ForgotPasswordPage').page_selector_input('getSerializedLink'), "type":"Text"});
+	                attributes.push({"name":"SelfRegistrationPage", "value":$('#SelfRegistrationPage').page_selector_input('getSerializedLink'), "type":"Text"});
+	                attributes.push({"name":"UsernameLabel", "value":$('#UsernameLabel').val(), "type":"Text", "simple":true});
+	                attributes.push({"name":"PasswordLabel", "value":$('#PasswordLabel').val(), "type":"Text", "simple":true});
+	                attributes.push({"name":"LoginButtonText", "value":$('#LoginButtonText').val(), "type":"Text", "simple":true});
+	                attributes.push({"name":"ForgotYourPasswordLinkText", "value":$('#ForgotYourPasswordLinkText').val(), "type":"Text", "simple":true});
+	                attributes.push({"name":"NewUserLinkText", "value":$('#NewUserLinkText').val(), "type":"Text", "simple":true});
+					return attributes;
+			
+				});
+				
+				$('#DefaultStartPage').page_selector_input({
+	 				input_field: 'DefaultStartPage',
+	 				input_id: 'DefaultStartPage_selector_input',
+					dialog_id: 'DefaultStartPageDlg_selector_dialog',
+					selected: {!IF(OR(DefaultStartPageObj.LinkJSON == null,DefaultStartPageObj.LinkJSON == ''), 'null',DefaultStartPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(DefaultStartPageObj.LinkName)}'
+ 				});
+ 				$('#ForgotPasswordPage').page_selector_input({
+	 				input_field: 'ForgotPasswordPage',
+	 				input_id: 'ForgotPasswordPage_selector_input',
+					dialog_id: 'ForgotPasswordPageDlg_selector_dialog',
+					selected: {!IF(OR(ForgotPasswordPageObj.LinkJSON == null,ForgotPasswordPageObj.LinkJSON == ''), 'null',ForgotPasswordPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ForgotPasswordPageObj.LinkName)}'
+ 				});
+ 				$('#SelfRegistrationPage').page_selector_input({
+	 				input_field: 'SelfRegistrationPage',
+	 				input_id: 'SelfRegistrationPage_selector_input',
+					dialog_id: 'SelfRegistrationPageDlg_selector_dialog',
+					selected: {!IF(OR(SelfRegistrationPageObj.LinkJSON == null,SelfRegistrationPageObj.LinkJSON == ''), 'null',SelfRegistrationPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(SelfRegistrationPageObj.LinkName)}'
+ 				});
+			});  
+        </script>
+    
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="DefaultStartPage">Default Start Page</label>
+                       <div id="DefaultStartPage" />
+                       <p class="ocmsHelpText">Page that users see after successfully logging in</p>
+                   </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="ForgotPasswordPage">Forgot Password Page</label>
+                       <div id="ForgotPasswordPage" />
+                       <p class="ocmsHelpText">Page that users see after clicking the forgot password link</p>
+                   </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="SelfRegistrationPage">Self Registration Page</label>
+                       <div id="SelfRegistrationPage"/>
+                       <p class="ocmsHelpText">Page that users see after clicking the self registration link</p>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="UsernameLabel">Username Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="UsernameLabel" value="{!usernameLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="PasswordLabel">Password Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="PasswordLabel" value="{!passwordLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="LoginButtonText">Login Button Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="LoginButtonText" value="{!loginButtonText}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="ForgotYourPasswordLinkText">Forgot Your Password Link Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="ForgotYourPasswordLinkText" value="{!forgotYourPasswordLinkText}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="NewUserLinkText">New User Link Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="NewUserLinkText" value="{!newUserLinkText}" />
+                    </td>
+                </tr>
+          </table>
+      </form>
+    </apex:outputPanel>
+</apex:page>

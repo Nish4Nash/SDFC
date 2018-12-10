@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>License Profile</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>License Profiles</value>
+    </caseValues>
+    <fields>
+        <label><!-- AutoSave --></label>
+        <name>AutoSave__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- DisablePanelTooltips --></label>
+        <name>DisablePanelTooltips__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Interface --></label>
+        <name>Interface__c</name>
+        <picklistValues>
+            <masterLabel>OrchestraCMS Workspace</masterLabel>
+            <translation><!-- OrchestraCMS Workspace --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Simplified Authoring Workspace</masterLabel>
+            <translation><!-- Simplified Authoring Workspace --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- License Identifier --></label>
+        <name>License_Identifier__c</name>
+    </fields>
+    <fields>
+        <label><!-- License Trial --></label>
+        <name>License_Trial__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- License Profiles --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Start Page Configuration --></label>
+        <name>Start_Page_Configuration__c</name>
+    </fields>
+    <fields>
+        <label><!-- Site Start Page --></label>
+        <name>Start_Page__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

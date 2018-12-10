@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content Template Relationship</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content Template Relationships</value>
+    </caseValues>
+    <fields>
+        <label><!-- Auto Create --></label>
+        <name>Auto_Create__c</name>
+    </fields>
+    <fields>
+        <label><!-- Content Layout --></label>
+        <name>Content_Layout__c</name>
+        <relationshipLabel><!-- Content Template Relationships --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Type --></label>
+        <name>Content_Type__c</name>
+        <relationshipLabel><!-- Content Template Relationships --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Default --></label>
+        <name>Default__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Install External Id --></label>
+        <name>Install_External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Preview Page --></label>
+        <name>Preview_Page__c</name>
+        <relationshipLabel><!-- Content Template Relationships --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

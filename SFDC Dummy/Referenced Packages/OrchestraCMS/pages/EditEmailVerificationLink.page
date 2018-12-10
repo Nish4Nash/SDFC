@@ -1,0 +1,46 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.EmailVerificationLinkController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+   	<script type="text/javascript" language="javascript">
+
+        $(document).ready(function(){
+             ce.content_editor('registerSaveFunction', function(){
+	             var attributes = new Array();
+	             attributes.push({"name":"EmailSubscriptionServerVerificationPageLink", "value":$('#EmailSubscriptionServerVerificationPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				 return attributes;
+			 });
+			 $('#EmailSubscriptionServerVerificationPageLink').page_selector_input({
+	 				input_field: 'EmailSubscriptionServerVerificationPageLink',
+	 				input_id: 'EmailSubscriptionServerVerificationPageLink_selector_input',
+					dialog_id: 'EmailSubscriptionServerVerificationPageLinkDlg_selector_dialog',
+					selected: {!IF(OR(EmailSubscriptionServerVerificationPageLinkObj.LinkJSON == null, EmailSubscriptionServerVerificationPageLinkObj.LinkJSON == ''), 'null', EmailSubscriptionServerVerificationPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(EmailSubscriptionServerVerificationPageLinkObj.LinkName)}'
+ 			});  
+         });
+
+     </script>
+     <style>
+         .ocms-property-viewer {
+             height:inherit !important;
+         }
+     </style>
+
+     <div class="ocms-property-viewer">
+         <div class="ocms-property-viewer-header">Component Properties</div>
+         <div class="ocms-property-viewer-body ocms-property-form" >
+             <div class="ocms-property-form-panel-col" >
+                     <table cellspacing="1" class="ocms-property-table">
+                         <tbody>
+                         <tr class="ocms-property-marker ocms-data-info">
+                             <td class="ocms-param-key  ocms-param-key-top"><span class="">Email Verification Page</span></td>
+                             <td class="ocms-param-value">
+                                 <div id="EmailSubscriptionServerVerificationPageLink"/>
+                                 <div class="ocms-instructional-text">Reference to an Orchestra Page that will accept the client subscription confirmation request from the confirmation email.<br/> This page MUST contain content of the type "Portal" with the content template "Email Verification" </div>
+                             </td>
+                             <span class=""><img class="ocms-input-error" src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}"/></span>
+                         </tr>
+                         </tbody>
+                     </table>
+             </div>
+             <div style="clear:both"></div>
+         </div>
+     </div>
+</apex:page>

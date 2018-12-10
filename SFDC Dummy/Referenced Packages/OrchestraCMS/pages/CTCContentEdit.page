@@ -1,0 +1,23 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.CTCLayoutController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	        
+	<div id="CLEdit-container"></div>
+	
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/ctc/vendor/lazyload.min.js')}" />
+    
+	<script>
+	
+		$(document).ready(function() {
+			$(document).data('ajaxLoadImage', '{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}');
+			$(document).data('defaultCKEditConfig', '{!CKEditorConfig}');
+			
+			$.orchestracmsUtil.loadScript('ui','ctc/editor.js');
+
+			window.app = new cms_ctc.LayoutEdit('#CLEdit-container', {
+				definition: '{!JSENCODE(attributeDefinitionJson)}',
+				values:     '{!JSENCODE(attributeEditValuesJson)}',
+				disable:    {!disableAll},
+				types:      '{!JSENCODE(attributeTypesJson)}'
+			});
+		});
+	</script>
+</apex:page>

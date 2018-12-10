@@ -1,0 +1,309 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.PortalLoginStatusController"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+<apex:outputPanel layout="block" style="padding: 5px;">
+
+ 	<script type="text/javascript" language="javascript">
+			$(document).ready(function(){
+                ce.content_editor('registerValidationRule', 'LoginLinkText', 'REQUIRED', 'Login Link Text is a required field.');
+                ce.content_editor('registerValidationRule', 'LogoutLinkText', 'REQUIRED', 'Logout Link Text is a required field.');
+
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array();
+		            if ($('#InlinePopup').prop('checked')) {
+		                ce.content_editor('registerValidationRule', 'UsernameLabel', 'REQUIRED', 'Username Label is a required field.');
+		                ce.content_editor('registerValidationRule', 'PasswordLabel', 'REQUIRED', 'Password Label is a required field.');
+		                
+		                attributes.push({"name":"ForgotPasswordPage", "value":$('#ForgotPasswordPage').page_selector_input('getSerializedLink'), "type":"Text"});
+		                attributes.push({"name":"SelfRegistrationPage", "value":$('#SelfRegistrationPage').page_selector_input('getSerializedLink'), "type":"Text"});
+		            }
+		            else {
+		                // Unregister the validation rules.
+                        ce.content_editor('unRegisterValidationRule', 'UsernameLabel');
+                        ce.content_editor('unRegisterValidationRule', 'PasswordLabel');
+                        attributes.push({"name":"LoginPage", "value":$('#LoginPage').page_selector_input('getSerializedLink'), "type":"Text"});
+                       
+ 
+		            }
+					attributes.push({"name":"DefaultStartPage", "value":$('#DefaultStartPage').page_selector_input('getSerializedLink'), "type":"Text"});
+		            attributes.push({"name":"MyOptionsPage", "value":$('#MyOptionsPage').page_selector_input('getSerializedLink'), "type":"Text"});
+                    attributes.push({"name":"MyOptionsLabel", "value":$('#MyOptionsLabel').val(), "type":"Text", "simple":true});
+		            attributes.push({"name":"InlinePopup", "value": $('#InlinePopup').prop('checked'), "type":"Boolean"});
+		            attributes.push({"name":"UsernameLabel", "value":$('#UsernameLabel').val(), "type":"Text", "simple":true});
+		            attributes.push({"name":"PasswordLabel", "value":$('#PasswordLabel').val(), "type":"Text", "simple":true});
+		            attributes.push({"name":"ForgotYourPasswordLinkText", "value":$('#ForgotYourPasswordLinkText').val(), "type":"Text", "simple":true});
+		            attributes.push({"name":"NewUserLinkText", "value":$('#NewUserLinkText').val(), "type":"Text", "simple":true});
+					attributes.push({"name":"ShowWelcomeLabel", "value": $('#ShowWelcomeLabel').prop('checked'), "type":"Boolean"});
+                    attributes.push({"name":"WelcomeLabelText", "value":$('#WelcomeLabelText').val(), "type":"Text", "simple":true});
+					attributes.push({"name":"ShowBackToPortalLink", "value": $('#ShowBackToPortalLink').prop('checked'), "type":"Boolean"});
+                    attributes.push({"name":"BackToPortalLinkText", "value":$('#BackToPortalLinkText').val(), "type":"Text", "simple":true});
+					attributes.push({"name":"LoginLinkText", "value":$('#LoginLinkText').val(), "type":"Text", "simple":true});
+					attributes.push({"name":"LogoutLinkText", "value":$('#LogoutLinkText').val(), "type":"Text", "simple":true});
+					
+					return attributes; 
+				});
+				$('#DefaultStartPage').page_selector_input({
+	 				input_field: 'DefaultStartPage',
+	 				input_id: 'DefaultStartPage_selector_input',
+					dialog_id: 'DefaultStartPageDlg_selector_dialog',
+					selected: {!IF(OR(DefaultStartPageObj.LinkJSON == null,DefaultStartPageObj.LinkJSON == ''), 'null',DefaultStartPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(DefaultStartPageObj.LinkName)}'
+ 				});
+ 				$('#ForgotPasswordPage').page_selector_input({
+	 				input_field: 'ForgotPasswordPage',
+	 				input_id: 'ForgotPasswordPage_selector_input',
+					dialog_id: 'ForgotPasswordPageDlg_selector_dialog',
+					selected: {!IF(OR(ForgotPasswordPageObj.LinkJSON == null,ForgotPasswordPageObj.LinkJSON == ''), 'null',ForgotPasswordPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ForgotPasswordPageObj.LinkName)}'
+ 				});
+ 				$('#SelfRegistrationPage').page_selector_input({
+	 				input_field: 'SelfRegistrationPage',
+	 				input_id: 'SelfRegistrationPage_selector_input',
+					dialog_id: 'SelfRegistrationPageDlg_selector_dialog',
+					selected: {!IF(OR(SelfRegistrationPageObj.LinkJSON == null,SelfRegistrationPageObj.LinkJSON == ''), 'null',SelfRegistrationPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(SelfRegistrationPageObj.LinkName)}'
+ 				});
+ 				$('#LoginPage').page_selector_input({
+	 				input_field: 'LoginPage',
+	 				input_id: 'LoginPage_selector_input',
+					dialog_id: 'LoginPageDlg_selector_dialog',
+					selected: {!IF(OR(LoginPageObj.LinkJSON == null,LoginPageObj.LinkJSON == ''), 'null',LoginPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(LoginPageObj.LinkName)}'
+ 				});
+ 				$('#MyOptionsPage').page_selector_input({
+	 				input_field: 'MyOptionsPage',
+	 				input_id: 'MyOptionsPage_selector_input',
+					dialog_id: 'MyOptionsPageDlg_selector_dialog',
+					selected: {!IF(OR(MyOptionsPageObj.LinkJSON == null,MyOptionsPageObj.LinkJSON == ''), 'null',MyOptionsPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(MyOptionsPageObj.LinkName)}'
+ 				});
+ 				
+			}); 
+	</script>
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="LoginLinkText">Login Link Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="LoginLinkText" value="{!loginLinkText}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="LogoutLinkText">Logout Link Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="LogoutLinkText" value="{!logoutLinkText}" />
+                    </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="DefaultStartPage">Default Start Page</label>
+                      
+                       <div id="DefaultStartPage" />
+                       <p class="ocmsHelpText">Page that users see after successfully logging in</p>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="MyOptionsLabel">My Profile Label Text</label>
+                        <input class="ocmsTextInputLrg" type="text" id="MyOptionsLabel" value="{!MyOptionsLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="MyOptionsPage">My Profile Page</label>
+                       
+                       <div id="MyOptionsPage" />
+                       <p class="ocmsHelpText">Page that users see when they click the My Profile button</p>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel inline" for="InlinePopup">Inline Login</label>
+                        <input type="checkbox" class="ocmsLanguageNeutral" name="InlinePopup" id="InlinePopup" value="{!InlinePopup}" disabled=""/>
+                        <p class="ocmsHelpText">Select this option to display a popup login form when the 'Login' button is clicked</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="UsernameLabel">Username Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="UsernameLabel" value="{!usernameLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="PasswordLabel">Password Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="PasswordLabel" value="{!passwordLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="LoginPage">Login Page</label>
+                      
+                       <div id="LoginPage" />
+                       <p class="ocmsHelpText">Page the user sees when the 'Login' button is clicked</p>
+                   </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="ForgotPasswordPage">Forgot Password Page</label>
+                       
+                       <div id="ForgotPasswordPage" />
+                       <p class="ocmsHelpText">Page the user sees when the 'Forgot Password' link is clicked</p>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="ForgotYourPasswordLinkText">Forgot Your Password Link Text</label>
+                        <input class="ocmsTextInputLrg" type="text" id="ForgotYourPasswordLinkText" value="{!forgotYourPasswordLinkText}" />
+                    </td>
+                </tr>
+                <tr>
+                   <td>
+                       <label class="ocmsLabel" for="SelfRegistrationPage">Registration Page</label>
+                      
+                       <div id="SelfRegistrationPage" />
+                       <p class="ocmsHelpText">Page the user sees when the 'Registration' link is clicked</p>
+                   </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="NewUserLinkText">User Registration Link Text</label>
+                        <input class="ocmsTextInputLrg" type="text" id="NewUserLinkText" value="{!newUserLinkText}" />
+                        <p class="ocmsHelpText">Text of the link the user clicks to register</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel inline" for="ShowWelcomeLabel">Show Welcome Label</label>
+                        <input type="checkbox" class="ocmsLanguageNeutral" name="ShowWelcomeLabel" id="ShowWelcomeLabel" value="{!ShowWelcomeLabel}" disabled=""/>
+                        <p class="ocmsHelpText">Select this option to show 'Welcome Text' before the username</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="WelcomeLabelText">Welcome Label Text</label>
+                        <input class="ocmsTextInputLrg" type="text" id="WelcomeLabelText" value="{!welcomeLabelText}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel inline" for="ShowBacktoPortalLink">Show Back to Portal Link</label>
+                        <input type="checkbox" class="ocmsLanguageNeutral" name="ShowBackToPortalLink" id="ShowBackToPortalLink" value="{!ShowBackToPortalLink}" disabled=""/>
+                        <p class="ocmsHelpText">Select this option to show a link to return to the Portal when browsing public pages</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="BackToPortalLinkText">Back to Portal Link Text</label>
+                        <input class="ocmsTextInputLrg" type="text" id="BackToPortalLinkText" value="{!backToPortalLinkText}" />
+                    </td>
+                </tr>
+          </table>
+      </form>
+</apex:outputPanel>
+
+<script type="text/javascript" language="javascript">
+        $('document').ready(function() {
+
+			if({!DynamicLoad}) {
+				$('#DynamicLoad').prop('checked', true);
+			} else {
+				$('#DynamicLoad').prop('checked', false);
+			}
+
+			if({!ShowWelcomeLabel}) {
+				$('#ShowWelcomeLabel').prop('checked', true);
+				$('#WelcomeLabelText').prop('disabled', false).removeClass('disabled');
+			} else {
+				$('#ShowWelcomeLabel').prop('checked', false);
+				$('#WelcomeLabelText').prop('disabled', true).addClass('disabled');
+			}
+
+
+			if({!ShowBackToPortalLink}) {
+				$('#ShowBackToPortalLink').prop('checked', true);
+				$('#BackToPortalLinkText').prop('disabled', false).removeClass('disabled');
+			} else {
+				$('#ShowBackToPortalLink').prop('checked', false);
+				$('#BackToPortalLinkText').prop('disabled', true).addClass('disabled');
+			}
+
+            if({!disableAll})
+            {
+                $('#InlinePopup').prop('disabled', true);
+                $('#DynamicLoad').prop('disabled', true);
+               	$('#ShowWelcomeLabel').prop('disabled', true);
+                $('#ShowBackToPortalLink').prop('disabled', true);
+            }
+            else
+            {
+                if ({!InlinePopup})
+                {
+                    $('#InlinePopup').prop('checked', true);
+                    $('#UsernameLabel').prop('disabled', false).removeClass('disabled');
+                    $('#PasswordLabel').prop('disabled', false).removeClass('disabled');
+                    $('#LoginPageDlg').page_selector_input('disable');
+                    $('#ForgotPasswordPageDlg').page_selector_input('enable');
+                    $('#ForgotYourPasswordLinkText').prop('disabled', true).addClass('disabled');
+                    $('#SelfRegistrationPageDlg').page_selector_input('enable');
+                    $('#NewUserLinkText').prop('disabled', true).addClass('disabled');
+                }
+                else
+                {
+                    $('#UsernameLabel').prop('disabled', true).addClass('disabled');
+                    $('#PasswordLabel').prop('disabled', true).addClass('disabled');
+                    $('#LoginPageDlg').page_selector_input('enable');
+                    $('#ForgotPasswordPageDlg').page_selector_input('disable');
+                    $('#ForgotYourPasswordLinkText').prop('disabled', true).addClass('disabled');
+                    $('#SelfRegistrationPageDlg').page_selector_input('disable');
+                    $('#NewUserLinkText').prop('disabled', true).addClass('disabled');
+                }
+
+                $('#InlinePopup').change(function() {
+                    if($(this).prop('checked'))
+                    {
+                        $('#UsernameLabel').prop('disabled', false).removeClass('disabled');
+                        $('#PasswordLabel').prop('disabled', false).removeClass('disabled');
+                        $('#LoginPageDlg').page_selector_input('disable');
+                        $('#ForgotPasswordPageDlg').page_selector_input('enable');
+                        $('#ForgotYourPasswordLinkText').prop('disabled', false).removeClass('disabled');
+                        $('#SelfRegistrationPageDlg').page_selector_input('enable');
+                        $('#NewUserLinkText').prop('disabled', false).removeClass('disabled');
+                    }
+                    else
+                    {
+                        $('#UsernameLabel').prop('disabled', true).addClass('disabled');
+                        $('#PasswordLabel').prop('disabled', true).addClass('disabled');
+                        $('#LoginPageDlg').page_selector_input('enable');
+                        $('#ForgotPasswordPageDlg').page_selector_input('disable');
+                        $('#ForgotYourPasswordLinkText').prop('disabled', true).addClass('disabled');
+                        $('#SelfRegistrationPageDlg').page_selector_input('disable');
+                        $('#NewUserLinkText').prop('disabled', true).addClass('disabled');
+                    }
+                });
+                
+                $('#ShowWelcomeLabel').change(function() {
+                    if($(this).prop('checked')) {
+                        $('#WelcomeLabelText').prop('disabled', false).removeClass('disabled');
+                    } else {
+                        $('#WelcomeLabelText').prop('disabled', true).addClass('disabled');
+                    }
+                });
+                
+                $('#ShowBackToPortalLink').change(function() {
+                    if($(this).prop('checked')) {
+                        $('#BackToPortalLinkText').prop('disabled', false).removeClass('disabled');
+                    } else {
+                        $('#BackToPortalLinkText').prop('disabled', true).addClass('disabled');
+                    }
+                });
+                
+            }
+			// @todo: Add this if we can figure it out when editing within Orchestra...
+			// if({!!RegistrationEnabled})
+			// {
+			//		setTimeout("$('#SelfRegistrationPageDlg').page_selector_input('disable')",1000);
+			//		$('#SelfRegistrationPageDlg').attr('title', 'Disabled because Self-Registration has not been enabled within your portals Self-Registration Settings.');
+			// }
+        });
+
+</script>
+</apex:page>

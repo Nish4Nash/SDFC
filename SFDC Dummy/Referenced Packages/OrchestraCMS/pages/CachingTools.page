@@ -1,0 +1,125 @@
+<apex:page id="cashing-tools" controller="cms.CachingTools" showHeader="false" sidebar="false" cache="false" title="OrchestraCMS" standardStylesheets="false">
+
+	<html style="padding: 0px; margin: 0px;">
+		<head>
+			 
+			<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+			<c:CmsScripts />
+		 	<!-- This is the jquery cookie extension only -->
+            <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+			<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUtil, '/CachingUtils.js')}" />
+			<style type="text/css">
+				#level1_cache_generator, 
+				#level2_cache_generator {
+					display: inline-block;
+					width: 450px;
+				}
+				.ocms-list {
+					margin: 0;
+				}
+				.ocms-list .list-header td {
+					padding: 5px 10px;
+				}
+				.refresh_status table tbody tr td:first-child {
+					padding-right: 10px;
+				}
+			</style>
+			
+			
+			<script type="text/javascript" >
+				$(document).ready(function(){
+
+					$(document).data('cms', {
+						'context' 	: 'orchestracms',
+						'namespace' : '{!namespace}',
+						'site_name' : '{!sname}'
+					});
+
+					// "level 1" is the CLIs
+					$('#refreshLevel1').button().click(function(){
+						$('#level1_cache_generator').ocmsCacheGenerator({
+							type: 'cli_batch',
+							sname: '{!sname}',
+							show_status: 'message',
+							mode: 'all',
+                            sendEmailNotification: true,
+                            sendEmailUpdateId: 'level1Email',
+                            title: 'Level 1 Job Status'
+						});
+					});
+
+					// "level 2" is the PCLIs
+					$('#refreshLevel2').button().click(function(){
+						$('#level2_cache_generator').ocmsCacheGenerator({
+							type: 'pcli_batch',
+							sname: '{!sname}',
+							show_status: 'message',
+							mode: 'all',
+                            sendEmailNotification: true,
+                            sendEmailUpdateId: 'level2Email',
+                            title: 'Level 2 Job Status'
+						});
+					});
+
+				});
+
+			</script>
+
+		</head>
+
+		<body class="ocms">
+
+			<c:SetupMenu sname="{!sname}" activeitem="cache-content" />
+
+		  	<div style="margin-left: 210px; padding: 10px;">
+
+		  		<div class="ocms-setup-breadcrumb">
+				  <div class="ocms-setup-breadcrumb-start"></div>
+				  <div class="ocms-setup-breadcrumb-item">Setup</div>
+				  <div class="ocms-setup-breadcrumb-separator-active"></div>
+				  <div class="ocms-setup-breadcrumb-item-active">Content Cache</div>
+				  <div class="ocms-setup-breadcrumb-end"></div>
+				  <div class="ocms-clear"></div>
+				</div>
+
+				<div style="margin-top: 20px;">
+
+					<div style="height: 100px;">
+						<div style="max-width: 400px">
+							<div>Perform a refresh of OrchestraCMS content caches.</div><br />
+							<table class="ocms-list">
+								<thead class="list-header">
+									<tr>
+										<td>Cache Level</td>
+										<td>Email on Completion?</td>
+										<td class="last">Refresh Cache</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="list-row list-row-even">
+										<td>Level 1</td>
+										<td><label><input type="checkbox" id="level1Email" name="level1Email" />Yes</label></td>
+										<td class="last"><button id="refreshLevel1">Refresh</button></td>
+									</tr>
+									<tr class="list-row list-row-odd">
+										<td>Level 2</td>
+										<td><label><input type="checkbox" id="level2Email" name="level2Email" />Yes</label></td>
+										<td class="last"><button id="refreshLevel2">Refresh</button></td>
+									</tr>
+									<tr class="list-footer"><td colspan="3"></td></tr>
+								</tbody>
+							</table>
+							<div id="message"></div>
+						</div>
+						<div id="level1_cache_generator" style="display:none"></div>
+						<div id="level2_cache_generator" style="display:none"></div>
+					</div>
+				</div>
+
+			</div>
+
+		</body>
+
+	</html>
+
+</apex:page>

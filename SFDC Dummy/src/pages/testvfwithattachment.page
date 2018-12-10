@@ -1,0 +1,68 @@
+<apex:page controller="accountListController">
+    <head>
+        <title>Product List</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    
+        <script>
+            $(document).ready(function() {
+                getProducts(function(){
+                    $('a').each(function(index){
+                        var img = $(this);
+                         getImage($(this).attr('id'),function(imageId,imageData){
+                             $(img).attr('src', 'data:image/png;base64,'+imageData);
+                         });
+                    });               
+                });
+            });  
+    
+            function getProducts(callback){
+                Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.accountListController.getProducts}',function(result, event){
+                    if (event.status && (result.success == true || result.success == 'true')){    
+                       var html='';
+                       for(var i = 0; i<result.sObjects.length;i++){
+                           var imageId = '';
+                           if(result.sObjects[i].hasOwnProperty('Attachments')){
+                                imageId = result.sObjects[i].Attachments[0].Id;
+                           }
+                           //html += '<li><img   id="'+imageId+'">'+result.sObjects[i].Name+'</li>';
+                           //alert('result.sObjects[i].Attachments[0].Id -->'+imageId);
+                           if(imageId != '')
+                               html += '<a href="/servlet/servlet.FileDownload?file='+imageId+'">'+result.sObjects[i].Name+'</a><br/>';
+                           else
+                               html += '<a>'+result.sObjects[i].Name+'</a><br/>';
+                       }
+                       $('#accounts').html(html);
+                       callback();
+                    } 
+                    else
+                        $("#responseErrors").html(event.message);
+                },{escape: true});                   
+            } 
+    
+          /*  function getImage(imageId,callback){
+                var imageData;
+                if(localStorage.getItem(imageId)){   
+                    //alert('Getting image from local storage!');
+                    imageData = localStorage.getItem(imageId);
+                    callback(imageId,imageData);    
+                }
+                else{
+                    //alert('Getting image remote server!');
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.accountListController.getAttachment}',imageId,function(result, event){
+                        if (event.status && (result.success == true || result.success == 'true')){    
+                             imageData = result.data;
+                             localStorage.setItem(imageId,imageData);      
+                             callback(imageId,imageData);    
+                        } 
+                        else
+                            $("#responseErrors").html(event.message);
+                    },{escape: true});                   
+                }      
+            }*/ 
+        </script>
+    </head>
+
+    <body>
+         <ul  id="accounts"></ul> 
+    </body>            
+</apex:page>

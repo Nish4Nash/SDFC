@@ -1,0 +1,21 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.PlainText" showHeader="false" sidebar="false" cache="false" standardStylesheets="false">
+ 	<script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"PlainText", "value":$('#PlainText').val(), "type":"Text"});
+				return attributes;
+			});
+ 		}); 
+	</script>
+  	<form>
+  		<table class="ocmsContentEditor ocmsContentEditorNested">
+  		 	<tr>
+               	<td>
+                	<label class="ocmsLabel">Text</label>
+					<textarea  name="PlainText" id="PlainText" style="width:600px;height:270px;"><apex:outputText value="{!PlainText}" /></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</apex:page>

@@ -1,0 +1,202 @@
+<apex:page controller="cms.SetupTargeting" showHeader="false"
+	sidebar="false" standardStylesheets="false">
+	<html>
+
+<head>
+<title>Manage Targeting</title>
+<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+
+<c:CmsScripts />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'AccessDialogs.js')}" />
+
+
+<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+		
+		jQuery(document).data('warning', '{!URLFOR($Resource.CmsImages,'/btn_unpublished.png')}');
+		
+		var site = {!SiteJSON};
+		
+		var userFields = {!UserFieldsJSON};
+
+	</script>
+
+</head>
+
+<body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+		<c:SetupMenu sname="{!siteName}" activeitem="targeting" />
+
+		<div style="margin-left: 210px; padding: 10px;">
+
+			<apex:outputPanel >
+
+				<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+					<div class="ocms-setup-breadcrumb-item">Setup</div>
+					<div class="ocms-setup-breadcrumb-separator"></div>
+					<div class="ocms-setup-breadcrumb-item">Manage
+						Targets</div>
+					<div class="ocms-setup-breadcrumb-separator-active"></div>
+					<div class="ocms-setup-breadcrumb-item-active">Select
+						Fields</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+					<div class="ocms-clear"></div>
+				</div>
+
+				<br />
+					<p>Before creating targets, you must select the target filter criteria fields. These are the fields that will be available when creating 
+						predefined or ad hoc targets. Only fields from the User object with data type Text or Picklist can be selected. You must select a 
+						minimum of one (1) field and a maximum of twenty (20).
+					</p>	
+					
+						<div id="saveFilterButton" >
+							Save and Close
+							</div>
+						<a href="{!$Page.SetupTargeting}?sname={!siteName}" id="cancelFilterButton" >
+								Cancel
+						</a>
+					<p> <img border="0" src="{!URLFOR($Resource.CmsImages,'/btn_unpublished.png')}" style="float:left; margin-right: 10px; margin-top: 3px;" />Once saved you can add fields and omit fields. Omitted fields will not appear in new targets or when editing an existing target. 
+						Added fields will appear in new targets or when editing an existing target.
+					</p><br />
+					
+					<table id="targetFilterFieldList"><tr><th></th><th style="text-align:left; background-color: #E7E7E7;"><strong>Field</strong></th><th style="text-align:left;  background-color: #E7E7E7;"><strong>Omit</strong></th></tr></table>
+						
+						<script>
+							var enabledCount = 0;
+							var prefix = '';
+						    var pkg_namespace = '{!namespace}';	
+  							if(pkg_namespace != '')
+  								prefix = pkg_namespace + '__';
+							
+							$(document).ready(function() {
+								$('#saveFilterButton').button().click(saveTargetFilters);
+								$('#cancelFilterButton').button();
+								
+								var usedValues = {};
+								for(var x=0;x<20;x++) {
+									var selectStr = '';
+									if (site[prefix +'Target_User_Field_'+x+'__c'] && site[prefix +'Target_User_Field_'+x+'__c']!= null) {
+										usedValues[site[prefix +'Target_User_Field_'+x+'__c']] = true;
+										selectStr = '<td><select class="index_'+x+'" size="1" disabled="disabled" style="width: 300px;"><option selected value="'+site[prefix +'Target_User_Field_'+x+'__c']+'">'+userFields[site[prefix +'Target_User_Field_'+x+'__c']]+'</option></select></td><td> <input class="index_'+x+' newCheck" type="checkbox" ' + (site[prefix +'Target_User_Field_'+x+'_Omit__c']?'checked="true"':'') + '/></td>';
+										if (site[prefix+'Target_User_Field_'+x+'_Omit__c']==false) {
+											enabledCount++;
+										}
+									} else {
+										selectStr = '<td ><select class="index_'+x+' enabledSelect" size="1" style="width: 300px;"/> </td><td><input class="index_'+x+' newCheck" type="checkbox" disabled="disabled"/></td>';
+									}
+									$('#targetFilterFieldList').append('<tr><td>' + (x+1) + '</td> ' + selectStr + ' </tr>');
+								
+								}
+								
+								var selectOptions = '<option value=" "> </option>';
+								for (var opt in userFields) {
+									if (!(opt in usedValues))
+										selectOptions += '<option value="'+opt + '">'+userFields[opt]+'</option>';
+								}
+								$('.enabledSelect').append(selectOptions);
+								
+								$('.enabledSelect').change(function() {
+									var oldValue = $(this).data('ocms-field-filter-value');
+									if (oldValue && oldValue != null && oldValue != ' '  && oldValue != $(this).val()) {
+										$('.enabledSelect option[value="'+oldValue+'"]').prop('disabled', false);	
+									}
+									newValue = $(this).val();
+									// Disable this as selectable in the selectors, then enable it in this one.
+									$('.enabledSelect option[value="'+newValue+'"]').prop('disabled', true);
+									$(this).find('option[value="'+newValue+'"]').prop('disabled', false);
+									
+									$(this).data('ocms-field-filter-value',  newValue);
+									//turn on and off the checkbox if a value is selected or cleared.
+									if (newValue != ' ') {
+										$(this).next().prop('disabled', false);
+										if ((!oldValue)|| oldValue == null || oldValue == ' ') {
+											enabledCount++;
+										}
+									}else {
+										$(this).next().prop('disabled', true);
+										if (oldValue && oldValue != null && oldValue != ' ')
+											enabledCount--;
+									}
+									
+									if (enabledCount > 0) {
+										$("#saveFilterButton").button( "enable" );
+									}else
+										$("#saveFilterButton").button( "disable" );
+								
+								});
+								$('input.newCheck').click(function() {
+									if ($(this).is(':checked')) 
+										enabledCount--;
+									else
+										enabledCount++;
+									if (enabledCount > 0) {
+										$("#saveFilterButton").button( "enable" );
+									}else
+										$("#saveFilterButton").button( "disable" );
+								});
+								//$("#saveFilterButton").;
+								$("#cancelFilterButton").click(cancelTargetFilters);
+							
+							});
+							
+							
+							function saveTargetFilters() {
+								if (enabledCount <1)
+									return;
+								for(var x=0;x<20;x++) {
+									var userField= $("select.index_"+x).val();
+									var userFieldCheck= $("input.index_"+x).is(':checked');
+									site[prefix +'Target_User_Field_'+x+'__c'] = userField==' '?null:userField;
+									site[prefix +'Target_User_Field_'+x+'_Omit__c']=userFieldCheck;
+								}
+								
+								var data = {};
+								data['action'] 	 	= "saveTargetFilterFields";
+								data['service']     = 'ContentTargetingAjax';
+								data['sname'] 	 	= '{!siteName}';
+								data['filter_fields'] 	= JSON.stringify(site);
+								
+								var handler = function(json, result){
+                                    json = $.orchestracmsUtil.parseJSON(json);
+									if((result.status) && (json.error === undefined))
+										window.location.href="{!$Page.SetupTargeting}?sname={!siteName}";
+									else{
+										$('<div></div>').ocmsShowErrorPopup({
+	                        				title : 'Save Target Filter Fields Error',
+	                           				message : json.error.message
+	                         			}); 
+									}
+								 }
+				                var options = {};
+				                options['cb']     = handler;
+				                doServiceRequest(data, options);
+							}
+							
+							function cancelTargetFilters(){
+							}
+							
+							
+						
+						</script>
+				</apex:outputPanel>
+
+		</div>
+
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+		<div style="padding: 10px;">You do not have Setup > Manage
+			Access Levels permission</div>
+	</apex:outputPanel>
+
+</body>
+
+	</html>
+</apex:page>

@@ -1,0 +1,102 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="thead" type="List"/>
+    <aura:attribute name="tbody" type="List"/>
+    <aura:attribute name="lstColDataArray" type="Object[]"/>
+    <aura:attribute name="nestedThead" type="List"/>
+    <aura:attribute name="treeGridLabel" type="String"/>
+    <aura:attribute name="isNestedTable" type="Boolean" default="false"/>
+    <aura:attribute name="sortPopup" type="Boolean" default="false" />   
+    <aura:attribute name="isAsc" type="boolean" default="false"/>
+    <aura:attribute name="isAscMobile" type="String" default="asc"/>
+    <aura:attribute name="colLabel" type="String"/>
+    <aura:attribute type="List" name="lstDisplayRecords"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:registerEvent name="headerAction" type="c:LRC_GenericTableSortEvent" />
+    <!--Sort Layout for Mobile View -->
+     <div class="slds-grid">
+   <div class="slds-col slds-align_absolute-center slds-m-bottom_small sort-button">
+    <lightning:button variant="Neutral" label="Sort" title="Brand action" onclick="{!c.sortPopup }" />
+       <aura:if isTrue="{!v.sortPopup}">
+  
+  <section role="dialog" aria-modal="true" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+      <header class="slds-modal__header">
+       
+        <h2 class="slds-text-heading_medium slds-hyphenate"><span class="slds-float_left">Sort</span>
+           <button class="slds-button slds-button_icon slds-float_right ltg-close-text" title="Close" onclick="{!c.closeModal}">
+                        &#10005;
+            <span class="slds-assistive-text">Close</span>
+          </button>
+          </h2>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium">
+          <aura:iteration items="{!v.thead}" var="item">
+            <div>
+              <aura:if isTrue="{!item.sorting}">
+                  <p class="{!and(v.colLabel==item.sColumnName,v.isAscMobile=='asc') ? 'slds-text-title_bold slds-p-around_small' : 'slds-p-around_small'}" 
+                     onclick="{!c.sortMobileTiles}"
+                     data-columnname="{!item.sValue}"
+                     data-columnlabel="{!item.sColumnName}"
+                     data-sortorder="asc">{!item.sColumnName} : Asc</p>
+                  
+                  <p class="{!and(v.colLabel==item.sColumnName,v.isAscMobile=='desc') ? 'slds-text-title_bold slds-p-around_small' : 'slds-p-around_small'}"
+                     onclick="{!c.sortMobileTiles}"
+                     data-columnname="{!item.sValue}"
+                     data-columnlabel="{!item.sColumnName}"
+                     data-sortorder="desc">{!item.sColumnName} : Desc </p>
+           
+              </aura:if>
+                </div>
+              
+          </aura:iteration>
+          
+      </div>
+     
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>
+   
+       </aura:if> 
+      
+      </div>
+    </div>
+    <!--Sort Layout for Mobile View Ends-->
+    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped slds-max-medium-table_stacked" role="grid">
+        <thead>
+            <tr>
+                <aura:iteration items="{!v.thead}" var="a">
+                    <th scope="col" class="{!a.sType == 'icon' || a.sType == 'link-icon' ?'slds-text-align_center slds-is-sortable slds-cell-wrap slds-text-title_caps':'slds-is-sortable slds-cell-wrap slds-text-title_caps'}" 
+                        onclick="{!c.sortColumn}"
+                        data-columnname="{!a.sValue}"
+                        data-columnlabel="{!a.sColumnName}"
+                        data-sorting="{!a.sorting}"
+                        data-sortType="{!a.sortType}">
+                       {!a.sColumnName}
+                     <span class="icon-fxr">
+                         <aura:if isTrue="{!a.sorting}">
+                       <aura:if isTrue="{!and(v.isAsc,v.colLabel==a.sColumnName)}">&nbsp;  &#9660; </aura:if>  
+                       <aura:if isTrue="{!and(!(v.isAsc),v.colLabel==a.sColumnName)}">&nbsp;  &#9650; </aura:if>        
+                     </aura:if>
+                         </span>
+                    </th>
+                   
+                </aura:iteration>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.tbody}" var="col" indexVar="index">
+                <c:LRC_TableRow column-header="{!v.thead}" 
+                                row-data="{!col}" 
+                                nestedThead="{!v.nestedThead}" 
+                                isNestedTable="{!v.isNestedTable}" 
+                                parentIndex="{!index}" 
+                                treeGridLabel="{!v.treeGridLabel}"
+                                lstColDataArray= "{!v.lstColDataArray}"/>
+            </aura:iteration>
+         </tbody>
+    </table>
+    
+   
+</aura:component>

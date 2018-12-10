@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Access Level Rule</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Access Level Rules</value>
+    </caseValues>
+    <fields>
+        <label><!-- Access Level Restriction --></label>
+        <name>Access_Level_Restriction__c</name>
+        <relationshipLabel><!-- Access Level Rules --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Access Level --></label>
+        <name>Access_Level__c</name>
+        <relationshipLabel><!-- Access Level Rules --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Layout --></label>
+        <name>Content_Layout__c</name>
+        <relationshipLabel><!-- Access Level Rules --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Type --></label>
+        <name>Content_Type__c</name>
+        <relationshipLabel><!-- Access Level Rules --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Content</masterLabel>
+            <translation><!-- Content --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Page</masterLabel>
+            <translation><!-- Page --></translation>
+        </picklistValues>
+    </fields>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Content Sharing Rule --></label>
+        <name>OrchestraCMS_Content_Sharing_Rule</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Page Sharing Rule --></label>
+        <name>OrchestraCMS_Page_Sharing_Rule</name>
+    </sharingReasons>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

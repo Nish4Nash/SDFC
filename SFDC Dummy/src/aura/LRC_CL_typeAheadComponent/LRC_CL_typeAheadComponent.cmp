@@ -1,0 +1,55 @@
+<!--***********************************************************************************
+* Component: LRC_CL_typeAheadComponent
+* CreatedBy: Ajay Agnihotri (Re-Used Existing Component)
+* Description: Lighning component to search a specified SObject for a specific string
+* Revision History
+***********************************************************************************-->
+<aura:component controller="LRC_CL_typeAheadController" implements="flexipage:availableForAllPageTypes">
+     
+    <!-- Attributes -->
+    <aura:attribute name="sObjectAPIName" type="String" required="true" description="The API name of the SObject to search" />
+    <aura:attribute name="label" type="String" required="true" description="The label to assign to the lookup, eg: Account" />
+    <aura:attribute name="pluralLabel" type="String" required="true" description="The plural label to assign to the lookup, eg: Accounts" />
+    <aura:attribute name="listIconSVGPath" type="String" default="/resource/slds103/assets/icons/custom-sprite/svg/symbols.svg#custom11" description="The static resource path to the svg icon to use." />
+    <aura:attribute name="listIconClass" type="String" default="slds-icon-custom-11" description="The SLDS class to use for the icon." />
+    <aura:attribute name="searchString" type="String" description="The search string to find." />
+    <aura:attribute name="matches" type="c.LRC_CL_result[]" description="The resulting matches returned by the Apex controller." />
+ 	<aura:attribute name="searchField" type="String" description="Serach will be based on the Given search Field" />
+    <aura:attribute name="DisplayField" type="String" description="Serach will be based on the Given search Field" />
+
+    <!-- Events -->
+    <aura:handler event="c:LRC_CL_updateLookupName" action="{!c.updateLookupNameEventinTypeAhead}" />
+    <aura:registerEvent name="updateLookupIdEvent" type="c:LRC_CL_updateLookupId"/>    
+    <!--<aura:registerEvent name="clearLookupIdEvent" type="c:LRC_ClearLookupId"/>    -->
+     
+    <!-- Lookup Markup : See https://www.lightningdesignsystem.com/components/lookups -->
+    <div class="slds-m-bottom--xx-large"></div> 
+    <div aura:id="lookup-div" class="slds-lookup" data-select="single" data-scope="single" data-typeahead="true">
+        <!-- This is the Input form markup -->
+        <div class="slds-form-element">
+            <label class="slds-form-element__label" for="lookup">{!v.label}</label>
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right" >
+                	<c:LRC_CL_svgIcon class="slds-input__icon" svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="small" name="search" />
+                    <ui:inputText aura:id="lookup" value="{!v.searchString}" class="slds-input" updateOn="keyup" keyup="{!c.search}" />
+                </div>
+            </div>
+            <!-- This is the lookup list markup. Initially it's hidden -->
+            <div id="searchToOpenPopUp" aura:id="lookuplist" class="slds-lookup__menu slds-hide" role="listbox">
+                <div class="slds-lookup__item" onclick="{!c.OpenPopUp}">
+                    <button class="slds-button">
+                        <c:LRC_CL_svgIcon class="slds-icon slds-icon-text-default slds-icon--small" svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="small" name="search" />
+                        &quot;{!v.searchString}&quot; in {!v.pluralLabel}
+                    </button>
+                </div>
+                <ul aura:id="lookuplist-items" class="slds-lookup__list" role="presentation">
+                    <aura:iteration items="{!v.matches}" var="match">
+                        <li class="slds-lookup__item">
+                            <a id="{!globalId + '_id_' + match.SObjectId}" role="option" onclick="{!c.select}">
+                                <c:LRC_CL_svgIcon class="{!'slds-icon ' + v.listIconClass + ' slds-icon--small'}" svgPath="{!v.listIconSVGPath}" category="standard" size="small" name="listIcon" />{!match.SObjectLabel}<br/>
+                            </a>
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </div>
+        </div>
+</aura:component>

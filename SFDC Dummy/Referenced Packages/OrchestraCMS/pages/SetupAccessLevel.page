@@ -1,0 +1,411 @@
+<apex:page controller="cms.SetupAccessLevel" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+    <title>Manage Access Levels</title>
+    
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	
+	<c:CmsScripts />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+   	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'AccessDialogs.js')}" />
+
+  	<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+
+		function deleteRule(id, level){
+			var data = {};
+			data['action'] 	 = "deleteAccessContentRule";
+ 			data['sname'] 	 = "{!site_name}";
+ 			data['token'] 	 = "{!token}";
+			data['share_id'] = id;
+
+		    $('<div />').ocmsShowConfirmationDlg({
+			   'title': 'Delete Rule',
+			   'message' : 'You are deleting a sharing rule. Continue?',
+			   'onYES' : function(){
+					$.ajax({
+						async: false,
+						url : '/apex/OrchestraPrivateAjax',
+						data: data,
+						type: 'POST',
+						dataType: 'json',
+						success: function(json, textStatus, xhr){
+							selectLevelCall(level);
+						}
+		
+					});	
+					return true;
+		   	   },
+		   	   'onNO' : function(dialog, obj){
+		   		   return true;
+		   	   }
+		    });
+
+
+	    }
+	    
+		function deleteLevel(id){
+			var data = {};
+			data['action'] 	 = "deleteAccessLevel";
+ 			data['sname'] 	 = "{!site_name}";
+ 			data['token'] 	 = "{!token}";
+			data['level'] = id;
+
+		    $('<div />').ocmsShowConfirmationDlg({
+			   'title': 'Delete Access Level',
+			   'message' : 'You are deleting an Access Level. This will delete it and all its sharing rules. Continue?',
+			   'onYES' : function(){
+					$.ajax({
+						async: false,
+						url : '/apex/OrchestraPrivateAjax',
+						data: data,
+						type: 'POST',
+						dataType: 'json',
+						success: function(json, textStatus, xhr){
+							refreshLevelList();
+						}
+					});	
+					return true;
+		   	   },
+		   	   'onNO' : function(dialog, obj){
+		   		   return true;
+		   	   }
+		    });
+
+	
+	    }	    
+	    
+	    $(document).ready(function(){
+			activateButton();
+	   	});
+	   	
+	   	function activateButton(){
+	   		
+	   		$('#addLevelButton').button();
+	   		$('#addLevelButton').on('click', function(){
+	   			$('<div></div>').ocmsCreateAccessLevel({
+	   				"sname" : "{!site_name}",
+	   				"token" : "{!token}",
+	   				"onSuccess" : function(){ refreshLevelList(); }
+	   			});
+			}); 
+ 		                         
+ 		    $('#filterButton').button(); 
+ 		    $('#filterButton').on('click', function(){ 
+ 		         filter(); 
+ 		    }); 
+ 		                         
+ 		    $('#clearButton').button(); 
+ 		    $('#clearButton').on('click', function(){ 
+ 		         clear(); 
+ 		    });                      
+ 		                                
+	   	}
+	</script>
+  
+  </head>
+
+  <body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+	  	<c:SetupMenu sname="{!site_name}" activeitem="accessLevels" />
+	
+	  	<div style="margin-left: 210px; padding: 10px;">
+	
+			<apex:outputPanel rendered="{!privateSharingOff}">
+	
+		  		<div class="ocms-setup-breadcrumb">
+				  <div class="ocms-setup-breadcrumb-start"></div>
+				  <div class="ocms-setup-breadcrumb-item">Setup</div>
+				  <div class="ocms-setup-breadcrumb-separator-active"></div>
+				  <div class="ocms-setup-breadcrumb-item-active">Manage Access Levels</div>
+				  <div class="ocms-setup-breadcrumb-end"></div>
+				  <div class="ocms-clear"></div>
+				</div>
+		
+				<br />
+					
+				<apex:outputPanel rendered="{!siteUserIssue}">
+					<strong>The site's guest user is currently not set.</strong><br />
+					Go to OrchestraCMS | Setup | Site Details. Select the user and save.				
+				</apex:outputPanel>
+						
+				<apex:outputPanel rendered="{!sharingIssue}">
+					<apex:outputPanel rendered="{!siteUserIssue}"><br /><br /></apex:outputPanel>
+					<strong>Sharing setting issues</strong><br />
+					Go to Salesforce.com | Setup | Administration Setup | Security Controls | Sharing Settings<br />
+					<ul style="margin-left: 13px; padding-left: 0px;">
+						<apex:repeat value="{!sharingIssues}" var="issue">
+							<li style="margin-left: 0px;"><apex:outputText value="{!issue}" /></li>
+						</apex:repeat>
+					</ul>
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!!privateSharingOn}">
+					Private Sharing is currently inactive. <apex:outputPanel rendered="{!privateSharingIssues}">Once the above issues are resolved click Activate</apex:outputPanel><br /><br />
+					<apex:form >
+						<apex:commandButton action="{!activateSharing}" value="Activate" />
+					</apex:form>
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!privateSharingOn}">
+					To edit the access levels resolve the above issues.
+				</apex:outputPanel>
+			
+			</apex:outputPanel>
+	
+			<apex:outputPanel id="levelList" rendered="{!privateSharingOn}">
+	
+				<apex:outputPanel rendered="{!showLevelList}">
+	
+			  		<div class="ocms-setup-breadcrumb">
+					  <div class="ocms-setup-breadcrumb-start"></div>
+					  <div class="ocms-setup-breadcrumb-item">Setup</div>
+					  <div class="ocms-setup-breadcrumb-separator-active"></div>
+					  <div class="ocms-setup-breadcrumb-item-active">Manage Access Levels</div>
+					  <div class="ocms-setup-breadcrumb-end"></div>
+					  <div class="ocms-clear"></div>
+					</div>
+			
+			  		<br />
+	
+					<apex:outputPanel rendered="{!siteUserIssue}">
+						<strong>The site's guest user is currently not set.</strong><br />
+						Go to OrchestraCMS | Setup | Site Details. Select the user and save.				
+					</apex:outputPanel>
+							
+					<apex:outputPanel rendered="{!sharingIssue}">
+						<apex:outputPanel rendered="{!siteUserIssue}"><br /><br /></apex:outputPanel>
+						<strong>Sharing setting issues</strong><br />
+						Go to Salesforce.com | Setup | Administration Setup | Security Controls | Sharing Settings<br />
+						<ul style="margin-left: 13px; padding-left: 0px;">
+							<apex:repeat value="{!sharingIssues}" var="issue">
+								<li style="margin-left: 0px;"><apex:outputText value="{!issue}" /></li>
+							</apex:repeat>
+						</ul>
+					</apex:outputPanel>
+				
+					<br />
+	
+					<div style="height: 29px;">
+						<div style="font-size: 16px; padding-bottom: 8px; padding-right: 25px; float: left;">Access Levels</div>
+                        <div id="addLevelButton" style="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Add Level</div> 
+                    </div> 
+                         
+                    <br /> 
+
+                    <div style="height: 29px;"> 
+                            <apex:form > 
+                                    <table> 
+                                    <tr> 
+                                    <td>Starts With&nbsp;&nbsp; <apex:inputText value="{!nameFilter}" /></td> 
+                                    <td><div id="filterButton" style="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Filter</div></td> 
+                                    <td><div id="clearButton" style="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Clear</div></td> 
+                                    </tr> 
+                                    </table> 
+                                    <apex:actionFunction action="{!refreshLevelList}" name="filter" rerender="levelList" oncomplete="activateButton()" /> 
+                                    <apex:actionFunction action="{!clear}" name="clear" rerender="levelList" oncomplete="activateButton()" /> 
+                            </apex:form> 
+					</div>
+					
+					<br />
+					
+					<table border="0" cellspacing="0" cellpadding="5" style="width: 470px;">
+					<tr style="background-color: #E7E7E8;">
+					  <td width="100" style="padding: 2px;"></td>
+					  <td width="320" style="padding: 2px;">Name</td>
+					  <td width="50" style="padding: 2px;">Value</td>
+					  <td width="250" style="padding: 2px;">Prevent Level Inheritance</td>
+					</tr>
+					<apex:repeat value="{!levelsObj}" var="level">
+					  <tr>
+					  <td>
+					  	<apex:outputPanel rendered="{!!privateSharingIssues}"><a href="#" onclick="selectLevelCall('{!level.Id}');" class="setup-link">Edit</a> | <a href="#" onclick="deleteLevel('{!level.Id}');" class="setup-link" >Del</a></apex:outputPanel>
+					  	<apex:outputPanel rendered="{!privateSharingIssues}"><span style="color: #888888;">Edit</span> | <a href="#" onclick="deleteLevel('{!level.Id}');" class="setup-link">Del</a></apex:outputPanel>
+					  </td>
+					  <td>{!level.cms__Name__c}</td>
+					  <td>{!level.cms__Value__c}</td>
+					  <td>{!IF(level.cms__Prevent_Level_Inheritance__c,'Yes','No')}</td>
+					  </tr>
+					</apex:repeat>
+					</table>
+	
+                    <apex:form > 
+                     	<apex:outputPanel rendered="{!showControls}"><br /><br /><apex:commandLink action="{!previous}" value="< Previous" rendered="{!showPrevious}" /><apex:outputText rendered="{!IF(showPrevious && showNext, true, false)}"> &nbsp; | &nbsp; </apex:outputText><apex:commandLink action="{!next}" value="Next >" rendered="{!showNext}" /></apex:outputPanel> 
+                  	</apex:form> 
+	
+				</apex:outputPanel>
+				
+				<apex:form >
+					<apex:actionFunction action="{!selectLevel}" name="selectLevelCall" rerender="levelRules, levelList">
+						<apex:param name="level_id" value="" />
+					</apex:actionFunction>
+					<apex:actionFunction action="{!refreshLevelList}" name="refreshLevelList" rerender="levelList" oncomplete="activateButton()" />
+				</apex:form>
+				
+				<apex:outputPanel id="levelRules">
+				
+					<apex:outputPanel rendered="{!showRules}">
+	
+				  		<div class="ocms-setup-breadcrumb">
+						  <div class="ocms-setup-breadcrumb-start"></div>
+						  <div class="ocms-setup-breadcrumb-item">Setup</div>
+						  <div class="ocms-setup-breadcrumb-separator"></div>
+						  <div class="ocms-setup-breadcrumb-item">Manage Access Levels</div>
+						  <div class="ocms-setup-breadcrumb-separator-active"></div>
+						  <div class="ocms-setup-breadcrumb-item-active">{!selectedLevelObj.Name__c}</div>
+						  <div class="ocms-setup-breadcrumb-end"></div>
+						  <div class="ocms-clear"></div>
+						</div>
+				
+				  		<br />
+	
+						<div style="height: 29px;">
+							<div style="font-size: 16px; padding-bottom: 8px;">Access Level - {!selectedLevelObj.Name__c}</div>
+						</div>
+	
+						{!message}
+	
+						<br /><br />
+						
+						<div style="height: 29px;">
+							<div style="font-size: 13px; padding-bottom: 8px; padding-right: 25px; float: left;">Content</div>
+							<div id="addLevelRule">Add Rule</div>
+						</div>
+							
+					    <script type="text/javascript">
+					    
+					    $('#addLevelRule').button();
+					    $('#addLevelRule').on('click',function(){ addRule(); });
+					    
+					    function addRule(){
+					    	$('<div id="addRules"></div>').ocmsAddAccessRuleDialog({
+					    		"sname" : "{!site_name}",
+					    		"token" : "{!token}",
+					    		"level" : "{!selectedLevelObj.Id}",
+					    		"templateShare" : {!templateSharing},
+					    		"afterFinish" : function(){
+					    			selectLevelCall("{!selectedLevelObj.Id}");
+					    		}
+					    	});
+					    }
+					    
+					    </script>
+												
+						<apex:outputPanel rendered="{!templateSharing}">
+						
+							<table border="0" cellspacing="0" cellpadding="5" width="750">
+								<tr style="background-color: #E7E7E8;">
+								  <td width="50" style="font-size: 11px;"></td>
+								  <td width="250" style="font-size: 11px;"><strong>Type</strong></td>
+								  <td width="250" style="font-size: 11px;"><strong>Name</strong></td>
+								  <td width="100" style="font-size: 11px;"><strong>Content Type</strong></td>
+								  <td width="100" style="font-size: 11px;"><strong>Content Template</strong></td>
+								</tr>
+								<apex:repeat value="{!allRules}" var="acr">
+									<tr>
+									  <td style="font-size: 11px;"><a href="#" onclick="deleteRule('{!acr.rule.shareId}', '{!selectedLevelObj.Id}')" style="text-decoration: underline;">Del</a></td>
+									  <td style="font-size: 11px;">{!acr.rule.userGroupType}</td>
+									  <td style="font-size: 11px;">{!acr.rule.userGroup}</td>
+									  <td style="font-size: 11px;">{!acr.content_type.cms__Name__c}</td>
+									  <td style="font-size: 11px;">{!acr.content_layout.cms__Name__c}</td>		
+									</tr>
+								</apex:repeat>
+							</table>
+	
+						</apex:outputPanel>
+						
+						<apex:outputPanel rendered="{!!templateSharing}">
+						
+							<table border="0" cellspacing="0" cellpadding="5" width="750">
+								<tr style="background-color: #E7E7E8;">
+								  <td width="50" style="font-size: 11px;"></td>
+								  <td width="250" style="font-size: 11px;"><strong>Type</strong></td>
+								  <td width="250" style="font-size: 11px;"><strong>Name</strong></td>
+								  <td width="100" style="font-size: 11px;"><strong>Content Type</strong></td>
+								</tr>
+								<apex:repeat value="{!allRules}" var="acr">
+									<tr>
+									  <td style="font-size: 11px;"><a href="#" onclick="deleteRule('{!acr.rule.shareId}', '{!selectedLevelObj.Id}')" style="text-decoration: underline;">Del</a></td>
+									  <td style="font-size: 11px;">{!acr.rule.userGroupType}</td>
+									  <td style="font-size: 11px;">{!acr.rule.userGroup}</td>
+									  <td style="font-size: 11px;">{!acr.content_type.cms__Name__c}</td>	
+									</tr>
+								</apex:repeat>
+							</table>
+	
+						</apex:outputPanel>					
+						
+						<br /><br />
+						
+						<apex:outputPanel rendered="{!pageSharing}">
+	
+							<div style="height: 29px;">
+								<div style="font-size: 13px; padding-bottom: 8px; padding-right: 25px; float: left;">Pages</div>
+								<div id="addLevelPageRule">Add Rule</div>
+							</div>					
+		
+						    <script type="text/javascript">
+						    
+						    $('#addLevelPageRule').button();
+						    $('#addLevelPageRule').on('click',function(){ addPageRule(); });
+						    
+						    function addPageRule(){
+						    	$('<div id="addPageRules"></div>').ocmsAddPageAccessRuleDialog({
+						    		"sname" : "{!site_name}",
+						    		"token" : "{!token}",
+						    		"level" : "{!selectedLevelObj.Id}",
+						    		"onSuccess" : function(){
+						    			selectLevelCall("{!selectedLevelObj.Id}");
+						    		}
+						    	});
+						    }
+						    
+						    </script>
+						
+							<table border="0" cellspacing="0" cellpadding="5" width="750">
+								<tr style="background-color: #E7E7E8;">
+								  <td width="50" style="font-size: 11px;"></td>
+								  <td width="250" style="font-size: 11px;"><strong>Type</strong></td>
+								  <td width="250" style="font-size: 11px;"><strong>Name</strong></td>
+								</tr>
+								<apex:repeat value="{!allPageRules}" var="apr">
+									<tr>
+									  <td style="font-size: 11px;"><a href="#" onclick="deleteRule('{!apr.rule.shareId}', '{!selectedLevelObj.Id}')" style="text-decoration: underline;">Del</a></td>
+									  <td style="font-size: 11px;">{!apr.rule.userGroupType}</td>
+									  <td style="font-size: 11px;">{!apr.rule.userGroup}</td>
+									</tr>
+								</apex:repeat>
+							</table>
+	
+						</apex:outputPanel>	
+						
+					</apex:outputPanel>
+				
+				</apex:outputPanel>	
+				
+				<div id="addLevel"></div>
+				
+				<div id="addRules"></div>	
+	
+			</apex:outputPanel>
+	
+	    </div>
+
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+	  	<div style="padding: 10px;">
+	  		You do not have Setup > Manage Access Levels permission
+	   	</div>
+	</apex:outputPanel>  
+	
+  </body>
+
+</html>
+</apex:page>

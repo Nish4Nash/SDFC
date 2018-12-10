@@ -1,0 +1,299 @@
+<apex:page id="installer" controller="cms.SiteDetails" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="OrchestraCMS">
+
+<html style="padding: 0px; margin: 0px;">
+
+<head>
+	<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/AccessDialogs.js')}" />		
+ 	
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	
+ 	<c:CmsScripts />
+
+
+	<script type="text/javascript">
+		
+		$('document').ready(function(){
+				showError();
+				if({!clearError})
+					clearSiteError();
+		});
+		
+		function initGuestUserSelector(){
+		
+		
+			$('#guestUserSelector').ocmsGuestUserDialog({
+				"sname" : "{!site.Site_Name__c}",
+				"token" : "{!token}",
+				"userlist" : [{!userList}],
+				"passthroughId" : "{!$Component.installer.DetailForm.siteGuestUser}",
+				"userSelected" : {!userSelected}
+			});
+		
+		}
+		
+		
+		function showError(){
+			if ($('#messagePanel .message').html().trim() != '') {
+				 $('#messagePanel').ocmsShowErrorPopup({
+	                   	message : $('#messagePanel .message').html(),
+	                    width: 300
+	            });
+            }
+		
+		}
+	   
+	
+	</script>
+	
+</head>
+			  	
+		
+<body class="ocms">
+
+
+<apex:outputPanel rendered="{!hasAccess}">
+
+	<c:SetupMenu sname="{!sname}" activeitem="site-details" />
+	
+	<apex:outputPanel id="main" layout="block" style="margin-left: 210px; padding: 10px;">
+	
+		<div class="ocms-setup-breadcrumb">
+		  <div class="ocms-setup-breadcrumb-start"></div>
+		  <div class="ocms-setup-breadcrumb-item">Setup</div>
+		  <div class="ocms-setup-breadcrumb-separator-active"></div>		  
+		  <div class="ocms-setup-breadcrumb-item-active">Site Details</div>
+		  <div class="ocms-setup-breadcrumb-end"></div>
+		  <div class="ocms-clear"></div>
+		</div>
+		<br />
+		
+		<apex:outputPanel id="status">
+            <div id="messagePanel" style="display: none;">
+                <span class="message">
+                	<apex:outputText escape="false" value="{!message}"  />
+                </span>
+            </div>
+        </apex:outputPanel>
+		<apex:form id="DetailForm">
+			<table border="0" cellspacing="0" cellpadding="0">
+			
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Name:</td>
+			  <td style="padding: 5px 5px 5px 0px;"><strong>{!site.Site_Name__c}</strong></td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Domain:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  		<apex:outputText escape="false" value="{!site.cms__Site_Domain__c}" rendered="{!!Edit}" />
+			  		<apex:inputField value="{!site.cms__Site_Domain__c}" rendered="{!Edit}"  style="width:400px;" />
+			  </td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Secure Domain:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  	<apex:outputText escape="false" value="{!site.cms__Site_Secure_Domain__c}" rendered="{!!Edit}" />
+			  	<apex:inputField value="{!site.cms__Site_Secure_Domain__c}" rendered="{!Edit}"  styleClass="ocms-input" style="width:400px;" />
+			  </td>
+			</tr>			
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Prefix:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  	<apex:outputText escape="false" rendered="{!!Edit}" >
+			  		{!site.cms__Site_Prefix__c}
+			  	</apex:outputText>
+				<apex:outputText escape="false" rendered="{!Edit}" >
+					<apex:inputField value="{!site.cms__Site_Prefix__c}"  style="width:200px;" />
+				</apex:outputText>
+			  </td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site URL:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  	<apex:outputText escape="false" rendered="{!!Edit}" >
+			  		<a href="{!site.cms__Site_URL__c}" target="_blank">{!site.cms__Site_URL__c}</a>
+			  	</apex:outputText>
+				<apex:outputText escape="false" rendered="{!Edit}" >
+					<apex:inputField value="{!site.cms__Site_URL__c}"  style="width:400px;" />
+				</apex:outputText>
+			  </td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Secure URL:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  	<apex:outputText escape="false" rendered="{!!Edit}" >
+			  		<a href="{!site.cms__Site_Secure_URL__c}" target="_blank">{!site.cms__Site_Secure_URL__c}</a>
+			  	</apex:outputText>
+			  	<apex:outputText escape="false" rendered="{!Edit}" >
+			  		<apex:inputField value="{!site.cms__Site_Secure_URL__c}" styleClass="ocms-textarea" style="width:400px;" />
+			  	</apex:outputText>
+			  </td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Site Guest User:</td>
+			  <td style="padding: 5px 5px 5px 0px;">
+			  	<apex:outputText escape="false" rendered="{!!Edit}" >
+			  		{!site.Site_Guest_User__r.Name}
+			  	</apex:outputText>
+			  	<apex:outputText escape="false" rendered="{!Edit}" >
+			  		<apex:inputHidden value="{!site.cms__Site_Guest_User__c}" id="siteGuestUser" />
+			  		<div id="guestUserSelector" style="display:inline-block"></div>
+			  		
+			  		<apex:outputPanel id="valdiatePermission" style="margin-left:10px">Validate Permissions</apex:outputPanel>
+			  		
+			  	</apex:outputText>			  
+			   
+			    <script>
+			     function initPermissionButton() {
+				    	$($.orchestracmsUtil.convertComponentId('{!$Component.valdiatePermission}',true)).button();			
+						$($.orchestracmsUtil.convertComponentId('{!$Component.valdiatePermission}',true)).on('click', function(){
+							var popup = $('<div></div>').ocmsShowInfoPopup({
+								message: 'Validating Guest Permissons'
+							});
+							var data = {};
+		    				data['action']    = "generate_site_viewer_perm";
+			   			    data['service']   =	"ocmsPermissionSetGen";
+			     		  	data['sname']     =  "{!site.Site_Name__c}";
+		    				var handler = function(json, result){
+					       		
+					        	json = $.orchestracmsUtil.parseJSON(json);
+					        	if((result.status == true) && (json.isSuccess)) {
+					         		popup.message='done';
+			    					
+			    				} else {
+					         		 $('<div></div>').ocmsShowErrorPopup({
+                   						title: 'error',
+                   						message : 'Error generating OrchestraCMS permissionSet: ' + json.message,
+                   						width: 300
+            						});
+            					}
+					        	popup.ocmsShowInfoPopup('closeMessage');
+					       }
+					       var options = {};
+					       options['cb']     = handler;
+					       doServiceRequest(data, options);
+		    			});
+					}
+			    
+			    </script>
+			  
+			  </td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Package Prefix:</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:outputText escape="false" value="{!package_prefix}"/></td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Salesforce Instance:</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:outputText escape="false" value="{!sf_instance}"/></td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Model Version:</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:outputText escape="false" value="{!version_model}"/></td>
+			</tr>						
+			<tr>
+			  <td colspan="2"><h3>URL Options</h3></td>
+			</tr>
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Enable Unique URLS</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:inputCheckbox value="{!siteConfig.EnableSingleURL}" disabled="{!!Edit}"/></td>
+			</tr>			
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Enable Case-sensitive URLs</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:inputCheckbox value="{!siteConfig.EnableCaseSensitiveURLs}" disabled="{!!Edit}"/></td>
+			</tr>
+			<tr>
+			  <td colspan="2"><h3>Markup Options</h3></td>
+			</tr>				
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Disable Superfluous Span Tags</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:inputCheckbox value="{!siteConfig.TurnOffSpans}" disabled="{!!Edit}"/></td>
+			</tr>			
+			<tr>
+			  <td colspan="2"><h3>Search Engine Options</h3></td>
+			</tr>				
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;">Enable Server Side Cache Injection (Experimental)</td>
+			  <td style="padding: 5px 5px 5px 0px;"><apex:inputCheckbox value="{!siteConfig.EnableSDL}" disabled="{!!Edit}"/></td>
+			</tr>			
+			<tr>
+			  <td style="padding: 5px 5px 5px 0px;" colspan="2">
+			  	<apex:actionFunction action="{!EditDetails}" name="edit" oncomplete="initGuestUserSelector();initPermissionButton();" rerender="DetailForm" />
+			  	<apex:actionFunction action="{!SaveDetails}" name="save" rerender="DetailForm,status" oncomplete="showError(),savePermissionSetGuestAjax()" />
+			  	<apex:actionFunction action="{!clearSiteError}" name="clearSiteError"  rerender="EmptyBlock"/>
+			  	<apex:outputtext id="EmptyBlock"/>
+			  	<apex:outputPanel id="editButton" rendered="{!!Edit}">Edit</apex:outputPanel>
+			  	<apex:outputPanel id="saveButton" rendered="{!Edit}">Save</apex:outputPanel>
+
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$($.orchestracmsUtil.convertComponentId('{!$Component.editButton}',true)).button();			
+						$($.orchestracmsUtil.convertComponentId('{!$Component.editButton}',true)).on('click', function(){
+							edit();
+						});
+						$($.orchestracmsUtil.convertComponentId('{!$Component.saveButton}',true)).button();
+						$($.orchestracmsUtil.convertComponentId('{!$Component.saveButton}',true)).on('click', function(){
+							save();
+						});
+					});
+				</script>
+				<apex:outputPanel id="permission_set_container" style="padding: 2px;">
+					<script type="text/javascript">
+     	
+		        		function savePermissionSetGuestAjax(){
+		        			if({!site.Site_Guest_User__r.Id != null && site.Site_Guest_User__r.Id !=''}) {
+			        			var popup = $('<div></div>').ocmsShowInfoPopup({
+								message: 'Saving Permission Set for Site User'
+							});
+							var data = {};
+					    	data['action']   		= 'generate_site_viewer_perm';
+						   	data['service']   		= 'ocmsPermissionSetGen';
+						    data['site_viewer'] 	= '{!site.Site_Guest_User__r.Id}';
+						    data['sname']			= '{!sName}';
+						   
+						   	var handler = function(json, result){
+								json = $.orchestracmsUtil.parseJSON(json);
+								if((result.status == true) && (json.isSuccess)) {
+								     popup.message='done';
+								     popup.ocmsShowInfoPopup('closeMessage');
+								    
+						    	} else {
+								         
+							         $('<div></div>').ocmsShowErrorPopup({
+			                  				title: 'error',
+			                  				message : 'Error creating permissions for Site User: ' + json.message,
+			                  				width: 400
+			           				});
+			           			}
+			           			savePermissionSetAjax();
+							   
+							}
+							var options = {};
+							options['cb']     = handler;
+							doServiceRequest(data, options);
+						} 
+		        }
+    		</script>
+		</apex:outputPanel>
+			  </td>
+			</tr>			
+			
+			</table>
+		</apex:form>
+	
+	</apex:outputPanel>
+
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!!hasAccess}">
+  	<div style="padding: 10px;">
+  		You do not have Setup > Site Details permission
+   	</div>
+</apex:outputPanel>  
+
+</body>
+
+</html>
+
+</apex:page>

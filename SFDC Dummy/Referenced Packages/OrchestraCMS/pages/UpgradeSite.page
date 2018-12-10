@@ -1,0 +1,3 @@
+<apex:page controller="cms.UpgradeSiteController" title="Setup - Upgrade Site">
+<!--  Site upgrade is handled during package installation process via the Upgrade site controller script -->
+</apex:page>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>License Profile Sharing Restriction</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>License Profile Sharing Restrictions</value>
+    </caseValues>
+    <fields>
+        <label><!-- License Profile --></label>
+        <name>License_Profile__c</name>
+        <relationshipLabel><!-- License Profile Sharing Restrictions --></relationshipLabel>
+    </fields>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Profile Restriction Collab --></label>
+        <name>OrchestraCMS_Profile_Restriction_Collab</name>
+    </sharingReasons>
+    <sharingReasons>
+        <label><!-- OrchestraCMS Profile Restriction Visitor --></label>
+        <name>OrchestraCMS_Profile_Restriction_Visitor</name>
+    </sharingReasons>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

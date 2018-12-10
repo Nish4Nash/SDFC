@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Page Layout</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Page Layouts</value>
+    </caseValues>
+    <fields>
+        <label><!-- Custom Body Tag --></label>
+        <name>Custom_Body_Tag__c</name>
+    </fields>
+    <fields>
+        <label><!-- Custom HTML Tag --></label>
+        <name>Custom_HTML_Tag__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Disable OrchestraCMS Scripts --></label>
+        <name>Disable_OrchestraCMS_Scripts__c</name>
+    </fields>
+    <fields>
+        <label><!-- Disable Standard Body Tag --></label>
+        <name>Disable_Standard_Body_Tag__c</name>
+    </fields>
+    <fields>
+        <label><!-- Disable Standard Html Tag --></label>
+        <name>Disable_Standard_Html_Tag__c</name>
+    </fields>
+    <fields>
+        <label><!-- Doc Type --></label>
+        <name>Doc_Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Label --></label>
+        <name>Label__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Namespace --></label>
+        <name>Namespace__c</name>
+    </fields>
+    <fields>
+        <help><!-- Used for no visualforce page generation --></help>
+        <label><!-- Render Cache --></label>
+        <name>Render_Cache__c</name>
+    </fields>
+    <fields>
+        <label><!-- Site Name --></label>
+        <name>Site_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Page Layouts --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail Id --></label>
+        <name>Thumbnail_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail Large Id --></label>
+        <name>Thumbnail_Large_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce Edit --></label>
+        <name>Visualforce_Edit__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce Email --></label>
+        <name>Visualforce_Email__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce View --></label>
+        <name>Visualforce_View__c</name>
+    </fields>
+    <fields>
+        <help><!-- The field determines whether or not pages built with this template can be cached. For example if your template has a custom that is dynamic on load then page caching should be disabled. --></help>
+        <label><!-- isCacheable --></label>
+        <name>isCacheable__c</name>
+    </fields>
+    <layouts>
+        <layout>Page Layout Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

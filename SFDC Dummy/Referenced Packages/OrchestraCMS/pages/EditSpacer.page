@@ -1,0 +1,86 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.Spacer" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	<script type="text/javascript" language="javascript" >	
+		$(document).ready(function(){
+
+			// this disables the "split view" button on the "parent" content editor window
+			if (typeof $jParent != 'undefined') {
+			    $jParent('#contentEditActionBar').ocmsActionBar('disableAction','SplitView');
+			}
+			
+			// this disables the langauge selector on the parent content editor window
+			$('.ocmslanguageSelected', window.parent.document).prop('disabled', true);
+
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array(); 
+				attributes.push({"name":"SpacerHeight", "value":$('#SpacerHeight').val(), "type":"Text", lang:""});
+				attributes.push({"name":"BackgroundColor", "value":$('#BackgroundColor').val(), "type":"Text", lang:""});
+				return {'cli':attributes};
+			});			
+			
+			var location = "{!URLFOR($Resource.OrchestraCMSUI, '/selector/color/images/Bars.png')}";		
+			var path = location.substr(0, location.length-8);	
+			var cssPath = location.substr(0, location.length-15) + 'css/jPicker-1.1.6.min.css';
+
+			var jPickerCss = $('<link />');
+			jPickerCss.addClass('user').attr('href', cssPath).attr('rel', 'stylesheet').attr('type', 'text/css');
+			$('head').append(jPickerCss);			
+
+			$('#BackgroundColor').jPicker({
+					window: {
+						position: {
+							x: 'screenCenter',
+							y: 'bottom'
+						}
+					},
+					images:	{
+						clientPath: path /* Path to image files */
+					}
+				},
+		        null,
+		        function(color, context) { $('#BackgroundColor').trigger('colorUpdate'); },
+		        function(color, context) { $('#BackgroundColor').trigger('colorUpdate'); }
+	        );
+
+
+
+					
+		}); 
+	</script>
+	
+	<style type="text/css">
+		table {border-collapse: inherit;}
+		tr, th, td {vertical-align: middle;}
+		input {height:20px;}
+	</style>
+		
+	<apex:outputPanel >
+		<form>			
+			<table class="ocmsContentEditor ocmsContentEditorNested autoWidth noMinWidth" >
+				<tr>
+					<td>
+						<label class="ocmsLabel">Height</label>
+						<apex:outputText rendered="{!disableAll}">
+							<input type="text" name="SpacerHeight" class="ocmsLanguageNeutral" id="SpacerHeight" value="{!SpacerHeight}" size="6" disabled="disabled" />
+						</apex:outputText>
+						<apex:outputText rendered="{!!disableAll}">
+							<input type="text" name="SpacerHeight" class="ocmsLanguageNeutral" id="SpacerHeight" value="{!SpacerHeight}" size="6" /> px
+						</apex:outputText>						
+					</td>
+				</tr>		
+				<tr>
+					<td>
+						<label class="ocmsLabel">Background Color</label>
+						<apex:outputText rendered="{!disableAll}">
+							<input type="text" name="BackgroundColor" class="ocmsLanguageNeutral" id="BackgroundColor" value="{!BackgroundColor}" size="6" disabled="disabled"/>
+						</apex:outputText>
+						<apex:outputText rendered="{!!disableAll}">
+							<input type="text" name="BackgroundColor" class="ocmsLanguageNeutral" id="BackgroundColor" value="{!BackgroundColor}" size="6" />
+						</apex:outputText>						
+					</td>
+					<td></td>
+				</tr>
+			</table>
+		
+		</form>
+	</apex:outputPanel>
+</apex:page>

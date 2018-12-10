@@ -1,0 +1,83 @@
+<!--
+ ***************************************************************************************************************************************
+ * NAME   : LRC_PaginationTable
+ * DESCRIPTION  : Generic Pagination Component
+ *    
+ * @AUTHOR   : Nidhin V K
+ * @DATE   : 22-Jan-2018
+ *
+ * MODIFICATION LOG:  
+ * ______________________________________________________________________________________________________________________________________
+ * DEVELOPER                DATE                DESCRIPTION 
+ * ______________________________________________________________________________________________________________________________________
+ * Nidhin V K               22-Jan-2018          Initial version         
+ ****************************************************************************************************************************************
+-->
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction">
+    <!-- Input attribs -->
+    <aura:attribute type="List" name="MasterRecordList" default="[]" />
+    <aura:attribute type="List" name="ColumnHeaders" default="[]" />
+    <aura:attribute type="Integer" name="RecordCountPerPage" default="3"/>
+    <aura:attribute type="Integer" name="PageCountPerScreen" default="5"/>
+    <aura:attribute type="Boolean" name="SortEnabled" default="false" />
+    <aura:attribute type="Boolean" name="SearchEnabled" default="false" />
+    <aura:attribute type="Boolean" name="ServerPaginationEnabled" default="false" />
+    
+    <aura:attribute name="nestedThead" type="List"/>
+    <aura:attribute name="treeGridLabel" type="String"/>
+    <aura:attribute name="isNestedTable" type="Boolean" default="false"/>
+    <aura:attribute name="lstColDataArray" type="Object[]"/>
+    
+    <!-- Internal attribs -->
+    <aura:attribute name="bshowTable" type="Boolean" default="false" />
+    <aura:attribute type="String" name="sSortField" default="CreatedDate" />
+    <aura:attribute type="String" name="sSortOrder" default="DESC" />
+    <aura:attribute type="String" name="sSearchText" default="" />
+    <aura:attribute type="Integer" name="iChunkSize" default="25"/>
+    <aura:attribute type="List" name="lstPageNumbers" default="[]" />
+    <aura:attribute type="Integer" name="iSelectedPage" default="1" />
+    <aura:attribute type="Integer" name="iListSize" default="0" />
+    <aura:attribute type="Integer" name="iTotalPages" default="0" />
+    <aura:attribute type="Integer" name="iServerOffset" default="0" />
+    <aura:attribute type="Integer" name="iClientOffset" default="0" />
+    <aura:attribute type="List" name="lstDisplayRecords"/>
+    
+    <aura:attribute type="List" name="lstRecordChunk" default="[]" />
+    <aura:attribute name="bDisableFirst" type="Boolean" default="false"/>
+	<aura:attribute name="bDisablePrev" type="Boolean" default="false"/>
+	<aura:attribute name="bDisableNext" type="Boolean" default="false"/>
+	<aura:attribute name="bDisableLast" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.MasterRecordList}" action="{!c.doInit}"/>
+    
+
+	<aura:if isTrue="{!v.bshowTable}">
+	    <div>
+	            <aura:if isTrue="{!and(!empty(v.lstDisplayRecords),!empty(v.ColumnHeaders))}">
+	            	<c:LRC_GenericTable 
+                         thead="{!v.ColumnHeaders}" 
+                         tbody="{!v.lstDisplayRecords}" 
+                         nestedThead="{!v.nestedThead}" 
+                         isNestedTable="{!v.isNestedTable}"
+                         lstColDataArray= "{!v.lstColDataArray}"/>
+		            <aura:set attribute="else">
+		                <b class="slds-p-left_small">No records found.</b>
+		            </aura:set>
+	            </aura:if>
+	        </div>
+	    <lightning:layout horizontalAlign="left" multipleRows="true" class="slds-m-top_small">
+	        <lightning:layoutItem flexibility="grow" class="slds-p-around_xx-small slds-p-left_small" size="12" largeDeviceSize="10" mediumDeviceSize="10" smallDeviceSize="10">
+	            <lightning:button aura:id="first" disabled="{!v.bDisableFirst}" class="{!(v.bDisableFirst)?'slds-button--disabled':'slds-button--primary'}" label="«" onclick="{!c.first}" />
+	            <lightning:button aura:id="prevSet" disabled="{!v.bDisablePrev}" class="{!(v.bDisablePrev)?'slds-button--disabled':'slds-button--primary'}" label="‹" onclick="{!c.prevSet}" />
+	            <aura:iteration items="{!v.lstPageNumbers}" var="row" indexVar="index">
+	                <lightning:button name="{!row}" aura:id="{!'some' + row}" class="{!(row == v.iSelectedPage) ? 'slds-button--inverse pagination-button' : 'slds-button--neutral pagination-button'}" label="{!row}" onclick="{!c.gotoSelectedPage}" />
+	            </aura:iteration>
+	            <lightning:button aura:id="nextSet" disabled="{!v.bDisableNext}" class="{!(v.bDisableNext)?'slds-button--disabled':'slds-button--primary'}" label="›" onclick="{!c.nextSet}" />
+	            <lightning:button aura:id="last" disabled="{!v.bDisableLast}" class="{!(v.bDisableLast)?'slds-button--disabled':'slds-button--primary'}" label="»" onclick="{!c.last}" />
+	        </lightning:layoutItem>
+	        <lightning:layoutItem flexibility="grow" class="pageNumber" size="12" largeDeviceSize="2" mediumDeviceSize="2" smallDeviceSize="2">
+	        	[Page {!v.iSelectedPage} of {!v.iTotalPages}]
+	        </lightning:layoutItem>
+	    </lightning:layout>
+    </aura:if>
+</aura:component>

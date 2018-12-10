@@ -1,0 +1,107 @@
+<apex:page controller="cms.ManageFeaturePackController" standardStylesheets="false" showHeader="false" sidebar="false">
+<html>
+
+  <head>
+
+    <title>Manage License Detail</title>
+
+    <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-migrate.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/JQueryInheritance.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryMessagePane.js')}" />
+  	<apex:includeScript value="{!URLFOR($Resource.cms__CmsLocalization, '/localization/CmsLocalization_en.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUtil, '/OCMSScripts.js')}" />
+
+
+    <style type="text/css">
+    	#fpContainer {
+    		width: 620px;
+    	}	
+ 		#fpIntro {
+ 			width: 100%;
+ 			margin:	10px 0;
+    		position: relative;
+    	}
+    	#fpName {
+    		 display: inline-block;
+    		 font-size: 16px;
+    	}
+    	#installAll {
+    		display: inline-block;
+    		position: absolute;
+    		right: 0;
+    	}
+    	#featureList td:nth-child(1) { width: 320px}
+    	#featureList td:nth-child(2) { width: 100px}
+    	#featureList td:nth-child(3) { width: 100px}
+    	#featureList td:nth-child(4) { width: 100px}
+    	#featureList tr#featureHdg   {background-color: #E7E7E8;}
+    	#featureList td {padding: 5px 2px;}
+    	#fListContainer {
+    		position: relative;
+    		min-height: 45px;
+    		margin-bottom: 10px;
+    	}
+    </style>
+
+	<script type="text/javascript">
+		// need this set up so we can use the REST Proxy
+		$(document).data('cms', {	  context : 'orchestracms'
+									, namespace : '{!OCMS_NS}'
+									, csrf_token: '{!token}'
+									, site_name : '{!site_name}'
+								});	
+  	    $(document).data("loading_indicator", "{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}");
+  	    $(document).ready(function(){
+			$('#ocms-feature-pack-details').feature_pack_details(
+				{	  sname:	"{!site_name}"
+					, fpns:		"{!packageNamespace}"
+					, back:		"{!goBack}"
+				});
+	 	});
+	</script>
+
+  </head>
+
+  <body class="ocms">
+
+    <apex:outputPanel rendered="{!hasAccess}">
+
+	  	<c:SetupMenu sname="{!site_name}" activeitem="licenses" />
+
+	  	<div style="margin-left: 210px; padding: 10px;">
+
+			<div class="ocms-setup-breadcrumb">
+			  <div class="ocms-setup-breadcrumb-start"></div>
+			  <div class="ocms-setup-breadcrumb-item">Setup</div>
+			  <div class="ocms-setup-breadcrumb-separator"></div>
+			  <div class="ocms-setup-breadcrumb-item">Manage Licenses</div>
+			  <div class="ocms-setup-breadcrumb-separator-active"></div>
+			  <div class="ocms-setup-breadcrumb-item-active">License Detail</div>
+			  <div class="ocms-setup-breadcrumb-end"></div>
+			  <div class="ocms-clear"></div>
+			</div>
+
+	  		<br />
+	  		<div id="ocms-feature-pack-details"></div>
+	  	</div>
+  </apex:outputPanel>
+
+  <apex:outputPanel rendered="{!!hasAccess}">
+  	<div style="padding: 10px;">
+  		You do not have Setup > Manage -> Licenses permission
+   	</div>
+  </apex:outputPanel>
+
+   <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/OCMSSecureUrlLoad.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/RESTDynamicLoad.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/OCMSProduction.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/RESTProxy.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/FeaturePackDetails.js')}" />
+
+  </body>
+
+</html>
+</apex:page>

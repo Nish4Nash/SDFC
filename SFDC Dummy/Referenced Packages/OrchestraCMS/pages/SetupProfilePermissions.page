@@ -1,0 +1,334 @@
+<apex:page controller="cms.SetupProfilePermissionsController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+    <title>Manage Licenses</title>
+	
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	<c:CmsScripts />
+    <script type="text/javascript">
+    	
+    	
+    	$(document).ready(function(){
+    			
+		     $('#addPermissionsButton').button().click(function(){
+    				 
+    				if( !($(this).button('option').disabled != undefined && $(this).button('option', 'disabled'))){
+    				 	var PermissionsToAdd = [];
+	    				$('#availablePermTable input[type="checkbox"]:checked:enabled').each(function(index,element) {
+	    					PermissionsToAdd.push($(element).data('permid'));
+	    				});
+	    				
+	    				var popup = $('<div></div>').ocmsShowInfoPopup({
+							message: 'Adding permissons to OrchestraCMS profile and users'
+						});
+	    				var data = {};
+	    				data['profile_id']='{!profileId}';
+	    				data['permissions']=JSON.stringify(PermissionsToAdd);
+	    				data['action']    = "add_perm_to_profile";
+		   			    data['service']     = 'ocmsPermissionSetGen';
+		     		  	data['sname']    = '{!site_name}' ;
+	    				//Call the function
+	    				var handler = function(json, result){
+				        	json = $.orchestracmsUtil.parseJSON(json);
+				        	if(result.status == true && json.isSuccess) {
+				        		var resp = $.orchestracmsUtil.parseJSON(json.message);
+				         		reLoadPermTable('appliedPermTable', resp[0]);
+		    					reLoadPermTable('availablePermTable', resp[1]); 
+		    					setupCheckboxes();
+		    				} else {
+				         		showError(json.message);
+				         		
+				        	}
+				      		popup.ocmsShowInfoPopup('closeMessage');
+				       }
+				       var options = {};
+				       options['cb']     = handler;
+				       doServiceRequest(data, options);
+			       }
+    			});
+    			
+    			
+    			$('#removePermissionsButton').button().click(function(){
+    				if( !($(this).button('option').disabled != undefined && $(this).button('option', 'disabled'))){
+	    				var PermissionsToRemove = [];
+	    				$('#appliedPermTable input[type="checkbox"]:checked:enabled').each(function(index,element) {
+	    					PermissionsToRemove.push($(element).data('permid'));
+	    				});
+	    				var popup = $('<div></div>').ocmsShowInfoPopup({
+							message: 'Removing permissons from OrchestraCMS profile and users'
+						});
+	    				var data = {};
+	    				data['profile_id']='{!profileId}';
+	    				data['permissions']=JSON.stringify(PermissionsToRemove);
+	    				data['action']    = "remove_perm_from_profile";
+		   			    data['service']     = 'ocmsPermissionSetGen';
+		     		  	data['sname']    = '{!site_name}' ;
+	    				//Call the function
+	    				var handler = function(json, result){
+				        	json = $.orchestracmsUtil.parseJSON(json);
+				        	if(result.status == true && json.isSuccess) {
+				         		var resp = $.orchestracmsUtil.parseJSON(json.message);
+				         		reLoadPermTable('appliedPermTable', resp[0]);
+		    					reLoadPermTable('availablePermTable', resp[1]); 
+		    					setupCheckboxes();
+		    					
+		    				} else {
+				         		showError(json.message);
+				         		
+				        	}
+				        	popup.ocmsShowInfoPopup('closeMessage');
+				    	}
+				       var options = {};
+				       options['cb']     = handler;
+				       doServiceRequest(data, options);
+			       }
+    			});
+    			
+    			$('#doneButton').button().click(function(){
+    				done();
+    			});
+    			$('#removePermissionsButton').button('disable');
+				$('#addPermissionsButton').button('disable');
+    			 var allPerm = $.orchestracmsUtil.parseJSON( '{!allPermissions}');
+   				if(allPerm.isSuccess){
+   					var resp = $.orchestracmsUtil.parseJSON(allPerm.message);
+   					reLoadPermTable('appliedPermTable', resp[0]);
+	    			reLoadPermTable('availablePermTable', resp[1]);
+	    			setupCheckboxes();
+	    		}//add error
+    			setupFilter();
+
+    		});
+			function setupCheckboxes() {
+				$('#removePermissionsButton').button('disable');
+				$('#addPermissionsButton').button('disable');
+				$('.psSelector').click(function() {
+				    var appliedSize = $('#appliedPermTable input:checked').size()
+					var addSize = $('#availablePermTable input:checked').size();
+					if ((appliedSize==0 && addSize==0)|| (appliedSize!=0 && addSize!=0)) {
+						$('#removePermissionsButton').button('disable');
+						$('#addPermissionsButton').button('disable');
+					} else if (appliedSize != 0) {
+						$('#removePermissionsButton').button('enable');
+					} else {
+						$('#addPermissionsButton').button('enable');	
+					}
+						
+				});
+			}
+	    	function reLoadPermTable(tableID, perms) {
+	    			$("#"+tableID).empty();
+    				$("#"+tableID).append('<tr style="background-color: rgb(231, 231, 232);">'
+			  		+'	<td style="padding: 2px; width: 20px;">&nbsp;</td>'
+			  		+'	<td style="padding: 2px; white-space: nowrap;overflow: hidden;">Name</td>'
+			  		+'	<td style="padding: 2px; ; white-space: nowrap; overflow: hidden;">Description</td>'
+			  		+'</tr>');
+			  		var profileId = '{!profileId}';
+			  		var permPrefix = '{!permPrefix}';
+    				var orgWidePermName = permPrefix + '{!orgWidePermName}';
+			  		
+    				$(perms).each(function(index,element) {
+    					if((element.Name == permPrefix + profileId) || (element.Name ==orgWidePermName)){
+    						$("#"+tableID).append('<tr>'
+    						+'  <td><input type="checkbox" data-permid="'+element.Id+'" disabled/></td>'
+			  				+'	<td style="padding: 5px 20px 5px 2px;">'+element.Label+'</td>'
+			  				+'	<td style="padding: 5px 2px;">'+(element.Description!= undefined?element.Description:'')+'</td>'
+			  				+'</tr>');
+			  			}else{
+			  				$("#"+tableID).append('<tr>'
+			  				+'  <td><input class="psSelector" type="checkbox"  data-permid="'+element.Id+'"/></td>'
+			  				+'	<td style="padding: 5px 20px 5px 2px;">'+element.Label+'</td>'
+			  				+'	<td style="padding: 5px 2px;">'+(element.Description!= undefined?element.Description:'')+'</td>'
+			  				+'</tr>');
+			  				}
+			  		    				
+    				});
+    				
+    				
+	    	}
+	    	
+	    	
+	    function setupFilter(){
+	    	var timerEventHandle = null;   // for  filter box - using a timer to avoid firing a search on every keystroke
+       		var doingSearch = false;    // search is in progress flag
+       		var cancelSearch = false;    // want to cancel current search flag
+	    
+	    	self.defaultInputMessage = 'Start typing to filter the list';
+       		initiateSearch();
+	       	$("#filterName").val(defaultInputMessage);
+       		
+			$('#filterName').click(function() {
+        		if (!$(this).hasClass('focused')) { // already have focus?
+         			$(this).select();    // no - select all text in input
+         			$(this).addClass('focused'); // and add class as a flag
+                    $(this).val('');                // remove default text
+                    $(this).css('color','#000000'); // change imput text colour to black   
+        		}
+       		});
+       
+       		$("#filterName").blur(function() {
+          		if($(this).val() ==''){
+          		 	$(this).val(defaultInputMessage);
+           			$(this).css('color','#788E1E');
+          		}
+          		$(this).removeClass('focused');  // remove our flag
+       		});
+
+
+      	 	// handle filter box keystrokes
+      	 	$('#filterName, #filterModifiedBy').keyup(function(){
+            	// if we had a recent keypress "cancel" the filtering action based on it and we'll timeout on this new one
+                if (timerEventHandle !== null) {
+                	clearTimeout(timerEventHandle);
+                }
+                             
+               // we want a 0.4 second delay before we apply the filter -- allows time for user to "complete" typing his/her string           
+              timerEventHandle = setTimeout(function() {
+              	timerEventHandle = null;
+                initiateSearch();
+              }, 400);
+      	 });
+	
+   
+    	// initiate a new search -- cancel existing search if one is in progress
+      	function initiateSearch() {
+       		if (doingSearch) {
+        		cancelSearch = true;
+        		setTimeout(initiateSearch, 100);
+       		} else {
+        		doingSearch = true;
+        		cancelSearch = false;
+        		search(0);
+       		}
+      	} // initiateSearch
+     
+     
+      function search(offset) {
+	  	   var data={};
+	       data['action']     = 'get_permission_lists';
+	       data['service']    = 'ocmsPermissionSetGen';
+	       data['sname']      ='{!site_name}';
+	       data['profile_id'] ='{!profileId}';
+	             
+	       if($('#filterName').val() != defaultInputMessage)
+	        	data['name']=$('#filterName').val();
+	    	var handler = function(json, result){
+	        	json = $.orchestracmsUtil.parseJSON(json);
+	        	if(result.status == true && json.isSuccess){
+	         		var resp = $.orchestracmsUtil.parseJSON(json.message);
+		         	reLoadPermTable('appliedPermTable', resp[0]);
+		    		reLoadPermTable('availablePermTable', resp[1]); 
+		    		setupCheckboxes();
+		       		doingSearch = false;
+		       	
+	        	} else {
+	         		doingSearch = false;
+	         		showError(json.message);
+	        	} 
+	       }
+	       var options = {};
+	       options['cb']     = handler;
+	       doServiceRequest(data, options);
+      } // search
+      
+      function showError(message){
+			$('<div></div>').ocmsShowErrorPopup({
+	        	message : message
+	   }); 
+	 } 
+	    	
+	}    	
+	    	
+	
+
+    </script>
+  </head>
+
+  <body class="ocms">
+
+  	<c:SetupMenu sname="{!site_name}" activeitem="profiles" />
+
+  	<div style="margin-left: 210px; padding: 10px;">
+
+  		<div class="ocms-setup-breadcrumb">
+		  <div class="ocms-setup-breadcrumb-start"></div>
+		  <div class="ocms-setup-breadcrumb-item">Setup</div>
+		  <div class="ocms-setup-breadcrumb-separator"></div>
+		  <div class="ocms-setup-breadcrumb-item">Manage Profiles</div>
+		  <div class="ocms-setup-breadcrumb-separator"></div>
+		  <div class="ocms-setup-breadcrumb-item">Edit OrchestraCMS Profile</div>
+		  <div class="ocms-setup-breadcrumb-separator-active"></div>
+		  <div class="ocms-setup-breadcrumb-item-active">Manage Permissions</div>
+		  <div class="ocms-setup-breadcrumb-end"></div>
+		  <div class="ocms-clear"></div>
+		</div>
+
+  		<br />
+<apex:form >
+
+
+		<apex:outputPanel id="messages" style="color: #990000">
+  			<apex:outputText escape="false" value="{!message + '<br /><br />'}" rendered="{!IF(message != '', true, false)}" />
+		</apex:outputPanel>
+	
+<apex:outputPanel rendered="{!hasAccess}">
+<table cellspacing="0" cellpadding="0" border="0">
+	<tr>
+	<td valign="top">
+		
+
+			<apex:actionFunction action="{!done}" name="done" />
+			
+			
+			<table border="0" cellspacing="0" cellpadding="0">
+			<tr>
+			    <td>
+			    	<div id="addPermissionsButton" style="float: left">Add</div>
+			    	<div id="removePermissionsButton" style="margin-left: 10px; float: left">Remove</div>
+			    	<div id="doneButton" style="margin-left: 10px; float: left">Done</div>
+			    	<div id="filterText"  style="margin-left: 50px;float: left;">Permission Set Name
+			    		<input id="filterName" style="color:#788E1E;margin-left:20px;width:200px" type="text"/>
+			    	</div>
+			    </td>
+			  </tr>
+		</table>
+		<div style="max-width:46%;display:inline-block;padding-right:35px;padding-top:15px;">	
+			<span style="font-size: 16px; padding-bottom: 8px;">Available Permission Sets</span><br /><br />
+			
+				<table cellspacing="0" cellpadding="0" border="0" id='availablePermTable'>
+					
+			</table>
+	</div>
+	<div style="max-width:46%;display:inline-block">	
+		
+	<span style="font-size: 16px; padding-bottom: 8px;">Applied Permission Sets</span><br /><br />
+	
+	<table cellspacing="0" cellpadding="0" border="0" id="appliedPermTable">
+		
+		
+	</table>
+	</div>
+
+	</td>
+	</tr>
+</table>
+</apex:outputPanel>
+	
+
+<apex:outputPanel rendered="{!!hasAccess}">
+
+	You have no access to Modify the Profile.
+
+</apex:outputPanel>
+
+
+
+</apex:form>
+
+  	</div>
+
+  </body>
+
+</html>
+</apex:page>

@@ -1,0 +1,12 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="item" type="Object" />
+    <aura:attribute name="totalTableRecords" type="Object[]" />
+    <aura:registerEvent name="handleRecDeleteInsert" type="c:LRC_HandleRecordDeleteInsert" />
+    <tr> 
+        <td>{!v.item.First_Name__c} </td>
+        <td> {!v.item.LastName__c} </td>
+        <td> {!v.item.EmpId__c} </td>
+        <td> {!v.item.PhoneNumber__c} </td>
+        <td> <a href="javascript:void(0)" onclick="{!c.removeRecord}">Remove</a> </td>
+    </tr>
+</aura:component>

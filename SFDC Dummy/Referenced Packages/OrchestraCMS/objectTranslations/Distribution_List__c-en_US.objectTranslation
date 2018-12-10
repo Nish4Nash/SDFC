@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Distribution List</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Distribution Lists</value>
+    </caseValues>
+    <fields>
+        <label><!-- Access Level --></label>
+        <name>Access_Level__c</name>
+        <relationshipLabel><!-- Distribution Lists --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Job Item --></label>
+        <name>Job_Item__c</name>
+        <relationshipLabel><!-- Distribution Lists --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Schedule --></label>
+        <name>Schedule__c</name>
+        <relationshipLabel><!-- Distribution Lists --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Subject --></label>
+        <name>Subject__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Automatic Distribution</masterLabel>
+            <translation><!-- Automatic Distribution --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Internal Distribution</masterLabel>
+            <translation><!-- Internal Distribution --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

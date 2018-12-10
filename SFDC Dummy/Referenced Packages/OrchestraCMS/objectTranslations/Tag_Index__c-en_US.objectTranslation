@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Tag Index</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Tag Indexes</value>
+    </caseValues>
+    <fields>
+        <label><!-- Content Type --></label>
+        <name>Content_Type__c</name>
+        <relationshipLabel><!-- Tag Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Depth --></label>
+        <name>Depth__c</name>
+    </fields>
+    <fields>
+        <label><!-- Key --></label>
+        <name>Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Tag Path --></label>
+        <name>Tag_Path__c</name>
+        <relationshipLabel><!-- Tag Indexes --></relationshipLabel>
+    </fields>
+    <recordTypes>
+        <label><!-- TagType --></label>
+        <name>TagType</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- TagTypeDepth --></label>
+        <name>TagTypeDepth</name>
+    </recordTypes>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

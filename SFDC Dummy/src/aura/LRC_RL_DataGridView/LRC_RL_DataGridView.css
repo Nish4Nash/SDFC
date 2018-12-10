@@ -1,0 +1,66 @@
+.THIS.demo-only{
+    overflow:hidden;
+    width:50%;
+}
+
+/*toggleCss.css*/
+.THIS.toggle {
+    display: true;
+}
+
+.THIS.slds-tile{
+    width:50%;
+    float:left;
+}
+
+.THIS {
+    position: relative;
+    overflow: hidden;
+}
+.THIS.small {
+    height: 28rem;
+}
+.THIS.medium {
+    height: 40rem;
+}
+.THIS.large {
+    height: 53rem;
+}
+.THIS.autoHeight {
+    min-height: 100vh;
+    height: auto;
+}
+.THIS.small .scroll-container {
+    height: 22rem;
+}
+.THIS.medium .scroll-container {
+    height: 34rem;
+}
+.THIS.large .scroll-container {
+    height: 47rem;
+}
+.THIS .ratingStars {
+    min-width: 25%;
+    max-width: 105px;
+}
+.THIS header {
+    height: 5rem;
+    padding-bottom: .25rem;
+}
+
+.THIS .slds-card+.slds-card {
+    margin-top: 0 !important;
+}
+
+.THIS .header-title{
+    display:inline;
+}
+
+.THIS .header-btn{
+    float:right;
+}
+
+.THIS .slds-dropdown{
+    max-height: 125px;
+    overflow-y: auto;
+}

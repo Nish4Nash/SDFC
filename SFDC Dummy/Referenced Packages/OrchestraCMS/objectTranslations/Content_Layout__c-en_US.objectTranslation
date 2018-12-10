@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Content Layout</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Content Layouts</value>
+    </caseValues>
+    <fields>
+        <label><!-- Attribute Definition --></label>
+        <name>Attribute_Definition__c</name>
+        <relationshipLabel><!-- Content Layouts --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Attribute List --></label>
+        <name>Attribute_List__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- CTC Managed --></label>
+        <name>CTC_Managed__c</name>
+    </fields>
+    <fields>
+        <label><!-- Component Name --></label>
+        <name>Component_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Controller Namespace --></label>
+        <name>Controller_Namespace__c</name>
+    </fields>
+    <fields>
+        <label><!-- Controller --></label>
+        <name>Controller__c</name>
+    </fields>
+    <fields>
+        <help><!-- Explanation why the content layout is deprecated and whether there is an alternative to it. --></help>
+        <label><!-- Deprecated_Reason --></label>
+        <name>Deprecated_Reason__c</name>
+    </fields>
+    <fields>
+        <label><!-- Deprecated --></label>
+        <name>Deprecated__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Generate Template --></label>
+        <name>Generate_Template__c</name>
+    </fields>
+    <fields>
+        <label><!-- Install External Id --></label>
+        <name>Install_External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Javascript1 --></label>
+        <name>Javascript1__c</name>
+    </fields>
+    <fields>
+        <label><!-- Javascript2 --></label>
+        <name>Javascript2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Javascript3 --></label>
+        <name>Javascript3__c</name>
+    </fields>
+    <fields>
+        <label><!-- Label --></label>
+        <name>Label__c</name>
+    </fields>
+    <fields>
+        <label><!-- Layout Style --></label>
+        <name>Layout_Style__c</name>
+    </fields>
+    <fields>
+        <label><!-- Listable --></label>
+        <name>Listable__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Markup --></label>
+        <name>Markup__c</name>
+    </fields>
+    <fields>
+        <label><!-- Generate Cache Languages Individually --></label>
+        <name>Multilingual_Layout__c</name>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Page Properties Definition --></label>
+        <name>Page_Properties_Definition__c</name>
+    </fields>
+    <fields>
+        <label><!-- Properties Definition --></label>
+        <name>Properties_Definition__c</name>
+    </fields>
+    <fields>
+        <label><!-- Static Resource Name --></label>
+        <name>Resource_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Static Resource Namespace --></label>
+        <name>Resource_Namespace__c</name>
+    </fields>
+    <fields>
+        <label><!-- Static Resource URL --></label>
+        <name>Resource_URL__c</name>
+    </fields>
+    <fields>
+        <label><!-- Stylesheet1 --></label>
+        <name>Stylesheet1__c</name>
+    </fields>
+    <fields>
+        <label><!-- Stylesheet2 --></label>
+        <name>Stylesheet2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Stylesheet3 --></label>
+        <name>Stylesheet3__c</name>
+    </fields>
+    <fields>
+        <label><!-- Taxonomies --></label>
+        <name>Taxonomies__c</name>
+        <picklistValues>
+            <masterLabel>None</masterLabel>
+            <translation><!-- None --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail Filepath --></label>
+        <name>Thumbnail_Filepath__c</name>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail Id --></label>
+        <name>Thumbnail_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Thumbnail Large Id --></label>
+        <name>Thumbnail_Large_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Core</masterLabel>
+            <translation><!-- Core --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Custom</masterLabel>
+            <translation><!-- Custom --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- VisualForce Edit Page Properties --></label>
+        <name>VisualForce_Edit_Page_Properties__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce_CKEditor_Config --></label>
+        <name>Visualforce_CKEditor_Config__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce Edit --></label>
+        <name>Visualforce_Edit__c</name>
+    </fields>
+    <fields>
+        <label><!-- Visualforce View --></label>
+        <name>Visualforce_View__c</name>
+    </fields>
+    <fields>
+        <label><!-- isContentCacheable --></label>
+        <name>isContentCacheable__c</name>
+    </fields>
+    <fields>
+        <label><!-- isPageCacheable --></label>
+        <name>isPageCacheable__c</name>
+    </fields>
+    <layouts>
+        <layout>Content Layout Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

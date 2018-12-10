@@ -1,0 +1,82 @@
+<apex:page controller="cms.CreateContentController"  extensions="cms.Image" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+ 	
+ 	<script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+
+			$('#image-input').image_selector_input({
+				type: 'Image',
+				ajaxLoader: '{!URLFOR($Resource.jqueryui, '/css/images/General/32px_AnimatedIndeterminateProgress.gif')}',
+				onSelect : function(dialog) {
+					if($('AltText').val() == '' || $('AltText').val() == null)
+						$('#AltText').val(dialog.selected.name);
+				},
+				url: '{!Image}',
+				instructionalText: ''
+			});
+			
+			$('#ImageLink').page_selector_input({
+	 				input_field: 'ImageLink',
+	 				input_id: 'ImageLink_selector_input',
+					dialog_id: 'SmallBlockTarget_selector_dialog',
+					selected: {!IF(OR(TargetPageObj.LinkJSON == null, TargetPageObj.LinkJSON == ''), 'null', TargetPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(TargetPageObj.LinkName)}'
+ 			});
+			
+			ce.content_editor('registerSaveFunction', function(){
+				var attributes = new Array();
+				attributes.push({"name":"Image", "value":$('#image-input').image_selector_input('getSelected'), "type":"Text"});
+				attributes.push({"name":"ImageLink", "value":$('#ImageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+				attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+				attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});			
+				
+				return attributes; 	
+			});
+
+		});
+
+	</script>
+
+    <apex:outputPanel >
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+            	<tr>
+            	  <td colspan="2">
+				  	  <div id="image-input"></div>
+				  </td>
+			 	</tr>
+            	<tr>
+            		<td>
+		               <label class="ocmsLabel" for="AltText">Alternative Text</label>
+		               <apex:outputText escape="false" rendered="{!!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" />
+        		       </apex:outputText>
+        		       <apex:outputText escape="false" rendered="{!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" disabled="disabled" />
+        		       </apex:outputText>
+               			<p class="ocmsHelpText">Words that describe the image that will be read by screen-reading software.</p>
+             		</td>
+            	</tr>
+            	<tr>
+            		<td>
+		               <label class="ocmsLabel" for="TitleText">Title Text</label>
+		               <apex:outputText escape="false" rendered="{!!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" />
+        		       </apex:outputText>
+		               <apex:outputText escape="false" rendered="{!disableAll}" >
+        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" disabled="disabled" />
+        		       </apex:outputText>
+               			<p class="ocmsHelpText">Text that appears when the mouse pointer hovers over the image.</p>
+             		</td>
+            	</tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel">Link</label>
+						<div id="ImageLink" />
+						<p class="ocmsHelpText">Link target when clicking on the image.</p>
+					</td>
+				</tr>
+			</table>
+        </form>
+    </apex:outputPanel>
+    
+</apex:page>

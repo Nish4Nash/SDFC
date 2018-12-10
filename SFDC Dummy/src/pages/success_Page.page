@@ -1,0 +1,7 @@
+<apex:page >
+    
+ <h1>
+     <p/> RECORDS SAVED SUCCESSFULLY
+    </h1> 
+    
+</apex:page>

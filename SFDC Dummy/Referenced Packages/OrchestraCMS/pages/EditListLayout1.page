@@ -1,0 +1,395 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.ListLayout1"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+<head>
+<style type="text/css">
+
+        .content_table{
+            border: 1px solid #CCCCCC;
+            padding: 0px;
+            margin: 0px;
+            border-collapse: collapse;
+            border-spacing: 0px;
+            width: 540px;
+        }
+
+        .content_table input{
+            margin:0px !important;
+            padding:0px !important;
+        }
+
+        .content_table tr{
+            border: 1px solid #CCCCCC;
+        }
+
+        .content_table th{
+            border: 1px solid #CCCCCC;
+            padding: 5px;
+            background-color: #DDE8A5;
+        }
+
+        .content_table td{
+            border: 1px solid #CCCCCC;
+            padding: 5px !important;
+            background-color: #fff;
+            float: none !important;
+        	//height: 40px;
+        }
+        
+        .selected-type{
+			    border: 1px solid #cccccc;
+			    padding: 5px;
+			    margin: 3px;
+			    height: 25px;
+			    width: 180px;
+			}
+		.selected-type .ocms-actions {
+			    padding: 0px;
+			    height: 22px;
+			    font-size: 10px;
+			    float: right;
+			    width: 35px;
+			    text-align: right;
+			}
+		.selected-type .label{
+                overflow: hidden;
+            }
+
+    </style>
+    
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/content/ContentTypeSelector.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/content/ContentTemplateSelector.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/content/GWTContentSelector.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/content/ContentSelector.js')}" />
+
+</head>
+ 	<apex:outputPanel layout="block">	
+		<script type="text/javascript" language="javascript" >
+			$(document).ready(function(){
+					
+			    if({!close_tab} && '{!JSENCODE(tab)}' != '')
+			 	  closeTab('{!JSENCODE(tab)}');
+	
+				if({!!published && !disableAll}) {
+	
+					//figure out the path to the images
+	
+					var location = "{!URLFOR($Resource.OrchestraCMSUI, '/selector/color/images/Bars.png')}";
+					var path = location.substr(0, location.length-8);
+					var cssPath = location.substr(0, location.length-15) + 'css/jPicker-1.1.6.min.css';
+
+					var jPickerCss = $('<link />');
+					jPickerCss.addClass('user').attr('href', cssPath).attr('rel', 'stylesheet').attr('type', 'text/css');
+					$('head').append(jPickerCss);
+				
+					$('#bg, #fc').jPicker({
+						window: {
+							position: {
+								x: 'screenCenter',
+								y: 'bottom'
+							}
+						},
+						images:	{
+							clientPath: path, /* Path to image files */
+						}
+					},
+			        null,
+			        function(color, context) { $('#bg, #fc').trigger('colorUpdate'); },
+			        function(color, context) { $('#bg, #fc').trigger('colorUpdate'); }
+			        );
+
+				}
+				
+				$('#MoreTargetLink').page_selector_input({
+	 				input_field: 'MoreTargetLink',
+	 				input_id: 'MoreTargetLink_selector_input',
+					dialog_id: 'ListLayoutMore_selector_dialog',
+					selected: {!IF(OR(MoreLinkObj.LinkJSON == null, MoreLinkObj.LinkJSON == ''), 'null', MoreLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(MoreLinkObj.LinkName)}'
+ 				});
+ 				
+ 				$('#MoreTargetImage').image_selector_input({
+					field_id: 'MoreTargetImageInput',
+					dialog_id: 'Image_selector_dialog',
+					url: '{!MoreTargetImage}'
+				});
+				
+				
+ 				$('#MoreTargetHoverImage').image_selector_input({
+					field_id: 'MoreTargetHoverImageInput',
+					dialog_id: 'HoverImage_selector_dialog',
+					url: '{!MoreTargetHoverImage}'
+				});
+				
+				if({!isDynamicList}){
+		           // Gather the list of listable types and layouts.
+	               var selectedContentTypeLayouts = {!SelectedContentTypesJSON};
+	                	
+		           $('#content-type-selector-container').content_type_selector({
+		                selectedContentTypes:selectedContentTypeLayouts
+		             
+		           });
+		               
+		           $('#content-template-selector-container').content_template_selector({
+		                 selectedContentTypes:selectedContentTypeLayouts
+		                ,contentTypeSelector:'#content-type-selector-container'
+		                ,selectedContentTemplates: {!SelectedLayoutsJSON}
+		                ,multiselect:false
+		           });
+	            }
+				ce.content_editor('registerSaveFunction', function(){
+					var content_attributes = new Array();
+					var cli_attributes = new Array();
+					
+					content_attributes.push({"name":"ListTitle", "value":$('#ListTitle').val(), "type":"Text"});
+					content_attributes.push({"name":"ListLayout1Height", "value":$('#ListLayout1Height').val(), "type":"Text", "lang":""});
+
+					cli_attributes.push({"name":"BackgroundColor", "value":$('#bg').val(), "type":"Text", "lang":""});
+					cli_attributes.push({"name":"FontColor", "value":$('#fc').val(), "type":"Text", "lang":""});
+					cli_attributes.push({"name":"ShowMoreLink", "value":$('#ShowMoreLink:checked').val() == 'true' ? 'true' : 'false', "type":"Boolean", "lang":""});
+					cli_attributes.push({"name":"MoreTargetLink", "value":$('#MoreTargetLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					cli_attributes.push({"name":"MoreTargetText", "value":$('#MoreTargetText').val(), "type":"Text"});
+					cli_attributes.push({"name":"MoreTargetImage", "value":$('#MoreTargetImage').image_selector_input('getSelected'), "type":"Text"});
+					cli_attributes.push({"name":"MoreTargetHoverImage", "value":$('#MoreTargetHoverImage').image_selector_input('getSelected'), "type":"Text"});				
+					cli_attributes.push({"name":"AltText", "value":$('#AltText').val(), "type":"Text"});
+					cli_attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+				    if({!isDynamicList}){
+				    	content_attributes.push({"name":"SelectedContentTypes", "value": $('#content-type-selector-container').content_type_selector('getSelected'), "type":"Text", "lang":""});
+	                    content_attributes.push({"name":"DynamicListDefaultLayout", "value": $('#content-template-selector-container').content_template_selector('getSelected'), "type":"Text", "lang":""});
+	                    content_attributes.push({"name":"ListType", "value":"Dynamic", "type":"Text", "lang":""});
+	                    content_attributes.push({"name":"DynamicListMaxItems", "value":$('#i2').val(), "type":"Text", "lang":""});
+	                	
+	                }
+				    else{
+				    	
+				   		content_attributes.push({"name":"FixedListContentIds", "value": $('#selector_container').content_selector('getSelectedContentIds'), "type":"Text", "lang":""});
+	                    content_attributes.push({"name":"FixedListLayouts", "value": $('#selector_container').content_selector('getSelectedLayouts'), "type":"Text", "lang":""});
+	                    content_attributes.push({"name":"ListType", "value":"Fixed", "type":"Text", "lang":""});
+	                	
+		
+				    }
+				
+					return {'content':content_attributes, 'cli': cli_attributes};
+				
+				}); 
+				
+				if ({!!ShowMoreLink}){
+				    $(".MoreLink").toggle();
+
+				}
+				
+				$('#ShowMoreLink').change(function () {
+				    $(".MoreLink").toggle(this.checked);
+
+                    if (typeof parent.resizeEditorFrames === 'function') {
+                        parent.resizeEditorFrames();
+                    }
+				});                
+		  });
+
+		
+		</script>
+	
+		<apex:outputPanel layout="block">
+			<form>
+			    <table class="ocmsContentEditor ocmsContentEditorNested">
+			    	<tr>
+			    		<td>
+			    		   <apex:outputPanel layout="block" rendered="{!isDynamicList}" style="float: left; width: 275px;">
+						    
+						     <table class="ocmsContentEditor ocmsContentEditorNested" style="width:275px;">
+								  <tr class="ocmsEditorSubtitle">
+							          <td>List Properties</td>
+							      </tr>
+							      <tr>
+							        <td>
+							        	<div id="content-type-selector-container" />
+							       </td>
+							      </tr>
+							      
+							      <tr>
+							     	<td>
+							     		<div id="content-template-selector-container" />
+							        	
+							     	</td>
+							      </tr>
+								  <tr class="ocmsTable">
+								  	<td>
+								  	
+								  	</td>
+							      </tr>
+							      <tr>
+							     	<td>
+							     		<label class="ocmsLabel" for="i2">Maximum Items</label>
+							     		<input class="ocmsTextInputSml ocmsLanguageNeutral" type="text" id="i2" value="{!MaxItems}" />
+							     	</td>
+							      </tr>
+							    </table>
+						   
+						   </apex:outputPanel>
+						
+						   <apex:outputPanel layout="block" rendered="{!isStaticList}" style="float: left;">
+						    
+								<div>
+						        	<table class="ocmsContentEditor ocmsContentEditorNested">
+								  		<tr class="ocmsEditorSubtitle">
+							          		<td>List Properties</td>
+							      		</tr>
+							      		<tr>
+							      			<td>
+							      				<div id="selector_container"/>
+							      				<script>
+								      			$('#selector_container').content_selector({
+													id_list:'{!ContentIds}'
+													,layouts:'{!Layouts}' 
+													,showLayouts: true
+													
+											
+												});
+							      				</script>
+							      			
+									        
+									    	</td>
+										</tr>
+									</table>
+						       </div>
+						   </apex:outputPanel>
+			    		</td>
+                    </tr>
+                    <tr>			    		
+			    		<td>
+				    		<table class="ocmsContentEditor ocmsContentEditorNested" style="width:345px;">
+				    			<tbody>
+								  	<tr class="ocmsEditorSubtitle">
+							        	<td>Template Properties</td>
+							      	</tr>
+					    			<tr>
+					    				<td>
+					    					<label class="ocmsLabel" for="ListTitle">List Title</label>
+											<apex:outputText escape="false" rendered="{!disableAll}">
+												<input class="ocmsTextInputLrg" type="text" id="ListTitle" name="ListTitle" value="{!ListTitle}" disabled="disabled" />
+											</apex:outputText>
+											<apex:outputText escape="false" rendered="{!!disableAll}">
+												<input class="ocmsTextInputLrg" type="text" id="ListTitle" name="ListTitle" value="{!ListTitle}" />
+											</apex:outputText>
+					    				</td>
+					    			</tr>
+					    			<tr>
+					    				<td>
+					    					<label class="ocmsLabel" for="bg">Background Color</label>
+											<apex:outputText escape="false" rendered="{!disableAll}">
+												<input class="ocmsTextInputMed ocmsLanguageNeutral" type="text" name="bg" id="bg" value="{!BackgroundColor}" style="background-color:#{!BackgroundColor}" disabled="disabled" />
+											</apex:outputText>
+											<apex:outputText escape="false" rendered="{!!disableAll}">
+												<input class="ocmsTextInputMed ocmsLanguageNeutral" type="text" name="bg" id="bg" value="{!BackgroundColor}" />
+											</apex:outputText>
+					    				</td>
+					    			</tr>
+					    			<tr>
+					    				<td>
+					    					<label class="ocmsLabel" for="fc">Font Color</label>
+											<apex:outputText escape="false" rendered="{!disableAll}">
+												<input class="ocmsTextInputMed ocmsLanguageNeutral" type="text" name="fc" id="fc" value="{!FontColor}" style="background-color:#{!FontColor}" disabled="disabled" />
+											</apex:outputText>
+											<apex:outputText escape="false" rendered="{!!disableAll}">
+												<input class="ocmsTextInputMed ocmsLanguageNeutral" type="text" name="fc" id="fc" value="{!FontColor}" />
+											</apex:outputText>
+					    				</td>
+					    			</tr>
+					    			<tr>
+					    				<td>
+					    					<label class="ocmsLabel" for="ListLayout1Height">List Layout Height</label>
+											<apex:outputText escape="false" rendered="{!disableAll}">
+												<input class="ocmsTextInputSml ocmsLanguageNeutral" type="text" id="ListLayout1Height" name="ListLayout1Height" value="{!ListLayout1Height}" disabled="disabled" />
+											</apex:outputText>
+											<apex:outputText escape="false" rendered="{!!disableAll}">
+												<input class="ocmsTextInputSml ocmsLanguageNeutral" type="text" id="ListLayout1Height" name="ListLayout1Height" value="{!ListLayout1Height}" />
+											</apex:outputText>
+											<label style="margin: 0 10px 0 -9px;" for="ListLayout1Height">px</label>
+											<p class="ocmsHelpText">If you want the list height to automatically scale to the length of the list content, enter "Auto".</p>
+					    				</td>
+					    			</tr>
+					    			<tr class="ocmsCheckForm">
+					    				<td>
+											<ul><li>
+												<apex:outputText escape="false" rendered="{!ShowMoreLink}">
+													<apex:outputText escape="false" rendered="{!disableAll}">
+														<input type="checkbox" class="ocmsLanguageNeutral" id="ShowMoreLink" name="ShowMoreLink" value="true" checked="checked" disabled="disabled" />
+													</apex:outputText>
+													<apex:outputText escape="false" rendered="{!!disableAll}">
+														<input type="checkbox" class="ocmsLanguageNeutral" id="ShowMoreLink" name="ShowMoreLink" value="true" checked="checked" />
+													</apex:outputText>
+												</apex:outputText>
+												<apex:outputText escape="false" rendered="{!!ShowMoreLink}">
+													<apex:outputText escape="false" rendered="{!disableAll}">
+														<input type="checkbox" class="ocmsLanguageNeutral" id="ShowMoreLink" name="ShowMoreLink" value="true" disabled="disabled" />
+													</apex:outputText>
+													<apex:outputText escape="false" rendered="{!!disableAll}">
+														<input type="checkbox" class="ocmsLanguageNeutral" id="ShowMoreLink" name="ShowMoreLink" value="true" />
+													</apex:outputText>
+												</apex:outputText>
+												<label style="margin: 0 10px 0 -9px;" for="ShowMoreLink">Show More Link</label>
+											</li></ul>
+					    				</td>
+					    			</tr>
+								  	<tr class="MoreLink">
+								  		<td>
+								  			<label class="ocmsLabel">More Target Page</label>
+									    	<div id="MoreTargetLink" />							  		
+								  		</td>
+								  	</tr>
+									<tr class="MoreLink">
+								  		<td>
+								  			<label class="ocmsLabel" for="MoreTargetText">More Target Text</label>
+											<apex:outputText escape="false" rendered="{!disableAll}">
+												<input class="ocmsTextInputLrg" type="text" name="MoreTargetText" id="MoreTargetText" value="{!MoreTargetText}" disabled="disabled" />
+											</apex:outputText>
+											<apex:outputText escape="false" rendered="{!!disableAll}">
+												<input class="ocmsTextInputLrg" type="text" name="MoreTargetText" id="MoreTargetText" value="{!MoreTargetText}" />
+											</apex:outputText>							  		
+								  		</td>
+									</tr>
+									<tr class="MoreLink">
+								  		<td>
+								  			<label class="ocmsLabel">More Target Image</label>
+											 <div id="MoreTargetImage"/>
+										</td>
+									</tr>
+									<tr class="MoreLink">
+								  		<td>
+								  			<label class="ocmsLabel">More Target Hover Image</label>
+											 <div id="MoreTargetHoverImage"/>
+								  		</td>
+									</tr>
+									<tr class="MoreLink">
+					            		<td>
+							               <label class="ocmsLabel" for="AltText">Alternative Text</label>
+							               <apex:outputText escape="false" rendered="{!!disableAll}" >
+					        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" />
+					        		       </apex:outputText>
+					        		       <apex:outputText escape="false" rendered="{!disableAll}" >
+					        		       		<input class="ocmsTextInputLrg" type="text" id="AltText" value="{!altText}" disabled="disabled" />
+					        		       </apex:outputText>
+					               			<p class="ocmsHelpText">Words that describe the image that will be read by screen-reading software.</p>
+					             		</td>
+					            	</tr>
+									<tr class="MoreLink">
+					            		<td>
+							               <label class="ocmsLabel" for="TitleText">Title Text</label>
+							               <apex:outputText escape="false" rendered="{!!disableAll}" >
+					        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" />
+					        		       </apex:outputText>
+							               <apex:outputText escape="false" rendered="{!disableAll}" >
+					        		       		<input class="ocmsTextInputLrg" type="text" id="TitleText" value="{!titleText}" disabled="disabled" />
+					        		       </apex:outputText>
+					               			<p class="ocmsHelpText">Text that appears when the mouse pointer hovers over the image.</p>
+					             		</td>
+					            	</tr>
+				            	</tbody>
+				    		</table>
+			    		</td>
+			    	</tr>
+				</table>
+			</form>
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+</apex:page>

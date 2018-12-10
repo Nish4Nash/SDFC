@@ -1,0 +1,5 @@
+<apex:page docType="{!doc_type}" language="{!RenderLanguage}" controller="cms.CoreController" showHeader="false" sidebar="false"  title="{!page_title}" standardStylesheets="false" renderAs="{!render_as}" applyBodyTag="false">    
+
+	<apex:composition template="{!page_layout_reference}" />
+	
+</apex:page>

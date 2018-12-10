@@ -1,0 +1,19 @@
+<!--***********************************************************************************
+* Component: LRC_GEN_CL_typeSearch
+* CreatedBy: Nishit Kedia
+* Description: This is inputbox search component, used in the Pop-up Dialog box for Lookup.
+* References :
+* Revision History
+***********************************************************************************-->
+<aura:component >
+
+    <!-- Attribute Declaration-->
+    <aura:attribute name="searchText" type="String" description="To store the search text entered by user"/>
+    <aura:attribute name="parentMethodInChild" type="Aura.action" description ="To store the parent method in child and invoke from here"/>
+    
+    <!--Markup for the Search Box-->
+    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+        <c:LRC_CL_svgIcon class="slds-input__icon slds-icon-text-default " svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="large" name="Search" />
+        <input id="lookup" class="slds-input " type="text" value="{!v.searchText}" onkeyup="{!c.searchRecord}" />
+    </div>
+</aura:component>

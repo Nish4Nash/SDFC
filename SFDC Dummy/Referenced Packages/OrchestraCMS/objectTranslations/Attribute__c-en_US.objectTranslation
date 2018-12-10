@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Attribute</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Attributes</value>
+    </caseValues>
+    <fields>
+        <label><!-- Boolean Value --></label>
+        <name>Boolean_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Configuration --></label>
+        <name>Configuration__c</name>
+    </fields>
+    <fields>
+        <label><!-- Content Layout Instance --></label>
+        <name>Content_Layout_Instance__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Type --></label>
+        <name>Content_Type__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Currency Value --></label>
+        <name>Currency_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- DateTime Value --></label>
+        <name>DateTime_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Date Value --></label>
+        <name>Date_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Email Value --></label>
+        <name>Email_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Index Key --></label>
+        <name>Index_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Index --></label>
+        <name>Index__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Simple --></label>
+        <name>Is_Simple__c</name>
+    </fields>
+    <fields>
+        <label><!-- Key --></label>
+        <name>Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language Index Key --></label>
+        <name>Language_Index_Key__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Bundle Description --></label>
+        <name>Meta_Bundle_Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Bundle Name --></label>
+        <name>Meta_Bundle_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Content Description --></label>
+        <name>Meta_Content_Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Content Name --></label>
+        <name>Meta_Content_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Content Title --></label>
+        <name>Meta_Content_Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Page Description --></label>
+        <name>Meta_Page_Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Page Keywords --></label>
+        <name>Meta_Page_Keywords__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Page Name --></label>
+        <name>Meta_Page_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Meta Page Title --></label>
+        <name>Meta_Page_Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- Multipicklist Value --></label>
+        <name>Multipicklist_Value__c</name>
+        <picklistValues>
+            <masterLabel>Value 1</masterLabel>
+            <translation><!-- Value 1 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Name --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Namespace --></label>
+        <name>Namespace__c</name>
+    </fields>
+    <fields>
+        <label><!-- Number Value --></label>
+        <name>Number_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Object Id --></label>
+        <name>Object_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Object Type --></label>
+        <name>Object_Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- Page Content Layout Instance --></label>
+        <name>Page_Content_Layout_Instance__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Page --></label>
+        <name>Page__c</name>
+        <relationshipLabel><!-- Attributes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Percent Value --></label>
+        <name>Percent_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Phone Value --></label>
+        <name>Phone_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Picklist Value --></label>
+        <name>Picklist_Value__c</name>
+        <picklistValues>
+            <masterLabel>Value 1</masterLabel>
+            <translation><!-- Value 1 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Requires Rewrite --></label>
+        <name>Requires_Rewrite__c</name>
+    </fields>
+    <fields>
+        <label><!-- Simple Name --></label>
+        <name>Simple_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Simple Value --></label>
+        <name>Simple_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- TextArea Value --></label>
+        <name>TextArea_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Text Value --></label>
+        <name>Text_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Blob</masterLabel>
+            <translation><!-- Blob --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Boolean</masterLabel>
+            <translation><!-- Boolean --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Date</masterLabel>
+            <translation><!-- Date --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Date Time</masterLabel>
+            <translation><!-- Date Time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Document</masterLabel>
+            <translation><!-- Document --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Double</masterLabel>
+            <translation><!-- Double --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Id</masterLabel>
+            <translation><!-- Id --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Id List</masterLabel>
+            <translation><!-- Id List --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Integer</masterLabel>
+            <translation><!-- Integer --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Link</masterLabel>
+            <translation><!-- Link --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Link List</masterLabel>
+            <translation><!-- Link List --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Long</masterLabel>
+            <translation><!-- Long --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Resource</masterLabel>
+            <translation><!-- Resource --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Rich Text</masterLabel>
+            <translation><!-- Rich Text --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Text</masterLabel>
+            <translation><!-- Text --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- URL Value --></label>
+        <name>URL_Value__c</name>
+    </fields>
+    <fields>
+        <label><!-- Value --></label>
+        <name>Value__c</name>
+    </fields>
+    <recordTypes>
+        <label><!-- Bundle Metadata --></label>
+        <name>Bundle_Metadata</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Content --></label>
+        <name>Content</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Content Layout Instance --></label>
+        <name>Content_Layout_Instance</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Content Metadata --></label>
+        <name>Content_Metadata</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Content Type --></label>
+        <name>Content_Type</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Page --></label>
+        <name>Page</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Page Content Layout Instance --></label>
+        <name>Page_Content_Layout_Instance</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Page Metadata --></label>
+        <name>Page_Metadata</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Taxonomy Item --></label>
+        <name>Taxonomy_Item</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Url --></label>
+        <name>Url</name>
+    </recordTypes>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

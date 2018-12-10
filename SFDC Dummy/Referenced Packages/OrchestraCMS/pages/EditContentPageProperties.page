@@ -1,0 +1,705 @@
+<apex:page controller="cms.CreateContentController" id="createContent" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false" action="{!initializeInterface}">
+<head>
+
+  <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.css')}" />
+   <c:CmsScripts />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/page/PageSelector.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/link/LinkSelector.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/link/LinkSelectorDialog.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/color/jpicker-1.1.6.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, IF(showActionBar, '/editor/ContentPagePropertiesEditor.js', '/ContentPagePropertiesInterface.js'))}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/multilingual/LanguageManager.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/widget/JQueryFullDialog.js')}" />
+
+
+  <apex:outputPanel rendered="{!showActionBar}">
+   
+    <script type="text/javascript">
+        /**
+         * Steps to take before changing to a new editor frame.
+         * @param  {iframe} frame - The frame that we are going to be switching.
+         * @return {void}
+         */
+        
+        function beforeFrameChange(frame, cb) {
+            // Make sure we are calling actions and checking options for content editor widgets that exist.
+            if (!frame.contentWindow.ce || !ce){
+                $(frame).closest('div').find('.languageTranslated').prop('disabled', true);
+
+                if ($.isFunction(cb)) {
+                    cb();
+                }
+                return;
+            }
+            // Check the parent for the allowSave permission.
+            if (ce.content_pageproperties_editor('instance').options.allowSave) {
+                frame.contentWindow.ce.content_pageproperties_editor('saveContentPageProperties', false, function(){
+                    $(frame).closest('div').find('.languageTranslated').prop('disabled', true);
+                    frame.contentWindow.ce.content_pageproperties_editor('unRegisterSaveFunction');
+                    if ($.isFunction(cb)) {
+                        cb();
+                    }
+                }, false);
+
+            } else {
+                if ($.isFunction(cb)) {
+                    cb();
+                }
+            }
+        }
+        /**
+         * Build the selection boxes for marking a language as either 'translated' or 'requires translation.'
+         * @param  {string} idModifier - A string to append to the id of the elements in order to ensure they are unique.
+         * @return {string} Returns a dom fragement representing the selection box, as a string.
+         */
+        function buildSelectBoxes (idModifier) {
+            var selectBoxes =   '<select class="ocmslanguageSelected" id="ocmsLanguageSelector'+ idModifier +'">' +
+                                '</select>' +
+                                '<select class="languageTranslated" id="languageTranslated'+ idModifier +'" disabled="disabled">' +
+                                    '<option value="false">Requires Translation</option>' +
+                                    '<option value="true">Translated</option>' +
+                                '</select>' +
+                                '<p class="ocmsHelpText"></p>';
+            return selectBoxes;                            
+        }
+        /**
+         * Returns the list of languages as options to insert into a select box.
+         * @param  {string} languageToDisable - A language code representing which option should be disabled.
+         * @param  {string} selectedLanguage - A language code representing the option should should be set as selected.
+         * @return {string}  Returns a string that is a list of options for a select box.
+         */
+        function optionsList (languageToDisable, selectedLanguage){
+            var available_languages = allLanguageInformation.contentLanguages;
+            var langOptionsList = '';
+            if({!IF(showLanguages && showActionBar, 'true', 'false')}) {
+                if (typeof available_languages !== 'undefined' && available_languages !== null) {
+                    for(var i = 0; i < available_languages.length; ++ i) {
+                        
+                        var langPostfix = '';
+                        if(available_languages[i][cms.prefix+'Priority__c'] == 0){
+                        
+                            langPostfix = ' (Default)';
+                        
+                        }else if(!available_languages[i][cms.prefix+'Active__c']){
+                        
+                            langPostfix = ' (Disabled)';
+                        }
+                        
+                        langOptionsList += '<option value="'+ available_languages[i][cms.prefix+'Language_Code__c'] +'" id="'+ available_languages[i].Id +'"'+
+                        (languageToDisable == available_languages[i][cms.prefix+'Language_Code__c'] ? ' disabled' : '') +
+                        (selectedLanguage == available_languages[i][cms.prefix+'Language_Code__c'] ? ' selected' : '') +'>'+ available_languages[i].Name + langPostfix +'</option>';
+                    }
+                }
+            }
+            return langOptionsList;
+        }
+
+        /**
+         * A function to calcuate the new size of an editor frame and apply it to both frames.
+         * @param  {number} newHeight - The new height for the frames (optional)
+         * @return {void}
+         */
+        function resizeEditorFrames(newHeight, newWidth) {
+        /*
+            var maxHeight = newHeight !== undefined ? newHeight : Math.max.apply(null, $('iframe').map(function () {
+                return this.contentWindow.document.body === null ? 0 : this.contentWindow.document.body.scrollHeight; 
+            }).get());
+
+            $('iframe').map(function() { 
+                $(this).height(maxHeight);
+            });
+
+            var maxWidth = newWidth !== undefined ? newWidth : Math.max.apply(null, $('iframe').map(function () {
+                return this.contentWindow.document.body === null ? 0 : this.contentWindow.document.body.scrollWidth; 
+            }).get());
+
+            $('iframe').map(function() { 
+                if (newWidth || (this.contentWindow.document.body !== null && this.contentWindow.document.body.scrollWidth > $(this).width())) {
+                    $(this).width(maxWidth);
+                }
+            });
+             */
+        }
+
+        /**
+         * Set the source path for the content frame.
+         * @param {iframe element}  The frame which we will be setting up.
+         */
+        function setContentFrame(frame) {
+            beforeFrameChange(frame, function() {
+                $(frame.contentDocument).find('body').css('display', 'none');
+
+                var language = $('#ocmsLanguageSelectorOne option:selected').attr('value');
+                var site_name = (typeof cms != 'undefined' && typeof cms.site_name != 'undefined' && cms.site_name !== '' && cms.site_name !== null) ? cms.site_name : '{!content.Site_Name__c}';
+                
+                $('#ocmsLanguageSelectorTwo').find('option').prop('disabled', false);
+                $('#ocmsLanguageSelectorTwo').find('option[value='+language+']').prop('disabled', true);
+                
+                var contentParam = '{!IF(content_layout_instance_id == null, 'content='+content.Id, 'instance='+ content_layout_instance_id)}';
+                var contentFrameSource = '/apex/EditContentPageProperties?sname='+site_name+'&'+contentParam+'&tabid='+escape('{!tab}')+'&ppcli_id={!page_content_layout_instance}&showbar=false&ocmsLang='+language;
+
+                frame.contentWindow.location.replace(contentFrameSource);
+            });
+            
+
+        }
+        /**
+         * Set the source path for the translate frame.
+         * @param {iframe element}  The frame which we will be setting up.
+         */
+        function setTranslateFrame(frame) {
+            beforeFrameChange(frame, function(){
+                $(frame.contentDocument).find('body').css('display', 'none');
+
+                var language = $('#ocmsLanguageSelectorTwo option:selected').attr('value');
+                var site_name = (typeof cms != 'undefined' && typeof cms.site_name != 'undefined' && cms.site_name !== '' && cms.site_name !== null) ? cms.site_name : '{!content.Site_Name__c}';
+
+                $('#ocmsLanguageSelectorOne').find('option').prop('disabled', false);
+                $('#ocmsLanguageSelectorOne').find('option[value='+language+']').prop('disabled', true);
+                
+                var contentParam = '{!IF(content_layout_instance_id == null, 'content='+content.Id, 'instance='+ content_layout_instance_id)}';
+                var translateFrameSource = '/apex/EditContentPageProperties?sname='+site_name+'&'+contentParam+'&tabid='+escape('{!tab}')+'&ppcli_id={!page_content_layout_instance}&showbar=false&ocmsLang='+language;
+
+                frame.contentWindow.location.replace(translateFrameSource);             
+            });
+        }
+
+        /** Holds all the language information for the content as an object.  All frames reference this object. **/
+        
+        var allLanguageInformation = {!allLanguageInformationJSON};
+
+        $(document).ready(function(){
+            
+            $(window).unload(function(){
+           		if(typeof cleanUpFrame !== 'undefined')
+           			cleanUpFrame(); 
+            });
+            
+            
+            var recentContentData = {};
+            recentContentData['id'] = '{!content.Id}';
+            recentContentData['listType'] = 'recentcontent';
+            addItemToUserList(recentContentData);
+
+            
+            // Listen for a potential update to the languages on the content.
+            var tId = thisTabId(); 
+            var listenFor = "available_languages_updated"+tId;
+            
+            availableLangFunc = function(sEvt, sObject, cbFunc){
+                try {
+                    allLanguageInformation.contentLanguages = sObject.value.languages;
+                    allLanguageInformation.contentPrimaryLanguage = allLanguageInformation.contentLanguages[0];
+                    allLanguageInformation.translatableLanguages = $.grep(allLanguageInformation.allTranslatableLanguagesForUser, function(tLanguage){
+                        return allLanguageInformation.contentLanguages.filter(function(cLanguage){ return cLanguage.Id == tLanguage.Id; }).length > 0;
+                    });
+                    allLanguageInformation.requireTranslationLanguages = $.grep(allLanguageInformation.contentLanguages, function(cLang){
+                        return allLanguageInformation.translatedLanguages.filter(function(tLang){
+                            return cLang.Id == tLang.Id;
+                        }).length == 0;
+                    });
+                    
+                    ce.content_pageproperties_editor('option', 'requireTranslationLanguages', allLanguageInformation.requireTranslationLanguages);
+                    
+
+                    //  A second select box exists and we have more than 1 language on the content
+                    var candidateForDisable = (document.querySelector('#ocmsLanguageSelectorTwo') !== null && allLanguageInformation.contentLanguages.length > 1)
+                    // The language to disable is in select box 2 or it doesn't exist and is blank.
+                    var languageToDisable =  candidateForDisable ? $('#ocmsLanguageSelectorTwo').val() : '';
+                    // The language currently set in the first selector.
+                    var languageBeforeChange = $('#ocmsLanguageSelectorOne').val();
+                    // Is the language to be disabled in the updated set of languages?
+                    var languageToDisableInList = allLanguageInformation.contentLanguages.some(function(lang){ 
+                        return lang[cms.prefix+'Language_Code__c'] == languageToDisable;
+                    })
+
+                    // If the language to disable isn't blank and it isn't in the list any more we need to pick one and set that as the languageToDisable.
+                    if (languageToDisable != '' && !languageToDisableInList) {
+                        languageToDisable = allLanguageInformation.contentLanguages[0][cms.prefix+'Language_Code__c'] == languageBeforeChange ? allLanguageInformation.contentLanguages[1][cms.prefix+'Language_Code__c'] : allLanguageInformation.contentLanguages[0][cms.prefix+'Language_Code__c'] ;
+                    }
+
+                    // Now, create the new options box with our languageToDisable and the language to select (whether it exists or not)
+                    $('#ocmsLanguageSelectorOne').empty();
+                    $('#ocmsLanguageSelectorOne').append(optionsList(languageToDisable, languageBeforeChange));
+                    
+                    // If the language in the first selector has changed, we'll need to load up the frame with the new language.
+                    if (languageBeforeChange != $('#ocmsLanguageSelectorOne').val()) {
+                       setContentFrame($('.contentFrame')[0]);
+                    }
+                    
+                    // Deal with the second frame and select box.
+                    var splitViewShowing = $(".ocms-content-translate-panel").css('display') != 'none';
+                    // If we have less than 2 languages.
+                    if (allLanguageInformation.contentLanguages.length < 2 ){
+                        // ...and split view is opened, then it needs to be closed and the split view button needs to be disabled.
+                        if (splitViewShowing) {
+                            $(".ocms-content-translate-panel").toggle();
+                            $(document).trigger('split_view_changed', false);
+                        }
+                      
+                    } else {
+                        // If there are more than 2 languages on the content and split view is showing
+                        if (splitViewShowing) {
+                            // Figure out what language was showing in the second pane.
+                            var languageTwoBeforeChange = $('#ocmsLanguageSelectorTwo').val();
+                            // Set our selection to the language that was disabled in the first selection box.
+                            var languageTwoToSelect = languageToDisable;
+                            $('#ocmsLanguageSelectorTwo').empty();
+                            $('#ocmsLanguageSelectorTwo').append(optionsList($('#ocmsLanguageSelectorOne').val(), languageTwoToSelect));
+
+                            // If the language has changed, load up the new frame.
+                            if (languageTwoBeforeChange != $('#ocmsLanguageSelectorTwo').val()) {
+                               setTranslateFrame($('.translateFrame')[0]);            
+                            }
+
+                        // If split view is now showing it could be because there weren't enough languages.  Enable the SplitView button to be sure.
+                        } else {
+                        	                        }
+                    }
+
+                } catch (e) {
+                    console.log('Error caught by content editor listener/dispatcher: '+e.message);
+                }
+            };
+            
+            updateAvailableLanguagesSubscriber = addSubscriber(listenFor, availableLangFunc); 
+            removeUpdateFunc = function(sEvt, sObject, cbFunc){};
+            
+             
+            // this listens for tab close and "unhooks" our listeners
+            removeUpdateAvailableLanguagesSubscriber = addSubscriber('Tab.Event.'+thisTabId(), removeUpdateFunc);
+
+            // Bind event for toggling of split view.
+            $(document).on('split_view_changed', function(event, paneShowing){
+                if (paneShowing) {
+                    // First, save the existing content.
+                    if ($('.contentFrame')[0].contentWindow.ce !== undefined) {
+                        $('.contentFrame')[0].contentWindow.ce.content_pageproperties_editor('saveContentPageProperties', false, function(){
+                            var languageSelectorTwo = buildSelectBoxes('Two');
+                            $('#ocmsLanguageOptionsTwo').append(languageSelectorTwo);
+
+                            $('#ocmsLanguageSelectorTwo').change(function(){
+                               setTranslateFrame($('.translateFrame')[0]);
+                            });
+
+                            $('#ocmsLanguageSelectorTwo').append(optionsList($('#ocmsLanguageSelectorOne').val()));
+                            setTranslateFrame($('.translateFrame')[0]);
+
+                            resizeEditorFrames();
+                        });
+
+                    // If the content editor isn't yet loaded, then toggle the attempt back off.
+                    } else {
+                        $('.ocms-content-translate-panel').toggle();
+                    }
+                } else {
+                    // Unregister any save events from the frame etc.
+                    beforeFrameChange($('.translateFrame')[0], function(){
+                        // Unset the translate frame.
+                        $('.translateFrame')[0].contentWindow.location.replace('about:blank');
+
+                        // Empty the second language selector and recalculate the first one.
+                        $('#ocmsLanguageOptionsTwo').empty();
+                        $('#ocmsLanguageSelectorOne').find('option').prop('disabled', false);
+                    });
+                }
+             });
+
+            // update language list if new languages are added or removed    
+            $(document).on('content_save_is_complete', function(event, p1){
+                // If the languages have potentially been updated then publish the event.
+                var publishTo = "available_languages_updated"+tId;
+                publishEvent(publishTo, {action: "updateAvailableLanguages", value: p1});
+
+            });
+        });
+    </script>
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!showLanguages}">
+<script type="text/javascript">
+    var $jParent = window.parent.$;
+    var $thisFrame = $(window.frameElement);
+
+    // Use the same language information object across all instances.
+    if(window.parent.allLanguageInformation != undefined)
+    	var allLanguageInformation = window.parent.allLanguageInformation;
+	
+	//need global scope so we can clean up 
+	var unlockOnClose;
+ 	var updateAvailableLanguagesSubscriber;
+	var removeUpdateAvailableLanguagesSubscriber; 
+	var availableLangFunc;
+	var unlockFunc;
+	var removeUpdateFunc;
+	var ce;
+
+	/*
+    /**
+     * This 'fixInputsOnScroll' function is in place to deal with a chrome bug outlined here:
+     * https://code.google.com/p/chromium/issues/detail?id=439407 and https://code.google.com/p/chromium/issues/detail?id=437025
+     *
+     * Once this bug has been resolved in Chrome this can be removed.  We limit this to firing at most 5 times a second.
+     */
+    fixInputsOnScroll = function(){
+        frameElement.style.webkitBackfaceVisibility = 'hidden';
+        document.removeEventListener('scroll', fixInputsOnScroll, false);
+        document.removeEventListener('click', fixInputsOnScroll, false);
+        document.removeEventListener('keydown', fixInputsOnScroll, false);
+        setTimeout(function(){
+            frameElement.style.webkitBackfaceVisibility = '';
+            document.addEventListener('scroll', fixInputsOnScroll, false);
+            document.addEventListener('click', fixInputsOnScroll, false);
+            document.addEventListener('keydown', fixInputsOnScroll, false);            
+        }, 200);
+    }
+    document.addEventListener('scroll', fixInputsOnScroll, false);
+    document.addEventListener('click', fixInputsOnScroll, false);
+    document.addEventListener('keydown', fixInputsOnScroll, false);
+    /**
+     * end of the fixInputsOnScroll workaround.
+     */
+    
+</script>
+</apex:outputPanel>
+  
+<script type="text/javascript">
+  	var pageEditPerm = $(window.frameElement).data().pageeditperm;
+ 	var pagePermissions = 'READONLY';
+ 	
+ 	var pageDisableAll = $(window.frameElement).data().pagedisableall; 	
+ 	if(!pageDisableAll && pageEditPerm && {!allowEditPageSpecificProperties}){
+ 		pagePermissions ='EDIT';
+ 	}else
+ 		pageDisableAll=true;
+  
+  $(document).data('cms', {
+      context         : 'orchestracms',
+      namespace       : '{!namespace}',
+      prefix          : '{!prefix}',
+      csrf_token      : '{!token}',
+      site_name       : '{!content.Site_Name__c}',
+      translationView : pagePermissions,
+      createManagePage: {!createManagePagePermission},
+      languageInUse   :  {!languageInUseJSON},
+      disableAll      : pageDisableAll,
+      allowPublicTags   : {!showPublicTags},
+      allowPersonalTags : {!showPersonalTags},
+      allowPrivateShare	: {!showShare},
+      isMultiLingual     : {!showLanguages}
+            
+  });
+  var cms = $(document).data('cms');
+  
+  function resizeContentEditorArea(){
+      /*var cntEditorPanel = (typeof parent.resizeContentEditorArea == 'function') ? $jParent('.ocms-content-editor-panel, .ocms-content-translate-panel'): $('.ocms-content-editor-panel, .ocms-content-translate-panel');
+      var eph1 = cntEditorPanel.css('padding-top');
+      var eph2 = cntEditorPanel.css('padding-bottom');
+      if (eph1 !== null && eph1 !== undefined)
+          eph1 = parseInt(eph1.substring(0,eph1.length-2));
+      else
+          eph1 = 0;
+      if (eph2 !== null && eph2 !== undefined)
+          eph2 = parseInt(eph2.substring(0,eph2.length-2));
+      else
+          eph2 = 0;
+      $('#contentEditBlock').height(($('body').outerHeight(true))- $('.contentEditForm').outerHeight(true)-(eph1+ eph2)); */
+  }
+    
+          
+  $(document).ready(function(){
+  
+    // if this is the content or translate frame then we want to mirror changes made to "language neutral" settings from one frame to the other
+    if (!{!showActionBar}) {
+    
+        function _mirrorUpdateValue(mObject) {
+            $('#' + mObject.id).val(mObject.value);
+        }
+        
+        function _mirrorUpdateChecked(mObject) {
+            $('#' + mObject.id).prop('checked', mObject.value).trigger('change', true);
+        }
+        
+        function _mirrorUpdateColor(mObject) {
+            $('#' + mObject.id).val(mObject.value).keyup();
+        }
+        
+        function _mirrorPushButton(mObject) {
+            if ($('#' + mObject.id).data('events').hasOwnProperty('click')) {
+                $.each($('#' + mObject.id).data('events').click, function(index, action) {
+                     if (action.namespace != 'ocms.publishedClick') {
+                        action.handler.call();
+                     }
+                });
+            }
+        }
+
+        // for side-by-side editing set up our action mirroring
+        
+        //** memmory leak */
+        
+		
+        $thisFrame.action_mirror({
+            "bMultilingual":    {!showLanguages},                   // actions will only get mirrored when the bMultilingual flag is true!
+            "mirrorActions":    {
+                 "updateValue":     _mirrorUpdateValue              // map action-name(s) to mirror handler routine(s)
+                ,"updateChecked":   _mirrorUpdateChecked
+                ,"updateColor":     _mirrorUpdateColor
+                ,"pushButton":      _mirrorPushButton
+            },
+            "context":          self,                               // context for handler routines to run in
+            "suffix":           "contentEditorSubframe"             // only need this when container element doesn't have an Id attribute
+        });
+
+        // get a handle to our action mirror widget so we can call its "action" mirror method directly
+        
+        
+        $thisFrame.mirror =  $(window.frameElement).action_mirror('instance');
+        
+        // find the language neutral controls and prepare to "mirror" changes to them to the other frame
+        $('.ocmsLanguageNeutral').each(function(idx) {
+            var cType = $(this).attr('type');
+            var id  = $(this).attr('id');
+            if (cType === 'text' || cType === 'email' || cType === 'password' || cType === 'number' || cType === 'search' || cType === 'tel' || cType === 'url') {
+                $(this).keyup(function() {
+                    $thisFrame.mirror.action("updateValue", {id: id, value: $(this).val()});
+                });
+                $(this).on('colorUpdate', function(){ // special for jPicker
+                    $thisFrame.mirror.action("updateColor", {id: id, value: $(this).val()});
+                });
+            } else if (cType === 'checkbox' || cType === 'radio') {
+                $(this).change(function(event, internal){
+                    if (!internal){
+                        $thisFrame.mirror.action("updateChecked", {id: id, value: $(this).prop('checked')});
+                    }
+                });
+            } else if ($(this).is('select')) {
+                $(this).change(function() {
+                    $thisFrame.mirror.action("updateValue", {id: id, value: $(this).val()});                 
+                });
+            } else if ($(this).hasClass('ocmsLanguageNeutralButton')) {
+                $(this).on('click.ocms.publishedClick', function() {
+                    $thisFrame.mirror.action("pushButton", {id: id, value:"click"});
+                });
+            }
+        });
+        
+        
+
+    } // if not showActionBar (ie if this is an editor "subframe")
+    if({!IF(!ISNULL(content), 'true', 'false')}) {
+       ce = $('#edit-prop-toolbar').content_pageproperties_editor({
+            published               : {!content.Published__c},
+            sitePrefix              : '{!JSENCODE(site_info.Site_Prefix__c)}',
+            disableAll              : {!disableAll},
+            disableSelectLanguages  : {!disableSelectLanguages},
+            disableTranslateProperties : {!disableTranslateProperties},
+           	contentId               : '{!JSENCODE(content.Id)}',
+         	allowSave               : {!allowSave},
+           	showSplitView           : {!numberOfLanguagesForContent > 1},
+            readOnlyCollaborator    : {!readOnlyCollaborator},
+			isPrimaryLanguage       : {!IF(contentLanguages != null && !contentLanguages.empty, JSENCODE(languageInUse.Id) == contentLanguages[0].Id, false)},
+            //requireTranslationLanguages: allLanguageInformation.requireTranslationLanguages,
+            language                : '{!JSENCODE(languageInUse.Id)}',
+            pcliId                   : '{!page_content_layout_instance}',
+           
+        });
+    }
+    
+    $('#SaveBtn').button().click( function(){
+    	ce.content_pageproperties_editor('saveContentPageProperties',true,null);
+    });
+     if(pageDisableAll)
+     	$('#SaveBtn').button('disable');
+    
+    $('#TranslateBtn').button().click( function(){
+    	ce.content_pageproperties_editor('toggleSplitView');
+    	
+    });
+     if(allLanguageInformation.numberOfLanguagesForContent <= 1){
+   		$('#TranslateBtn').button('disable');
+    }
+    
+    $('#CancelBtn').button().click( function(){
+    	window.parent.$('#page_properties_dlg').fulldialog("close");
+    });
+    if({!showLanguages}){
+        $('.ocms-content-translate-panel').toggle();
+
+        if ({!!showActionBar}) {
+            
+            var resizeFrames = function() {
+                parent.resizeEditorFrames();
+            }
+			//where does the load.ocms.createcontent
+			$(window).on('load.ocms.createcontent', resizeFrames);
+            
+            $(document).on('ocmsTreeBranchExpanded', function() {
+                parent.resizeEditorFrames();
+            });
+            
+            var saveFunctionDefinition =  function(){
+                var translationStatus = [];
+                var thisTranslationStatus = $thisFrame.closest('div').find('.languageTranslated').val() == 'true';
+                translationStatus.push({"id":"{!JSENCODE(languageInUse.Id)}", "translated":thisTranslationStatus});
+
+                var thisLanguage = $.grep(allLanguageInformation.contentLanguages, function(lang){
+                    return '{!JSENCODE(languageInUse.Id)}' == lang.Id;
+                })[0];
+                var languageIsAlreadyTranslated = allLanguageInformation.translatedLanguages.some(function(language){
+                    return '{!JSENCODE(languageInUse.Id)}' == language.Id;
+                });
+                
+                if (thisTranslationStatus === true) {
+                    if (!languageIsAlreadyTranslated) {
+                        allLanguageInformation.translatedLanguages.push(thisLanguage);
+                        allLanguageInformation.requireTranslationLanguages = $.grep(allLanguageInformation.requireTranslationLanguages, function(lang){
+                            return lang.Id != thisLanguage.Id;
+                        });
+                        ce.content_pageproperties_editor('option', 'requireTranslationLanguages', allLanguageInformation.requireTranslationLanguages);
+                    }
+                }
+                else if (thisTranslationStatus === false) {
+                    if (languageIsAlreadyTranslated) {
+                        allLanguageInformation.translatedLanguages = $.grep(allLanguageInformation.translatedLanguages, function(lang){
+                            return lang.Id != thisLanguage.Id;
+                        });
+                        allLanguageInformation.requireTranslationLanguages.push(thisLanguage);
+                        ce.content_pageproperties_editor('option', 'requireTranslationLanguages', allLanguageInformation.requireTranslationLanguages);
+                    }
+                    
+                }
+                
+                return {'translationStatus':translationStatus}; 
+            };
+            
+            // Set the translation status.
+            var translationStatusBox = $thisFrame.closest('div').find('.languageTranslated');
+            if (allLanguageInformation.defaultSiteLanguage.Id == '{!JSENCODE(languageInUse.Id)}') {
+                $thisFrame.closest('div').find('.languageTranslated option[value="true"]').prop("selected", true);
+            } else {
+                translationStatusBox.prop('disabled', false);
+                translationStatusBox.find('option[value="{!isCurrentLanguageTranslated}"]').prop("selected", true);
+            }
+
+
+            var permissionText;
+            if (pageDisableAll) {
+                permissionText = 'Viewing';
+                $thisFrame.closest('div').find('.languageTranslated').prop('disabled', true);
+            }else{
+                switch (pagePermissions){
+                    case 'TRANSLATE':
+                        permissionText = 'Translating';
+                        $('.ocmsLanguageNeutral').prop('disabled', true);
+                        ce.content_pageproperties_editor('registerSaveFunction', saveFunctionDefinition);
+                        break;
+                    case 'READONLY':
+                        permissionText = 'Viewing';
+                        $thisFrame.closest('div').find('.languageTranslated').prop('disabled', true);
+                        $($thisFrame[0].contentDocument).find('input, textarea, select').prop('disabled', true);
+                        break;
+                    case 'EDIT':
+                        permissionText = 'Editing';
+                        ce.content_pageproperties_editor('registerSaveFunction', saveFunctionDefinition);
+                        break;
+                    default:
+                        permissionText = 'Viewing';
+                }
+            }
+            var permissionMessage = 'Currently '+ permissionText;           
+            $thisFrame.closest('div').find('.ocmsHelpText').text(permissionMessage);
+            
+        } else {
+        
+            $('#ocmsLanguageOptionsOne').append(buildSelectBoxes('One'));
+            $('#ocmsLanguageSelectorOne').change(function(){
+                setContentFrame($('.contentFrame')[0]);
+            });
+             
+            // Build the options dialogs.
+            $('#ocmsLanguageSelectorOne').append(optionsList(''));
+             
+        }
+
+    }else
+    	$('#TranslateBtn').button('disable');
+  
+    
+    $(window).on('resize', function() {
+        resizeContentEditorArea();
+    });
+    
+   
+    resizeContentEditorArea();
+    
+   
+
+    
+  });
+</script>
+ 
+</head>
+
+<body class="ocms" style="padding: 0px; margin: 0px;">
+
+  <div id="edit-prop-toolbar"></div>
+
+  <apex:outputPanel rendered="{!!hasAccess}">
+    <div style="padding: 10px;">You do not have the privileges required to edit this content.</div>
+  </apex:outputPanel>
+
+  <apex:outputPanel rendered="{!hasAccess}">
+      <apex:outputPanel rendered="{!showActionBar}">
+         <div id="contentEditBlock" style="width: 100%; overflow: auto; height: 90%">
+            <div class="ui-layout-center" style="height:90%;">
+                <table class="ocmsContentEditor" >
+                    <tr style="height: 100%;"><td style="min-width: 1292px; height: 100%; white-space: nowrap;">
+                        <div class="ocms-content-editor-panel">
+                        
+                            <apex:outputPanel rendered="{!!showLanguages}" layout="none">
+                                <apex:composition template="{!EditPageProperties}" />
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{!showLanguages}" layout="none">
+                                <div class="ocmsLanguageOptions" id="ocmsLanguageOptionsOne"></div>
+                                <iframe border="0" frameborder="0" style="padding: 0px; border: 0px; margin: 0; width: 100%; height: 85%;" class="contentFrame" src="/apex/EditContentPageProperties?sname={!content.Site_Name__c}&{!IF(content_layout_instance_id == null, 'content='+content.Id, 'instance='+ content_layout_instance_id)}&ppcli_id={!page_content_layout_instance}&tabid={!URLENCODE(tab)}&showbar=false&ocmsLang={!contentPrimaryLanguage.LanguageCode}"></iframe>
+                           			<script type="text/javascript">
+	                                	$('.contentFrame').attr('data-pageeditperm', $(window.frameElement).data().pageeditperm);
+	                                	$('.contentFrame').attr('data-pagedisableall', $(window.frameElement).data().pagedisableall);
+	                                    setContentFrame(document.querySelector('.contentFrame'));
+	                                </script>
+                            </apex:outputPanel>
+    
+                        </div>
+                        <apex:outputPanel rendered="{!showLanguages}" layout="none">
+                            <div class="ocms-content-translate-panel">
+                                <div class="ocmsLanguageOptions" id="ocmsLanguageOptionsTwo"></div>
+                                <iframe border="0" frameborder="0" style="padding: 0px; border: 0px; margin: 0; width: 100%; height: 85%;" class="translateFrame" src=""></iframe>
+                            <script>
+                            		$('.translateFrame').attr('data-pageeditperm', $(window.frameElement).data().pageeditperm);
+	                                $('.translateFrame').attr('data-pagedisableall', $(window.frameElement).data().pagedisableall);
+	                                    
+                            	</script>
+                            </div>
+                        </apex:outputPanel>
+                    </td></tr>
+                </table>
+            </div>
+            <div id="ContentItemDetailPanel" class="ui-layout-south"></div>    
+        </div>
+      <div id="button-panel">
+      <span id="SaveBtn">Save</span>
+      <span id="TranslateBtn">Translate</span>
+      <span id = "CancelBtn">Cancel</span>
+      </div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!!showActionBar}" layout="none">
+        <div id="preventMarginCollapse" style="padding-top: 1px;"></div>
+        <apex:composition template="{!EditPageProperties}" />
+      </apex:outputPanel>
+  </apex:outputPanel>
+</body>
+
+</apex:page>

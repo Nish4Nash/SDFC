@@ -1,0 +1,5 @@
+<apex:page id="m" controller="cms.CoreController" showHeader="false" sidebar="false" cache="{!page_cache}" expires="{!page_expires}" title="{!page_title}" standardStylesheets="false">
+    <html>
+        <apex:include id="i" pageName="{!page_layout_reference}" />
+    </html>
+</apex:page>

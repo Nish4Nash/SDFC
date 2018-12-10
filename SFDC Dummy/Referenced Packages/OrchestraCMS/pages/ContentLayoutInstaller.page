@@ -1,0 +1,269 @@
+<apex:page id="installer" controller="cms.ContentLayoutInstaller" showHeader="false" sidebar="false" cache="false" standardStylesheets="false" title="OrchestraCMS">
+
+<html>
+
+	<head>
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+		<c:CmsScripts />
+		<script type="text/javascript">
+			$( document ).ready(function() {
+				$('.exportButton').button({disabled: true});
+				$('.importButton').button();
+			
+				// click handler for the selector checkboxes
+				$('input[type=checkbox][name=layoutSelected]').on("click", function() {
+					var someChecked = false;
+					var allChecked = true;
+					if ($(this).val() === 'toggleAll') {
+						var checked = $(this).prop("checked");
+						someChecked = checked;
+						$('input[type=checkbox][name=layoutSelected]').prop("checked", checked);
+					} else {
+						$('input[type=checkbox][name=layoutSelected]').each(function() {
+							if ($(this).val() !== 'toggleAll') {
+								someChecked = someChecked || $(this).prop("checked");
+								allChecked = allChecked && $(this).prop("checked");
+							}
+							
+							$('input[type=checkbox][name=layoutSelected][value=toggleAll]').prop("checked", allChecked);														
+						});
+					}
+					
+					// as long as some checked is true we can enable the export button otherwise disable it
+					$('.exportButton').button("option", "disabled", !someChecked);
+					
+				});
+				
+				// click handler for the export button
+				$('.exportButton').on("click", function() {
+					var selectedIds = [];
+					$('input[type=checkbox][name=layoutSelected]').each(function() {
+						if ($(this).val() !== 'toggleAll' && $(this).prop('checked')) {
+							selectedIds.push($(this).val());
+						}
+					});
+					if (selectedIds.length>0) {
+						var layoutList = selectedIds.join(',');
+						var url = '/apex/ServiceEndPoint?service=ContentLayoutManager&action=export&sname={!sname}&token={!URLENCODE(token)}&layoutList='+layoutList;
+						window.open(url, 'exportLayouts');
+					}
+				});
+				
+
+				// click handler for the import button
+				$('.importButton').on("click", function() {
+					import_dialog.dialog('open');
+				});
+
+
+				// import dialog
+				var import_dialog = $('<div><p><textarea id="importData" name="importData" style="display:block; margin:auto" placeholder="Paste the import string here" rows="30" cols="90"></textarea></div>');
+				var didImport = false;
+						
+				//ADD DIALOG
+                import_dialog.dialog({
+	                autoOpen: false,
+	                title: 'Import Templates',
+	                dialogClass: 'importTemplatesDialog',
+	                height: Math.min(620, $.orchestracmsUtil.getViewPortSize().height),
+	                width: 800,
+	                modal: true,
+	                
+	                resize: function() {
+	                        var dialog = $(this);
+	                },
+	                
+	                beforeClose: function() {
+	                        var dialog = $(this);
+	                        if (didImport)				// force a refresh of the screen if we did an import
+	                        	setTimeout(function() {window.location.href = window.location.href;}, 100);
+	                },				
+
+					buttons: [
+                    	{
+                    		text: "Submit",
+                    		click: function(event) {
+                    			var dialog = $(this);
+								//clear old errors
+								dialog.find('#ImportErrors').children().remove();
+								
+								var data = {};
+								data.service = 'ContentLayoutManager';
+								data.action = 'import';
+								data.config = dialog.find('#importData').val();
+								
+								var handler =  function(response, bSuccess){
+									didImport = true;
+									response = $.orchestracmsUtil.parseJSON(response);
+									
+									
+									var msg = (response.hasOwnProperty('message') ? response.message : response);
+									var popup = $('<div></div>').ocmsShowInfoPopup({
+										message: msg
+									});
+									
+								}
+								
+								var options = {};
+								options.cb = handler;
+								doServiceRequest(data, options);
+							}
+						},                 			
+						{
+							text: 'cancel'.localize(),
+							click: function (event) {
+								var dialog = $(this);
+								dialog.dialog('close');
+								event.stopPropagation();
+							}
+						}
+					],
+					
+					open: function(event, ui) {
+						var dialog = $(this);
+					},
+					
+					close: function() {
+						var dialog = $(this);
+						dialog.find('#importData').val('');						
+					}
+				}).parent().click(function(event){event.stopPropagation()});
+
+
+			});	
+		</script>
+	</head>
+
+	<body class="ocms">
+	
+		<c:SetupMenu sname="{!sname}" activeitem="manage-content-layouts" />
+
+		<apex:outputText escape="fales" rendered="{!hasAccess}">							
+			<div style="margin-left: 210px; padding: 10px;">	
+				<div class="ocms-setup-breadcrumb">
+					<div class="ocms-setup-breadcrumb-start"></div>
+					<div class="ocms-setup-breadcrumb-item">Setup</div>
+					<div class="ocms-setup-breadcrumb-separator-active"></div>		  
+					<div class="ocms-setup-breadcrumb-item-active">Content Templates</div>
+					<div class="ocms-setup-breadcrumb-end"></div>
+					<div class="ocms-clear"></div>
+				</div>
+			</div>
+			
+			<apex:outputPanel id="messages" layout="block" rendered="{!showMessages}">
+				<div style="border: 1px solid #DEDEDE;">
+					<apex:repeat value="{!messages}" var="message">
+						<apex:outputPanel layout="block" style="padding: 5px;">{!message.detail}</apex:outputPanel>
+					</apex:repeat>
+				</div>
+			</apex:outputPanel>
+			<div style="width: 1450px;">
+				<div style="display: inline-block; width: 42%;">		
+					<span style="font-size: 16px; padding-bottom: 8px;">Pre-defined Content Templates</span>
+					<br/>
+					<br/>
+				
+					<table border="0" cellspacing="0" cellpadding="3" style="margin:0; font-size: 12px">
+						<tbody>
+							<tr style="background-color: rgb(231, 231, 232);">
+								<td style="width: 200px; padding: 2px;">Name</td>
+								<td style="width: 300px; padding: 2px;">Description</td>
+								<td style="width: 100px; padding: 2px;">&nbsp;</td>
+							</tr>
+							
+							<apex:repeat value="{!unmanaged_layouts}" var="layout">
+								
+								<tr>
+									<td style="padding: 5px 2px;">
+										{!layout.Label__c}
+									</td>
+									<td style="padding: 5px 2px;">
+										{!layout.Description__c}
+									</td>
+									<td style="padding: 5px 2px; text-align: center">
+										<a href="/apex/EditContentTemplate?id={!layout.Id}&sname={!sname}" class="setup-link" >Edit</a>
+									</td>
+								</tr>
+							</apex:repeat>
+						</tbody>
+						<tfoot>
+							<tr class="list-footer"><td colspan="2"></td></tr>
+						</tfoot>
+					</table>	 
+				</div>
+								
+				<div style="display: inline-block; width: 42%;">
+					<div>
+						<span style="font-size: 16px; padding-bottom: 8px;">User-defined Content Templates</span>
+						<apex:outputPanel rendered="{!hasCTCAccess}">
+							<a class="button" style="float: right" href="/apex/CTC?sname={!sname}&hasCTCAccess=1">New Template</a>
+							<a class="exportButton" style="float: right">Export Selected</a> 
+							<a class="importButton" style="float: right">Import</a>
+							<script>$('.button').button();</script>
+                        </apex:outputPanel>
+						<apex:outputPanel rendered="{!!hasCTCAccess}">
+							<a class="importButton" style="float: right">Import</a>
+                        </apex:outputPanel>
+					</div>
+					<br/>
+				
+					<table border="0" cellspacing="0" cellpadding="3" style="margin:0; font-size: 12px">
+						<tbody>
+							<tr style="background-color: rgb(231, 231, 232);">
+								<td><input type="checkbox" name="layoutSelected" value="toggleAll" /></td>
+								<td style="width: 200px; padding: 2px;">Name</td>
+								<td style="width: 300px; padding: 2px;">Description</td>
+								<td style="width: 100px; padding: 2px;">&nbsp;</td> 
+							</tr>
+							
+							<apex:repeat value="{!managed_layouts}" var="layout">
+								
+								<tr>
+									<td><input type="checkbox" name="layoutSelected" value="{!layout.Id}" /></td>
+									<td style="padding: 5px 2px;">
+										{!layout.Label__c}
+									</td>
+									<td style="padding: 5px 2px;">
+										{!layout.Description__c}
+									</td>
+									<td style="padding: 5px 2px; text-align: center">
+										<a href="/apex/CTC?id={!layout.Id}&sname={!sname}&{!IF(hasCTCAccess == true, 'hasCTCAccess=1', 'hasCTCAccess=0')}" class="setup-link" >Edit</a>
+									</td>
+								</tr>
+							</apex:repeat>
+
+							<apex:repeat value="{!custom_layouts}" var="layout">
+								<tr>
+									<td><input type="checkbox" name="layoutSelected" value="{!layout.Id}" /></td>
+									<td style="padding: 5px 2px;">
+										{!layout.Label__c}
+									</td>
+									<td style="padding: 5px 2px;">
+										{!layout.Description__c}
+									</td>
+									<td style="padding: 5px 2px; text-align: center">
+										<a href="/apex/EditContentTemplate?id={!layout.Id}&sname={!sname}" class="setup-link" >Edit</a>
+									</td>
+								</tr>
+							</apex:repeat>
+
+						</tbody>
+						<tfoot>
+							<tr class="list-footer"><td colspan="2"></td></tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>	
+		</apex:outputText>
+		
+		<apex:outputPanel rendered="{!!hasAccess}">
+		  	<div style="padding: 10px;">
+		  		You do not have Setup > Templates -> Content Templates permission
+		   	</div>
+		</apex:outputPanel>
+	
+	</body>
+
+</html>
+
+</apex:page>

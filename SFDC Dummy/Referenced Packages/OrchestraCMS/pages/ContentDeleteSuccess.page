@@ -1,0 +1,17 @@
+<apex:page controller="cms.DeleteContentWizardController" showHeader="false" sidebar="false" standardStylesheets="false" >
+
+	<head>
+		<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+ 		<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+		<!-- This is the jquery cookie extension only -->
+  		<apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" />
+	</head>
+
+	<body style="font-size: 12px; font-family: arial; padding: 0px; margin: 0px;">
+		<div style="padding:10px;">
+			Content Deleted Successfully
+		</div>
+	</body>
+
+</apex:page>

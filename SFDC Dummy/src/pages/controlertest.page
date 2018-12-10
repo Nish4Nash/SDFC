@@ -1,0 +1,18 @@
+<apex:page controller="cont1" extensions="cont2,cont3">
+<apex:form >
+    <apex:pageBlock >
+       <apex:pageBlockSection >
+            <apex:outputText >Enter the value:</apex:outputText>
+            <apex:inputText value="{!x}"/>
+            <apex:commandButton value="Check" action="{!checking}" rerender="pb2"/>
+            </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    
+    <apex:pageBlock id="pb2">
+    <apex:outputText >the value is :</apex:outputText>
+            <apex:inputText value="{!c}"/>
+    </apex:pageBlock>
+    
+    </apex:form>
+    </apex:page>

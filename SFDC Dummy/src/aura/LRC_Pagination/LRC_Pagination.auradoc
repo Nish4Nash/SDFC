@@ -1,0 +1,20 @@
+<aura:documentation>
+	<aura:description>
+		<p>Component used for pagination for a given set of data</p>              
+        <p>Attribute 1: tableDataList : This is the complete list of data that needs to be divided in pages for pagination </p>
+        <p>Attribute 2: needServerCall : This is a boolean value that says if a server call is needed for pagination or no</p>
+    	<p>Attribute 3: offSetVal : This is the integer value which is calculated and is sent back to server to get the next set of records</p>
+        <p>Attribute 4: noOfPages: This is an integer value that gets calculated and defines the no of pages in pagination</p>
+    	<p>Attribute 5: sizePerPage : This is an integer value that defines the no of records to be displayed per page.</p>
+        <p>Attribute 6: currentPage : This indicates the current page no in pagination</p>
+        <p>Attribute 7: lastPage: This value indicates the last page of pagination</p>
+        <p>Attribute 8: firstPage: This value indicates the first page of pagination </p>        
+    </aura:description>
+	
+    <aura:example name="Example_1" ref="LRC_PaginationTestApp" label="Using the LRC_Pagination component">
+		<p>This example shows a basic pagination for a given set of records with inputs like a size per page (determines no. of records to be displayed in 1 page),the main table list (this list will have the total no of records and not as per the size per page)</p>
+	</aura:example>
+    <aura:example name="Example_2" ref="LRC_PaginationTestApp" label="Removing records and relatively changing the LRC_Pagination component">
+       <p>This example shows how you can Remove records from the table and as the size of the page decreases you can see the no of pages in pagination also decreasing </p>
+    </aura:example>    
+</aura:documentation>

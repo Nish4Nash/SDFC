@@ -1,0 +1,68 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.Listable" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+
+	<apex:outputPanel layout="block">
+	
+	 	<script type="text/javascript" language="javascript">
+			$(document).ready(function(){
+				
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array();
+		
+					attributes.push({"name":"ListSummary", "value":$('#ListSummary').val(), "type":"Text"});
+					attributes.push({"name":"TargetLink", "value":$('#TargetLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					attributes.push({"name":"ListableMoreLink", "value":$('#MoreLink').val(), "type":"Text"});
+				
+					return attributes; 
+				})
+				
+				$('#TargetLink').page_selector_input({
+	 				input_field: 'TargetLink',
+	 				input_id: 'TargetLink_selector_input',
+					dialog_id: 'TargetLinkDlg_selector_dialog',
+					selected: {!IF(OR(TargetLinkObj.LinkJSON == null, TargetLinkObj.LinkJSON == ''), 'null', TargetLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(TargetLinkObj.LinkName)}'
+ 			});
+	
+	 		}); 
+		</script>
+	
+		<form>
+	
+			<table class="ocmsContentEditor ocmsContentEditorNested">
+			
+				<tr>
+					<td>
+						<label class="ocmsLabel" for="ListSummary">Summary</label>
+						<apex:outputText escape="false" rendered="{!disableAll}">
+							<textarea class="ocmsTextInputLrg" id="ListSummary" name="ListSummary" disabled="disabled"><apex:outputText value="{!ListSummary}" /></textarea>
+						</apex:outputText>
+						<apex:outputText escape="false" rendered="{!!disableAll}">
+							<textarea class="ocmsTextInputLrg" id="ListSummary" name="ListSummary" size="100" ><apex:outputText value="{!ListSummary}"  /></textarea>
+						</apex:outputText>
+						<p class="ocmsHelpText" >Text that will appear as a link on your list.</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="ocmsLabel" for="TargetLink">Target Link</label>
+					    <div id="TargetLink" />
+						
+					</td>
+				</tr>
+		        <tr>
+		        	<td>
+		        		<label class="ocmsLabel" for="MoreLink">More Link</label>
+		               	<apex:outputText escape="false" rendered="{!disableAll}">
+		            		<input type="text" id="MoreLink" name="MoreLink" value="{!ListableMoreLink}" disabled="disabled" />
+		            	</apex:outputText>
+		            	<apex:outputText escape="false" rendered="{!!disableAll}">
+		            		<input class="ocmsTextInputLrg" type="text" id="MoreLink" name="MoreLink" value="{!ListableMoreLink}" />
+		            	</apex:outputText>
+		            </td>
+		         </tr>
+			</table>
+		</form>
+	</apex:outputPanel>
+
+
+</apex:page>

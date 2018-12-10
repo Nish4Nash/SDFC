@@ -1,0 +1,33 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false">
+
+    <script type="text/javascript" language="javascript">   
+        $(document).ready(function(){
+            // this disables the "split view" button on the "parent" content editor window
+            // STI-0000003272 - check number of languages before deciding to disable split view
+
+		    var $jParent = window.parent.$;
+		    var $thisFrame = $(window.frameElement);
+
+		  	$(window).unload(function(){
+		  		cleanUpFrame(); 
+			}); 
+
+            var numLanguages = 0;   
+          	if(typeof $jParent !== 'undefined') {
+	            numLanguages = $jParent('#ocmsLanguageSelectorOne option').size();
+	            if (numLanguages <= 1)
+	            	$jParent('#contentEditActionBar').ocmsActionBar('disableAction','SplitView');
+	            else
+	            	$jParent('#contentEditActionBar').ocmsActionBar('enableAction','SplitView');
+	    	}
+        });
+    </script>
+    
+    <div id="ocmsPreviewMsgBox" style="position:absolute; max-width: 50%">
+        <div class="ui-state-warn ui-corner-all" style="position:relative;min-height:30px;background-color:#FFFFE0;color:#000;border:2px solid #DAA520;">
+            <div style="padding:7px 40px 5px">
+                <div id="ocmsPreviewMsgBoxMsg" style="overflow-y: hidden;overflow-x: auto;padding-bottom: 10px; font-size: 14px;">This content template doesn't have any content or template properties to configure</div>
+            </div>
+        </div>
+    </div>
+</apex:page>

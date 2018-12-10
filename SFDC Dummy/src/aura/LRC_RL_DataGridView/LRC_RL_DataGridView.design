@@ -1,0 +1,4 @@
+<design:component label="LRC Related List">
+	<design:attribute name="inputChildMetadata" label="Input Child Name" default="" description="The child Metadata Name for related List" />
+    <design:attribute name="inputPageSize" label="Input Page Size"  default="20" description="No of records to display per page" />
+</design:component>

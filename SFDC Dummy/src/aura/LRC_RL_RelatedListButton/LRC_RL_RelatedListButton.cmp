@@ -1,0 +1,45 @@
+<!--***********************************************************************************
+* Component: LRC_RL_RelatedListButton
+* CreatedBy: Nishit Kedia
+* Description: The Related List Component 
+* Revision History
+***********************************************************************************-->
+
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="inputChildMetadata" type="String" />
+    <aura:attribute name="inputPageSize" type="Integer" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<c:LRC_RL_DataGridView aura:id="RLComp" 
+                           bIsButtonFacetSet ="true"
+                           bIsOptionFacetSet ="true"
+                           	inputChildMetadata="{!v.inputChildMetadata}" 
+                           recordId="{!v.recordId}" 
+                           inputPageSize="{!v.inputPageSize}">
+    
+        <aura:set attribute="buttons">
+            <!--<button class="slds-button"  style="height: 10px; width:200px;color: #FFFFFF;background-color: #00FF7C;border: 1px solid #00FF7C;border-radius: 5px;" aria-haspopup="true" title="More options" value="Button 1" />-->
+            <!--<button class="slds-button " style="height: 10px; width:200px;color: #FFFFFF;background-color: #00FF7C;border: 1px solid #00FF7C;border-radius: 5px;" aria-haspopup="true" title="More options" value="Button 2" />-->
+        	<button class="slds-button slds-float_right slds-button--brand testid__dummy-button-submit-action slds-col slds-no-space dummyButtonSubmitAction uiButton" aria-live="off" type="button" title="Add" data-aura-rendered-by="2491:0" data-aura-class="uiButton" onclick="{! c.handleClick }"><!--render facet: 2492:0--><span class=" label bBody truncate" dir="ltr" data-aura-rendered-by="2494:0">Add</span><!--render facet: 2496:0--></button>
+        	<button class="slds-button slds-float_right slds-button--brand testid__dummy-button-submit-action slds-col slds-no-space dummyButtonSubmitAction uiButton" aria-live="off" type="button" title="Add" data-aura-rendered-by="2491:0" data-aura-class="uiButton"><!--render facet: 2492:0--><span class=" label bBody truncate" dir="ltr" data-aura-rendered-by="2494:0">Save</span><!--render facet: 2496:0--></button>
+        <button class="slds-button slds-float_right slds-button--brand testid__dummy-button-submit-action slds-col slds-no-space dummyButtonSubmitAction uiButton" aria-live="off" type="button" title="Add" data-aura-rendered-by="2491:0" data-aura-class="uiButton"><!--render facet: 2492:0--><span class=" label bBody truncate" dir="ltr" data-aura-rendered-by="2494:0">Update</span><!--render facet: 2496:0--></button>
+        
+        </aura:set>
+        
+        <aura:set attribute="optionbuttons">
+            <!--<button class="slds-button"  style="height: 10px; width:200px;color: #FFFFFF;background-color: #00FF7C;border: 1px solid #00FF7C;border-radius: 5px;" aria-haspopup="true" title="More options" value="Button 1" />-->
+            <!--<button class="slds-button " style="height: 10px; width:200px;color: #FFFFFF;background-color: #00FF7C;border: 1px solid #00FF7C;border-radius: 5px;" aria-haspopup="true" title="More options" value="Button 2" />-->
+        	<a href="javascript:void(0);" role="menuitem" tabindex="0">
+              <span class="slds-truncate">Menu Item One</span>
+            </a>
+            <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+          <span class="slds-truncate">Menu Item Two</span>
+        </a>
+            <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+          <span class="slds-truncate">Menu Item Four</span>
+        </a>
+        </aura:set>
+        
+    </c:LRC_RL_DataGridView>
+</aura:component>

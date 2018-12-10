@@ -1,0 +1,19 @@
+<apex:page docType="{!doc_type}" controller="cms.CoreController" standardStylesheets="false" showHeader="false" sidebar="false">
+    
+    <apex:composition template="{!page_template}">
+        <apex:define name="header">         
+            <style type="text/css">
+                body{
+                    font: normal 14px arial,sans-serif;
+                    margin: 10px;  
+                }
+            </style>            
+        </apex:define>
+        
+        <apex:define name="body" >
+        	<div>404 Page Not Found.</div>
+        	<div>Default OrchestraCMS 404. Please Configure a 404 Page.</div>
+        </apex:define>  
+    </apex:composition>
+
+</apex:page>

@@ -1,0 +1,100 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.SearchBasicFormController"  showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	<apex:outputPanel layout="block" style="padding: 5px;">
+	
+	 	<script type="text/javascript" language="javascript">
+			$(document).ready(function(){
+                ce.content_editor('registerSaveFunction', function(){
+                	ce.content_editor('registerValidationRule','SearchButtonText','REQUIRED','Search Button Text is a required field.');
+                
+                    var attributes = new Array();
+
+                    attributes.push({"name":"ResultsPage", "value":$('#ResultsPage').page_selector_input('getSerializedLink'), "type":"Text"});
+                    attributes.push({"name":"SearchButtonText", "value":$('#SearchButtonText').val(), "type":"Text"});
+                    attributes.push({"name":"SearchLabel", "value":$('#SearchLabel').val(), "type":"Text"});
+                    attributes.push({"name":"TitleText", "value":$('#TitleText').val(), "type":"Text"});
+
+                    return attributes;
+                });
+                
+                $('#ResultsPage').page_selector_input({
+	 				input_field: 'ResultsPage',
+	 				input_id: 'ResultsPage_selector_input',
+					dialog_id: 'ResultsPageDlg_selector_dialog',
+					selected: {!IF(OR(ResultsPageLink.LinkJSON == null,ResultsPageLink.LinkJSON == ''), 'null',ResultsPageLink.LinkJSON)},
+					selected_name: '{!JSENCODE(ResultsPageLink.LinkName)}'
+ 				}); 
+			});
+		</script>
+	
+		<style type="text/css">
+			table.ocmsContentEditor tr td {
+				float: none;
+			}
+			table.ocmsContentEditor {
+				height: auto;
+			}
+			span .ocms-instructional-text {
+				display: block;
+				margin-top: 0.5em;
+			}
+			span .ocms-instructional-text {
+				width: 300px;
+			}
+			#ResultsPageDlg .ocmsTextInputLrg {
+				display: inline-block;
+			}
+		</style>
+	
+	<form>
+		<table class="ocms-form-edit ocmsContentEditor ocmsContentEditorNested">
+	        <tr>
+	            <td>
+	            	<label class="ocmsLabel">Basic Results Page</label>
+	                <div id="ResultsPage" />
+	                <span class="ocms-instructional-text">Page users see when they click the Search button. It must contain the Basic Results content item.</span>
+	            </td>
+	        </tr>
+
+			<tr>
+				<td>
+	            	<label class="ocmsLabel">Search Button Text *</label>
+					<apex:outputText rendered="{!disableAll}">
+		            	<input type="text" name="SearchButtonText" id="SearchButtonText" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchButtonText}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+		            	<input type="text" name="SearchButtonText" id="SearchButtonText" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchButtonText}" />
+					</apex:outputText>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+	            	<label class="ocmsLabel">Search Label</label>
+					<apex:outputText rendered="{!disableAll}">
+		            	<input type="text" name="SearchLabel" id="SearchLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchLabel}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+		            	<input type="text" name="SearchLabel" id="SearchLabel" class="ocmsTextInputMed ocmsLanguageSpecific" value="{!SearchLabel}" />
+					</apex:outputText>
+	                <span class="ocms-instructional-text">If left blank use Title text to improve the accessibility of your website</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+	            	<label class="ocmsLabel">Title Text</label>
+					<apex:outputText rendered="{!disableAll}">
+		            	<input type="text" name="TitleText" id="TitleText" class="ocmsTextInputLrg ocmsLanguageSpecific" value="{!TitleText}" disabled="disabled" />
+					</apex:outputText>
+					<apex:outputText rendered="{!!disableAll}">
+		            	<input type="text" name="TitleText" id="TitleText" class="ocmsTextInputLrg ocmsLanguageSpecific" value="{!TitleText}" />
+					</apex:outputText>
+	                <span class="ocms-instructional-text">Text that appears when the mouse pointer hovers over the image</span>
+				</td>
+			</tr>
+
+	    </table>
+	</form>
+	</apex:outputPanel>
+
+</apex:page>

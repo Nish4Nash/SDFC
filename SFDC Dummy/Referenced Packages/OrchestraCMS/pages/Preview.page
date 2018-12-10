@@ -1,0 +1,6 @@
+<apex:page id="m" language="{!RenderLanguage}" docType="{!doc_type}" apiVersion="27" readOnly="true" controller="cms.CoreController" extensions="cms.PreviewController" showHeader="false" sidebar="false" cache="false" expires="{!page_expires}" standardStylesheets="false" title="{!page_title}" renderAs="{!render_as}" applyBodyTag="false" applyHtmlTag="false">
+	
+	<apex:outputText escape="false" value="{!htmlTag}" />
+		<apex:composition template="{!page_layout_reference}" />
+	<apex:outputText escape="false" value="</html>" />
+</apex:page>

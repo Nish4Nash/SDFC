@@ -1,0 +1,1 @@
+<apex:page controller="cms.ServiceEndPoint" language="{!RenderLanguage}" action="{!doAction}" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" contentType="text/plain" readonly="true">{!response}</apex:page>

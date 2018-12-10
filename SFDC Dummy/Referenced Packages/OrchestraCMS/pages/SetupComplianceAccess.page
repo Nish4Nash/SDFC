@@ -1,0 +1,98 @@
+<apex:page controller="cms.SetupComplianceAccess" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+    <title>Manage Access Levels</title>
+    
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	
+	<c:CmsScripts />
+   	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'AccessDialogs.js')}" />
+  	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'compliance/ComplianceMatrix.js')}" />
+
+	<style type="text/css">
+	
+	.rulesLoading {
+					background-image: url('{!URLFOR($Resource.jqueryui, '/css/images/General/16px_AnimatedIndeterminateProgress.gif')}');
+				    background-repeat: no-repeat;
+				    display: block;
+				    position: relative;
+				    margin: 2px;
+				    padding: 0px; 
+				    width: 16px; 
+				    height: 16px;
+	}
+	
+	</style>
+  
+  	<script type="text/javascript">
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+		
+        function doServiceRequest(params, options) {
+            var main = window.top;
+            if(main != null) {
+                main.doServiceRequest(params, options);
+            }
+        }		
+
+		$(document).ready(function(){
+			$('#ocms-setup-compliance-matrix').ocmsComplianceMatrix({
+				level: 				{!accessLevelJSON},
+				groups: 			{!groupsJSON},
+				restrictions: 		{!restrictionsJSON},
+				restrictionsCustom: {!restrictionsCustomJSON},
+				templateSharing: 	{!templateSharing},
+				pageSharing:		{!pageSharing},
+				sname: 				"{!site_name}",
+				namespace:			"{!namespace}"
+			});
+		});
+
+	</script>
+  
+  </head>
+
+  <body class="ocms">
+
+	<apex:outputPanel rendered="{!hasAccess}">
+
+	  	<c:SetupMenu sname="{!site_name}" activeitem="accessLevels" />
+	
+	  	<div style="margin-left: 210px; padding: 10px;">
+
+		  		<div class="ocms-setup-breadcrumb">
+				  <div class="ocms-setup-breadcrumb-start"></div>
+				  <div class="ocms-setup-breadcrumb-item">Setup</div>
+				  <div class="ocms-setup-breadcrumb-separator-active"></div>
+				  <div class="ocms-setup-breadcrumb-item-active">Manage Access Levels</div>
+				  <div class="ocms-setup-breadcrumb-end"></div>
+				  <div class="ocms-clear"></div>
+				</div>
+				
+				<br />
+				
+				<h1 style="font-size: 16px; color: #788E1E;">{!accessLevel.Name__c}</h1><br /><br />
+				
+				<div id="ocms-setup-compliance-matrix"></div>
+				
+				<br /> 
+				
+				<apex:form >
+				<apex:commandButton action="{!done}" value="Done" />
+				</apex:form>
+	    </div>
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!!hasAccess}">
+	  	<div style="padding: 10px;">
+	  		You do not have Setup > Manage Access Levels permission
+	   	</div>
+	</apex:outputPanel>  
+	
+  </body>
+
+</html>
+</apex:page>

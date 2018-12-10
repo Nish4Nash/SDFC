@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>User Tracked List</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>User Tracked Lists</value>
+    </caseValues>
+    <fields>
+        <label><!-- ListEntry001 --></label>
+        <name>ListEntry001__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry002 --></label>
+        <name>ListEntry002__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry003 --></label>
+        <name>ListEntry003__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry004 --></label>
+        <name>ListEntry004__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry005 --></label>
+        <name>ListEntry005__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry006 --></label>
+        <name>ListEntry006__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry007 --></label>
+        <name>ListEntry007__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry008 --></label>
+        <name>ListEntry008__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry009 --></label>
+        <name>ListEntry009__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry010 --></label>
+        <name>ListEntry010__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry011 --></label>
+        <name>ListEntry011__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry012 --></label>
+        <name>ListEntry012__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry013 --></label>
+        <name>ListEntry013__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry014 --></label>
+        <name>ListEntry014__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry015 --></label>
+        <name>ListEntry015__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry016 --></label>
+        <name>ListEntry016__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry017 --></label>
+        <name>ListEntry017__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry018 --></label>
+        <name>ListEntry018__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry019 --></label>
+        <name>ListEntry019__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry020 --></label>
+        <name>ListEntry020__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry021 --></label>
+        <name>ListEntry021__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry022 --></label>
+        <name>ListEntry022__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry023 --></label>
+        <name>ListEntry023__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry024 --></label>
+        <name>ListEntry024__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry025 --></label>
+        <name>ListEntry025__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry026 --></label>
+        <name>ListEntry026__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry027 --></label>
+        <name>ListEntry027__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry028 --></label>
+        <name>ListEntry028__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry029 --></label>
+        <name>ListEntry029__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry030 --></label>
+        <name>ListEntry030__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry031 --></label>
+        <name>ListEntry031__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry032 --></label>
+        <name>ListEntry032__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry033 --></label>
+        <name>ListEntry033__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry034 --></label>
+        <name>ListEntry034__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry035 --></label>
+        <name>ListEntry035__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry036 --></label>
+        <name>ListEntry036__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry037 --></label>
+        <name>ListEntry037__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry038 --></label>
+        <name>ListEntry038__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry039 --></label>
+        <name>ListEntry039__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry040 --></label>
+        <name>ListEntry040__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry041 --></label>
+        <name>ListEntry041__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry042 --></label>
+        <name>ListEntry042__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry043 --></label>
+        <name>ListEntry043__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry044 --></label>
+        <name>ListEntry044__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry045 --></label>
+        <name>ListEntry045__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry046 --></label>
+        <name>ListEntry046__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry047 --></label>
+        <name>ListEntry047__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry048 --></label>
+        <name>ListEntry048__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry049 --></label>
+        <name>ListEntry049__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry050 --></label>
+        <name>ListEntry050__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry051 --></label>
+        <name>ListEntry051__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry052 --></label>
+        <name>ListEntry052__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry053 --></label>
+        <name>ListEntry053__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry054 --></label>
+        <name>ListEntry054__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry055 --></label>
+        <name>ListEntry055__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry056 --></label>
+        <name>ListEntry056__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry057 --></label>
+        <name>ListEntry057__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry058 --></label>
+        <name>ListEntry058__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry059 --></label>
+        <name>ListEntry059__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry060 --></label>
+        <name>ListEntry060__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry061 --></label>
+        <name>ListEntry061__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry062 --></label>
+        <name>ListEntry062__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry063 --></label>
+        <name>ListEntry063__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry064 --></label>
+        <name>ListEntry064__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry065 --></label>
+        <name>ListEntry065__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry066 --></label>
+        <name>ListEntry066__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry067 --></label>
+        <name>ListEntry067__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry068 --></label>
+        <name>ListEntry068__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry069 --></label>
+        <name>ListEntry069__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry070 --></label>
+        <name>ListEntry070__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry071 --></label>
+        <name>ListEntry071__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry072 --></label>
+        <name>ListEntry072__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry073 --></label>
+        <name>ListEntry073__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry074 --></label>
+        <name>ListEntry074__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry075 --></label>
+        <name>ListEntry075__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry076 --></label>
+        <name>ListEntry076__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry077 --></label>
+        <name>ListEntry077__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry078 --></label>
+        <name>ListEntry078__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry079 --></label>
+        <name>ListEntry079__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry080 --></label>
+        <name>ListEntry080__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry081 --></label>
+        <name>ListEntry081__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry082 --></label>
+        <name>ListEntry082__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry083 --></label>
+        <name>ListEntry083__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry084 --></label>
+        <name>ListEntry084__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry085 --></label>
+        <name>ListEntry085__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry086 --></label>
+        <name>ListEntry086__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry087 --></label>
+        <name>ListEntry087__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry088 --></label>
+        <name>ListEntry088__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry089 --></label>
+        <name>ListEntry089__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry090 --></label>
+        <name>ListEntry090__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry091 --></label>
+        <name>ListEntry091__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry092 --></label>
+        <name>ListEntry092__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry093 --></label>
+        <name>ListEntry093__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry094 --></label>
+        <name>ListEntry094__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry095 --></label>
+        <name>ListEntry095__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry096 --></label>
+        <name>ListEntry096__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry097 --></label>
+        <name>ListEntry097__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry098 --></label>
+        <name>ListEntry098__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry099 --></label>
+        <name>ListEntry099__c</name>
+    </fields>
+    <fields>
+        <label><!-- ListEntry100 --></label>
+        <name>ListEntry100__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- UserTrackedList --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- User --></label>
+        <name>User__c</name>
+        <relationshipLabel><!-- User Tracked Lists --></relationshipLabel>
+    </fields>
+    <recordTypes>
+        <label><!-- Favourite Content --></label>
+        <name>Favourite_Content</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Favourite Media --></label>
+        <name>Favourite_Media</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Favourite Pages --></label>
+        <name>Favourite_Pages</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Favourite Places --></label>
+        <name>Favourite_Places</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Pinned Content --></label>
+        <name>Pinned_Content</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Pinned Media --></label>
+        <name>Pinned_Media</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Pinned Pages --></label>
+        <name>Pinned_Pages</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Pinned Places --></label>
+        <name>Pinned_Places</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Recent Content --></label>
+        <name>Recent_Content</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Recent Media --></label>
+        <name>Recent_Media</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Recent Pages --></label>
+        <name>Recent_Pages</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Recent Places --></label>
+        <name>Recent_Places</name>
+    </recordTypes>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

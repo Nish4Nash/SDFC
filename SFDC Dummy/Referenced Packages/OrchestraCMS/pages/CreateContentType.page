@@ -1,0 +1,414 @@
+<apex:page controller="cms.CreateContentTypeController" sidebar="false" showHeader="false" standardStylesheets="false" cache="false">
+<html>
+<head>
+
+  <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+  <c:CmsScripts />
+  
+  <script type="text/javascript" src="{!URLFOR($Resource.OrchestraCMSUI, '/widget/JQueryContentTemplateOptions.js')}"></script>
+
+
+  <style type="text/css">
+	.sortable { background-color: rgb(195,195,195);}
+	.draggable { height: 25px; padding: 3px; font-size: 12px; font-family: arial; background-color: rgb(235,235,235); border: 1px solid rgb(200,200,200); width: 250px;}
+	.sortable div { height: 25px; }
+  </style>
+
+  <script type="text/javascript">
+
+	$(document).ready(function() {
+
+		$(document).data('cms', {
+			'context' 	: 'orchestracms',
+			'namespace' : '{!namespace}'
+		});
+
+		$(document).data('type_id', '{!ctype.Id}');
+
+		//setup the buttons all ajax all the time no viewstate over head!!
+		$('.btnSave, .btnSaveAndNew').button();
+		$('.btnSave').click(function(){
+			saveTypeAndTemplate();
+		});
+
+		$('.btnSaveAndNew').click(function(){
+
+			if(saveTypeAndTemplate())
+				window.location.href = '/apex/CreateContentType?sname={!sname}&mode=new';
+		});
+
+		$('.btnCancel').button();
+		$('.btnCancel').click(function(){
+			window.location.href = '/apex/ManageContentType?sname={!sname}';
+		});
+
+
+
+		$('#content_templates').contentTemplateSetup({
+			sname: '{!sname}',
+			token: '{!token}',
+			state: {!SelectedTemplatesJSON},
+			templates: {!ContentTemplateOptions}
+		});
+		
+		
+		///Setup the disabled checkboxes
+		$('.childOptions').each(function(index,element) {
+			if ($(element).data('disabled')==true)
+				$(element).prop('disabled', true);
+		});
+		$("#hasChildren").click(function() {
+			var enabled = $(this).is(":checked");
+			$('.childOptions').each(function(index,element) {
+				if (enabled) {
+					$(this).prop('disabled', false);
+				} else {
+					$(this).prop('checked', false);
+					$(this).prop('disabled', true);
+				}
+			});	
+		});
+		
+		$("#hasChildren").hover(function() {
+			 clearTimeout($(this).data('timeoutid'));	
+			 $("#hasChildrenToolTip").fadeIn("slow");
+		});
+		$("#hasChildren").mouseleave(function() {
+			 $(this).data('timeoutid', setTimeout(function(){	
+				 $("#hasChildrenToolTip").fadeOut("fast");
+			 },300));
+		});	
+		
+		$("#excludeFromAccessLevelSharing").hover(function() {
+			 clearTimeout($(this).data('timeoutid'));	
+			 $("#excludeFromAccessLevelSharingToolTip").fadeIn("slow");
+		});
+		$("#excludeFromAccessLevelSharing").mouseleave(function() {
+			 $(this).data('timeoutid', setTimeout(function(){	
+				 $("#excludeFromAccessLevelSharingToolTip").fadeOut("fast");
+			 },300));
+		});	
+		
+		
+		$("#enableApplyToChildren").hover(function() {
+			 clearTimeout($(this).data('timeoutid'));	
+			 $("#enableApplyToChildrenToolTip").fadeIn("slow");
+		});
+		$("#enableApplyToChildren").mouseleave(function() {
+			 $(this).data('timeoutid', setTimeout(function(){	
+				 $("#enableApplyToChildrenToolTip").fadeOut("fast");
+			 },300));
+		});			 	
+		
+	});
+	
+	function  validateSave(){
+		var valid=true;
+		var name = $('#typeName').val();
+		var type = $('#typeLabel').val();
+		if(name == null || name == undefined || name == '') {
+			$('#typeName').addClass('error');
+			$('#typeName').after('<div id="name-error" class="error-msg">Name is required</div>');
+			$('#typeName').keyup(function() {
+				var value = $(this).val();
+				if(value !== null && value !== undefined && value !== '') {
+					$('#typeName').removeClass('error');
+					$('#name-error').remove();
+					$('#typeName').off('keyup');
+				}
+			});
+			valid=false;	
+		}if(type == null || type == undefined || type == ''){
+			$('#typeLabel').addClass('error');
+			$('#typeLabel').after('<div id="type-error" class="error-msg">Label is required</div>');
+			$('#typeLabel').keyup(function() {
+				var value = $(this).val();
+				if(value !== null && value !== undefined && value !== '') {
+					$('#typeLabel').removeClass('error');
+					$('#type-error').remove();
+					$('#typeLabel').off('keyup');
+				}
+			});
+			valid=false;	
+		}
+		return valid;
+	}
+	
+	function saveTypeAndTemplate(){
+		
+		if(validateSave()){
+			$('.btnSave, .btnSaveAndNew').button();
+			$('.btnSave, .btnSaveAndNew').button('disable');
+			var status = true;
+			var popup = $('<div></div>').ocmsShowInfoPopup({
+				message: 'Saving'
+			});
+	
+			var data = {};
+			data['action'] = 'saveContentType';
+	
+			if($(document).data('type_id') != '') {
+				data['type_id'] = $(document).data('type_id');
+			}
+	
+			data['type_name'] = $('#typeName').val();
+			data['type_label'] = $('#typeLabel').val();
+			
+			data['past_publishing'] = $('#pastPublishing:checked').size() > 0;
+			data['has_children'] = $('#hasChildren:checked').size() > 0; 
+			data['enable_apply_to_children'] = $('#enableApplyToChildren:checked').size() > 0; 		
+			data['exclude_from_accessLevel_sharing'] = $('#excludeFromAccessLevelSharing:checked').size() > 0;
+			
+			data['sname'] = '{!sname}';
+			data['token'] = '{!token}';
+	
+			var templates = $('#content_templates').find('tr.list-item');
+	
+			data['template_count'] = templates.length;
+	
+			for(var i=0 ; i < templates.length; ++i) {
+				var id = $(templates[i]).attr('id');
+				data['template_id_'+i] = id;
+				data['autocreate_'+i] = $(templates[i]).find('.autocreate:checked').length > 0;
+				data['default_'+i] = $(templates[i]).find('#default_template:checked').val() == id;
+	
+				var selectedPage = $(templates[i]).find('.page_lookup').page_selector_input('getSelected');
+				if(selectedPage !== undefined) {
+					if(selectedPage['id'] != '' && selectedPage['id'] != null)
+						data['preview_page_id_'+i] = selectedPage['id'];
+				}
+	
+			}
+	
+			jQuery.ajax({
+	               url: '/apex/OrchestraPrivateAjax',
+	               type: 'POST',
+	               data: data,
+	               async: false,
+	               dataType: 'json',
+	               success: function(json, textStatus){
+	
+	               	popup.ocmsShowInfoPopup('closeMessage');
+	
+					if(json['success'] !== undefined){
+						$('#typeName').prop('disabled', true);
+						$(document).data('type_id', json['success']['message']['Id']);
+					} else if(json['error'] !== undefined) {
+						$('<div></div>').ocmsShowErrorPopup({
+							message: json['error']['message']
+						});
+						status=false;
+					}
+	
+					$('.btnSave, .btnSaveAndNew').button('enable');
+	               }
+		       });
+		   		return status;
+	   		}
+   		}
+   </script>
+
+</head>
+
+<body class="ocms">
+
+  <apex:outputPanel id="create" rendered="{!showCreate}">
+
+    <c:SetupMenu sname="{!sname}" activeitem="manage-content-type" />
+
+    <div style="margin-left: 210px; padding: 10px;">
+
+		  <div class="ocms-setup-breadcrumb">
+			 <div class="ocms-setup-breadcrumb-start"></div>
+			 <div class="ocms-setup-breadcrumb-item">Setup</div>
+			 <div class="ocms-setup-breadcrumb-separator"></div>
+			 <div class="ocms-setup-breadcrumb-item">Content Types</div>
+			 <div class="ocms-setup-breadcrumb-separator-active"></div>
+			 <div class="ocms-setup-breadcrumb-item-active">{!modeText} Content Type</div>
+			 <div class="ocms-setup-breadcrumb-end"></div>
+			 <div class="ocms-setup-clear"></div>
+		  </div>
+		  <br />
+
+
+	    <apex:outputPanel layout="block" style="background-color: rgb(255,255,255); font-family: Arial; font-size: 12px;">
+
+		    <div style="font-size: 16px; padding-bottom: 8px;">{!modeText} Content Type</div>
+
+		    <apex:outputPanel id="saved" rendered="{!showSaved}">
+
+			    <table border="0" cellspacing="0" cellpadding="5px;">
+		   		 <tr>
+		      		<td style="width: 300px;"><br />Content Type <strong>{!saved.Name__c}</strong> Saved.<br />&nbsp;</td>
+		    	  </tr>
+		    	</table>
+
+		    </apex:outputPanel>
+
+		    <table border="0" cellspacing="0" cellpadding="5px;" >
+			<tr>
+				<td></td>
+				<td></td>
+				<td>
+					<div class="btnSave" style="float:left; padding-right: 5px;">Save</div>
+					<apex:outputText rendered="{!showSaveAndNew}">
+						<div class="btnSaveAndNew" style="float: left; padding-right: 5px;">Save &amp; New</div>
+					</apex:outputText>
+					<div class="btnCancel" style="float:left;">Cancel</div>
+					<div style="clear: both;"></div>
+				</td>
+			</tr>
+		    <tr>
+		      <td style="width: 120px;">Name *</td>
+		      <td style="width: 15px;">&nbsp;</td>
+
+		     	<td style="width: 420px;">
+		     		<apex:outputText rendered="{!ctype.cms__Name__c !=null}">
+		     			<input type="text" name="typeName"  id="typeName" disabled="disabled" value="{!ctype.cms__Name__c}" />
+		     		</apex:outputText>
+		     		<apex:outputText rendered="{!ctype.cms__Name__c}">
+		     			<input type="text" name="typeName"  id="typeName" value="{!ctype.cms__Name__c}" />
+		     		</apex:outputText>
+		     	</td>
+		    </tr>
+		    <tr>
+		      <td>Label *</td>
+		      <td>&nbsp;</td>
+		      <td><input type="text" name="typeLabel" id="typeLabel" value="{!ctype.Label__c}" required="true"/></td>
+		      <td></td>
+		    </tr>
+		    <tr>
+			      <td valign="top">Child Elements</td>
+			      <td>&nbsp;</td>
+			      <td>
+			      
+				<div style="display:inline; margin-right: 5px;">
+					<div class="ocms-livetooltip" id="hasChildrenToolTip" style="display:none;position:absolute;width:300px;margin-top:10px;margin-left:20px">Content templates related to menus, taxonomy, data and forms are used to create content with a parent/child structure. Select this option if any of the following core content templates are included in the content type: 
+			      		<ul><li>Breadcrumb</li>
+			      			<li>Class Styled Menu</li>
+			     		    <li>Mega Menu</li>
+			     		    <li>Simple Horizontal Menu</li>
+							<li>Taxonomy Menu</li>
+							<li>Class Styled Record List</li>
+							<li>Class Styled Record Detail</li>
+							<li>Form</li></ul> </div>
+				    <apex:outputPanel rendered="{!ctype.cms__hasChildren__c}">
+				      		<apex:outputText rendered="{!isCoreType}">
+				      			<input type="checkbox" name="hasChildren" id="hasChildren" checked="checked" disabled="disabled" />&nbsp;&nbsp;
+				      		</apex:outputText>
+				      		<apex:outputText rendered="{!!isCoreType}">
+				      			<input type="checkbox" name="hasChildren" id="hasChildren" checked="checked" />&nbsp;&nbsp;
+				      		</apex:outputText>
+				    </apex:outputPanel>
+						
+				    <apex:outputPanel rendered="{!!ctype.cms__hasChildren__c}">
+				      		<apex:outputText rendered="{!isCoreType}">
+				      			<input type="checkbox" name="hasChildren" id="hasChildren"  disabled="disabled"/>&nbsp;&nbsp;
+				      		</apex:outputText>
+				      		<apex:outputText rendered="{!!isCoreType}">
+				      			<input type="checkbox" name="hasChildren" id="hasChildren" />&nbsp;&nbsp;
+				      		</apex:outputText>
+				    </apex:outputPanel>
+			     </div>
+			      	
+			     Content has a parent/child structure
+			     <apex:outputText rendered="{!isContentSharingOn}">
+			      	
+			      	<div style="display:block; margin-right: 5px;">
+			      		<div class="ocms-livetooltip" id="excludeFromAccessLevelSharingToolTip" style="display:none;position:absolute;width:300px;margin-top:10px;margin-left:45px">Relevant for menus only. You can choose whether access level rules are applied only to the parent menu or to the parent menu and all menu items (child elements). This option is relevant if any of the following core content templates are included in the content type; otherwise, this option should not be selected: 
+						<ul><li>Breadcrumb</li>
+							<li>Class Styled Menu</li>
+			     		    <li>Mega Menu</li>
+			     		    <li>Simple Horizontal Menu</li>
+			     		    <li>Taxonomy Menu</li>
+							</ul> </div>
+				      		<apex:outputText rendered="{!ctype.Disable_Child_Rule_Sharing__c }">
+				      		<input style="margin-left:31px" class="childOptions" type="checkbox" name="excludeFromAccessLevelSharing" id="excludeFromAccessLevelSharing" checked="checked" data-disabled="{!isCoreType || (!ctype.hasChildren__c)}" />&nbsp;&nbsp;
+				      		</apex:outputText>
+				      		<apex:outputText rendered="{!!ctype.Disable_Child_Rule_Sharing__c }">
+				      		<input style="margin-left:31px" class="childOptions"  type="checkbox" name="excludeFromAccessLevelSharing" id="excludeFromAccessLevelSharing" data-disabled="{!isCoreType || (!ctype.hasChildren__c)}" />&nbsp;&nbsp;
+				      		</apex:outputText>
+			      			Exclude child elements from access level rules assigned to parent
+			        </div>	
+			      	
+			        <div style="display:block; margin-right: 5px;">	
+				      <div class="ocms-livetooltip" id="enableApplyToChildrenToolTip" style="display:none;position:absolute;width:300px;margin-top:10px;margin-left:45px">Relevant for menus only. If you choose not to display the check box, the default behaviour is that sharing rules applied to the parent menu are always applied to all menu items (child elements). This option is relevant if any of the following core content templates are included in the content type; otherwise, this option should not be selected:
+						<ul><li>Breadcrumb</li>
+						<li>Class Styled Menu</li>
+			     		<li>Mega Menu</li>
+			     		<li>Simple Horizontal Menu</li>
+					    </ul> </div>		
+				     <apex:outputText rendered="{!ctype.cms__Enable_Apply_To_Children__c}">
+				      	<input  style="margin-left:31px" class="childOptions"  type="checkbox" name="enableApplyToChildren" id="enableApplyToChildren" checked="checked"  data-disabled="{!isCoreType || (!ctype.hasChildren__c)}" />&nbsp;&nbsp;
+				     </apex:outputText>
+					<apex:outputText rendered="{!!ctype.cms__Enable_Apply_To_Children__c}">
+						<input  style="margin-left:31px" class="childOptions" type="checkbox" name="enableApplyToChildren" id="enableApplyToChildren"  data-disabled="{!isCoreType || (!ctype.hasChildren__c)}" />&nbsp;&nbsp;
+				    </apex:outputText>
+			      	Include checkbox in the Add Visitor dialog when sharing content
+			        </div>
+			     </apex:outputText>
+			</td>
+			<td></td>
+		</tr>
+		   
+		     
+		    <apex:outputText rendered="{!hasPastPublishing}">
+		    <tr>
+		      <td valign="top">Publish in the Past</td>
+		      <td>&nbsp;</td>
+		      <td>
+		      	<div style="float: left; margin-right: 5px;">
+		      	<apex:outputPanel rendered="{!ctype.cms__Allow_Past_Publishing__c}">
+		      		<input type="checkbox" name="pastPublishing" id="pastPublishing" checked="checked"  />&nbsp;&nbsp;
+		      	</apex:outputPanel>
+				<apex:outputPanel rendered="{!!ctype.cms__Allow_Past_Publishing__c}">
+		      		<input type="checkbox" name="pastPublishing" id="pastPublishing"  />&nbsp;&nbsp;
+		      	</apex:outputPanel>
+		      	</div>
+		      	Allow the setting of the publish start date in the past when creating <strong>new</strong> content.<br />
+            	<strong>Note</strong>: this will negatively affect the integrity of the site's Time Travel timeline.
+		      </td>
+		      <td></td>
+		    </tr>
+		    </apex:outputText>
+		    <tr>
+		      <td valign="top">Content Templates</td>
+		      <td>&nbsp;</td>
+		      <td>
+		   	  	<table class="ocms-list" cellspacing="0" cellpadding="5">
+					<thead>
+						<tr class="list-header">
+							<td>Content Template</td>
+							<td>Auto Create</td>
+							<td>Default</td>
+							<td>Preview Page</td>
+							<td class="last"></td>
+						</tr>
+					</thead>
+					<tbody id="content_templates">
+					</tbody>
+					<tfoot>
+						<tr class="list-footer">
+							<td colspan="5" class="last">
+								<div class="btnSave" style="float:left; padding-right: 5px;">Save</div>
+								<apex:outputText rendered="{!showSaveAndNew}">
+									<div class="btnSaveAndNew" style="float: left; padding-right: 5px;">Save &amp; New</div>
+								</apex:outputText>
+								<div class="btnCancel" style="float:left;">Cancel</div>
+								<div style="clear: both;"></div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+		      </td>
+		    </tr>
+		   </table>
+		    <br />
+
+	    </apex:outputPanel>
+    </div>
+
+  </apex:outputPanel>
+</body>
+</html>
+</apex:page>

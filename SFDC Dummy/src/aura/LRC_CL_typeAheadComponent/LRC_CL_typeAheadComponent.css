@@ -1,0 +1,9 @@
+.THIS .smallIcon{
+    height: 1rem;
+    line-height: 1;
+    width: 1rem;
+}
+/*toggleCss.css*/
+.THIS.toggle {
+    display: none;
+}

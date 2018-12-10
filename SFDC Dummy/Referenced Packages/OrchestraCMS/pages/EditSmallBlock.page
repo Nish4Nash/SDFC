@@ -1,0 +1,65 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.SmallBlock" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	 
+		  <script type="text/javascript" language="javascript">
+		 	$(document).ready(function(){
+		 		$(document).data('sname', '{!SiteName}');
+		 		
+		 		CKEDITOR.replace('ContentSummary',{!CKEditorConfig});
+
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array();
+					attributes.push({"name":"ContentSummary", "value":CKEDITOR.instances.ContentSummary.getData(), "type":"Text"});
+					attributes.push({"name":"SmallBlockTitle", "value":$('#SmallBlockTitle').val(), "type":"Text"});
+					attributes.push({"name":"TargetPageLink", "value":$('#TargetPageLink').page_selector_input('getSerializedLink'), "type":"Text"});
+					return attributes; 
+				}); 
+				$(".ocmsTextInputLrg").keydown(function (event) {
+				    if (event.which == 13) {
+				        event.preventDefault();
+				    }
+				});
+				
+				 $('#TargetPageLink').page_selector_input({
+	 				input_field: 'TargetPageLink',
+	 				input_id: 'TargetPageLink_selector_input',
+					dialog_id: 'SmallBlockTarget_selector_dialog',
+					selected: {!IF(OR(TargetPageLinkObj.LinkJSON == null,TargetPageLinkObj.LinkJSON == ''), 'null',TargetPageLinkObj.LinkJSON)},
+					selected_name: '{!JSENCODE(TargetPageLinkObj.LinkName)}'
+ 				}); 
+			});
+		  </script>
+	 
+	<apex:outputPanel >
+		<form>
+			<table class="ocmsContentEditor ocmsContentEditorNested">
+			  <tr>
+               	<td>
+                	<label class="ocmsLabel">Title</label>
+                	<apex:outputText escape="false" rendered="{!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!SmallBlockTitle}" name="SmallBlockTitle" id="SmallBlockTitle"  disabled="disabled" />
+                	</apex:outputText>
+                	<apex:outputText escape="false" rendered="{!!disableAll}" >
+                    	<input class="ocmsTextInputLrg"  type="text" value="{!SmallBlockTitle}" name="SmallBlockTitle" id="SmallBlockTitle" />
+                	</apex:outputText>
+                </td>
+              </tr>
+			  <tr>
+			   
+				<td>
+					<label class="ocmsLabel">Summary</label>
+					<textarea name="ContentSummary" id="ContentSummary" rows="12" cols="50" ><apex:outputText value="{!ContentSummary}" /></textarea>
+				</td>
+			  </tr>
+			  <tr>
+			   
+			    <td>
+			    	<label class="ocmsLabel">Target Page</label>
+			    
+			    	<div id="TargetPageLink" />
+			    </td>
+			  </tr>
+			</table>
+		</form>
+	</apex:outputPanel>
+
+</apex:page>

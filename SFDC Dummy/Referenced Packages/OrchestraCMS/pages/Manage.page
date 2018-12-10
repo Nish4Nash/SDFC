@@ -1,0 +1,1168 @@
+<apex:page controller="cms.ManageController" id="m" showHeader="false" sidebar="false" standardStylesheets="false" cache="false" title="OrchestraCMS" action="{!checkAccessCondition}">
+<html style="height: 100%;">
+<head>
+
+	<apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+	<c:CmsScripts debug="false" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/MainTabController.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'UserTrackedListController.js')}" />
+	<link rel="icon" href="{!URLFOR($Resource.jqueryui, '/css/images/Icons/Favicon.ico')}" />
+	<!--  required by ie -->
+	<link rel="shortcut icon" href="{!URLFOR($Resource.jqueryui, '/css/images/Icons/Favicon.ico')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/multilingual/LanguageManager.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, 'ocmsUIDoServiceRequest.js')}" />
+	
+	<style type="text/css">
+	
+		.info-block {
+			text-align:center;
+		}
+		
+		.info-block:before {
+			content: '';
+			display: inline-block;
+			height: 100%;
+			vertical-align: middle;
+			margin-right: -0.25em; 
+			position: relative;s
+			width: 1px;
+			margin: 0;
+		}
+		
+		.centered {
+			display: inline-block;
+			vertical-align: middle;
+		}
+	
+		.ui-icon-unlockcontent:before {
+   			content: "Unlock";
+		}
+		
+		.ui-icon-opentabs:before {
+   			content: "Open";
+		}
+		
+		.ocms-popup-custombuttonbar{
+			padding: 7px 40px 5px;
+			text-align:left
+		}
+		
+		#ocms-locked-content-warning{
+			display:inline-block;
+			vertical-align:top;
+		}
+		#ocms-locked-pages-warning{
+			display:inline-block;
+			vertical-align:top;
+			padding-right:100px;"
+		}
+		
+		.ocm-custom-button{
+			margin-right: 10px;
+		}
+	</style>
+
+
+   	<script type="text/javascript">
+
+		var CMS = {
+			"sname" : "{!sname}",
+			"csrf_token" : "{!token}"
+		}
+        $(document).data('cms', CMS);
+        
+        // As soon at doServiceRequest is defined we can attempt to load the user lists.
+        if ({!IF(sname == null, false, true)}) {
+        	initializeUserLists();
+        }
+
+		// Add a style rule for the start page icon.
+        var startPageIconStyle = document.createElement("style");
+        startPageIconStyle.appendChild(document.createTextNode(''));
+        
+        var iconRule = '.ocms-icon-16-Overture {'
+        	+'background:url({!JSENCODE(startPageIcon)}) top center / 16px 16px no-repeat;'
+        	+'width:16px;'
+    		+'height:16px;'
+    		+'padding-right:5px;'
+    		+'vertical-align:bottom;'
+    	+'}';
+		startPageIconStyle.appendChild(document.createTextNode(iconRule));
+        document.head.appendChild(startPageIconStyle);
+
+       var mainLayout;
+       var searchEnabled = true;
+		$(document).ready(function() {
+           // window.name='OrchestraCMS-Manage';
+			if({!IF(sname == null, false, true)}){
+
+
+	           	mainLayout = $(jq('{!$Component.m.mainControl}')).layout({
+		                 spacing_open:   8 // ALL panes
+		            ,    spacing_closed: 8 // ALL panes
+		            , north: {
+		                    size:	106
+		                ,	spacing_open:0
+		            }
+		            , south: {
+			                size:    30
+			            ,   resizable: false
+			            ,   slidable: false
+			            ,   spacing_open:0
+			            ,   togglerLength_open:    48
+			            ,   togglerLength_closed:    48
+			            ,   onopen:"reSizeContent"
+			            ,   onclose:"reSizeContent"
+		            }
+		            , center: {
+		                    onresize:"reCalculateContentArea"
+		            }
+	            });
+
+				var site_name = "{!JSENCODE(sname)}";
+				if(site_name != ""){
+			  		$("#tabs").tabs( {idPrefix: 'tabs-primary', cache: true});
+			  		$('#tabs').tab_controller({
+						closeBtnInactive: '{!URLFOR($Resource.CmsImages,'/btnCloseInactive.png')}',
+						closeBtnActive: '{!URLFOR($Resource.CmsImages,'/btnCloseActive.png')}'
+					});
+
+					$('body').on('mouseup', function(){
+						try{
+							$('.previewFrame').contents().find('#actionOptions').hide();
+							}catch(e) {}
+						try{
+							$('.previewFrame').contents().find('#gotoOptions').hide();
+							}catch(e) {}
+					});
+
+				}
+
+
+	 			setupSideBar();
+
+		        setupSearchBar();
+
+		        setupSiteSelector();
+
+
+
+				//-- Show the Overture tab.
+				if({!launchStartupApprovalTab}){
+					if('{!startupType}' == 'page'){
+						addTab('Page', 'Preview - {!startupPage.pageName} - v{!startupPage.version}','/apex/TaskPanel?sname={!sname}&name={!startupPage.page.Search_Optimized_Name__c}&timeline={!IF(startupPage.publishedStartDatePreview != null,startupPage.publishedStartDatePreview,'null')}&targetid={!startupApproval}&type=page', 'preview_{!startupPage.page.Id}', true, true);
+					}else if('{!startupType}' == 'content'){
+						addTab('Content', '{!startupContent.contentName} - v{!startupContent.version}','/apex/TaskPanel?sname={!sname}&content={!startupContent.content.Id}&targetid={!startupApproval}&type=content', '{!startupContent.content.Id}', true, true);
+					}
+				}else if({!launchStartupEditTab}){
+					if('{!startupType}' == 'page'){
+						addTab('Page', '{!startupPage.pageName} - v{!startupPage.version}','/apex/Edit?sname={!sname}&id={!startupPage.page.Id}', '{!startupPage.page.Id}', true, true);
+					}else if('{!startupType}' == 'content'){
+						addTab('Content', '{!startupContent.contentName} - v{!startupContent.version}','/apex/CreateContent?sname={!sname}&content={!startupContent.content.Id}', '{!startupContent.content.Id}', true, true);
+					}
+				}else{
+					$('#tabs').tab_controller('addTab','Overture', '{!JSENCODE(startPageName)}', '/apex/Welcome?sname='+'{!JSENCODE(sname)}', 'ocms~~Overture', false, true );
+				}
+
+                closeTheSideBar();
+				//-- ALWAYS RECALCULATE LAST...
+	            reCalculateContentArea();
+
+                setupUtilityMenu();
+			    //-- setup toolbar toggler.
+    			setupToolbarToggler();
+				reSizeContent();
+				
+                if({!isLocked}){
+	               
+	               	var pageList = {!pageListJSON};
+	                var contentList = {!contentListJSON};	
+	                var message = "<h1>Action Required</h1><p>The following items are locked form your previous session.<br>"+
+	                				"Open these items to continue editing them or unlock them to allow others to edit them.</p>";
+	                var actions= {'Open' : function() { 
+	               						$.each(pageList, function(index, element) {
+	               							addTab('Page', element.name+' - v'+element.version,'/apex/Edit?sname={!sname}&id='+element.id, element.id, true, true);
+	 									});
+	 									$.each(contentList, function(index, element){
+	 										addTab('Content', element.name+' - v'+element.version,'/apex/CreateContent?sname={!sname}&content='+element.id, element.id, true, true);
+	 									});
+	 								},
+	                				'Unlock': function(){ 
+										unlockContentAndPages();
+               							 
+									},
+									'Cancel' : function(dialog, obj){
+				   		   				return true;
+				   	   				}
+	            		};
+	               		
+	                	message += '<div id="ocms-locked-warning" >';
+	                	if(pageList != null && pageList.length>0){
+		                	message += '<div id="ocms-locked-pages-warning" ><strong>Pages</strong><ul>';
+		                  	$.each(pageList, function(index,element) {
+	            				message += '<li>'+ element.name+'</li>';
+	            				});
+	            				message +='</ul></div>';
+            			}
+            		 	if(contentList != null && contentList.length>0){
+	            		 	message += '<div id="ocms-locked-content-warning" ><strong>Content</strong><ul>';	
+	            		 	$.each(contentList, function(index, element) {
+	            				message += '<li>'+ element.name+'</li>';
+	            				});
+	        
+		               		 	message +='</ul></div>';
+		               		 }
+	                
+	                message +='</div>';
+	                showMessage(message,actions);
+                }
+                
+                if({!!defaultLanguageSet}) {
+                    disableToolBar();
+                    
+                   if({!hasUpgradeAccess}) {
+                       showMessage("<h1>Important Information</h1><p>An upgrade of OrchestraCMS has been installed.</p>"+
+                                "<p>To take advantage of performance improvements and other features you must first</p>"+
+                                "<p>select a default language for your site and upgrade your OrchestraCMS data.</p>"+
+                                "<div id=\"SetDefaultLanguageButton\">Set Default Language</div>");
+                                
+                       $('#SetDefaultLanguageButton').button().on('click', function(){
+                           $(document).data('cms', {
+                               'context'   : 'orchestracms',
+                               'csrf_token': '{!token}',
+                               'site_name' : '{!JSENCODE(sname)}',
+                               'sname' 	: '{!JSENCODE(sname)}'
+                           });
+                       
+                           $('<div></div>').ocmsLanguageEditor({
+                               languageList   : {!orgLanguages},
+                               sname          : "{!JSENCODE(sname)}",
+                               siteId         : "{!site.Id}",
+                               token          : "{!token}",
+                               action         : "set",
+                               disablefb      : true,
+                               isdefault      : true
+                           });
+                       });
+                   }else{
+                       showMessage("<h1>Important Information</h1><p>An upgrade of OrchestraCMS has been installed</p>"+
+                             "<p>To take advantage of performance improvements and other features you must first</p>"+
+                             "<p>select a default language for your site and upgrade your OrchestraCMS data.</p>"+
+                             "<p>Contact your System Administrator to upgrade your version of OrchestraCMS and it’s data.</p>");
+                   }
+                }else{
+                    setupToolBar();
+                    setupButtons();
+                    setupToolTips();                
+                }
+                if ('{!permissionError}' != '') {	
+ 					showMessage('{!permissionError}');
+ 				}
+                
+                $(window).unload(function() {
+                	 if({!isLocked})
+                		unlockContentAndPages();
+                });
+		  	} else {
+
+	            setupButtons();
+
+	        	if(true){
+					$('#keyDialog').dialog({
+						title: 'Update License Keys',
+						autoOpen: {!showUpdateKeys},
+						width: 525,
+						height: 180,
+						buttons: [
+						  {
+						      text: 'save'.localize(),
+						      click: function(){
+                                updateLicenseKeys();
+                              }
+						  },
+						  {
+						      text: 'cancel'.localize(),
+						      click: function(){
+                                  $(this).dialog('close');
+                              }
+						  }
+						] 
+					});
+				}
+
+				if({!hasMessages}){
+					$('#messagePane').ocmsShowErrorPopup({
+							title : $('#messagePane .title').html(),
+							message : $('#messagePane .message').html(),
+							width: 400
+					});
+				}
+
+			}
+			
+			
+			/* Validate PermissionSets */
+			var missingPerms = {!missingPermSetForUserJSON};
+			if (missingPerms.length > 0) {
+			    	var popup = $('<div></div>').ocmsShowInfoPopup({
+						message: 'Creating Permission Set for User'
+					});
+					var data = {};
+			    	data['action']   		= 'add_perm_to_user';
+				   	data['service']   		= 'ocmsPermissionSetGen';
+				    data['profile_id'] 		= '';
+				    data['users']		    =  '["{!$User.id}"]';
+				    data['permissions']  	= '{!missingPermSetForUserJSON}';
+				    data['send_email']		= 'true';
+				   	var handler = function(json, result){
+						json = $.orchestracmsUtil.parseJSON(json);
+						if((result.status == true) && (json.isSuccess)) {
+						     popup.message='done';
+						   
+						} else {
+						        var msg ='';
+						        if(json.error != null && json.error !=undefined)
+						        	msg = 'Error adding permissions: '  +json.error.message;
+						        else
+						        	msg = json.message;
+						        $('<div></div>').ocmsShowErrorPopup({
+	                   				title: 'error',
+	                   				message : msg,
+	                   				width: 400
+	            				});
+	            		}
+						popup.ocmsShowInfoPopup('closeMessage');
+						    
+						   
+					}
+					var options = {};
+					options['cb']     = handler;
+					doServiceRequest(data, options);
+		        }
+		});
+
+		function unlockContentAndPages(){
+			
+			
+			var cIds = '{!contentids}';
+			if(cIds != null && cIds !=''){	
+				var data = {};
+	            data['service'] = 'LockingManagerService';
+	            data['action']  = 'unlockContent';
+	            data['sname']   = '{!sname}';
+	            data['content_ids'] = cIds;
+											
+				var handler = function(response_string){
+	            	var response = JSON.parse(response_string);
+	                if (response.error != undefined) {
+	                	$('<div></div>').ocmsShowErrorPopup({
+	                    	message: response.error.message
+	               		});
+	                 }
+	           	}
+                var options = {};
+                options['cb']     = handler;
+                doServiceRequest(data, options);
+	    	}
+            var pgIds = '{!pageids}';
+            if(pgIds != null && pgIds!=''){
+	        	var data2 = {};
+	            data2['service'] = 'LockingManagerService';
+	            data2['action']  = 'unlockPage';
+	            data2['sname']   = '{!sname}';
+	            data2['page_ids']	=pgIds;
+				var cbHandler = function(response_string){
+	            	var response = JSON.parse(response_string);
+	                if (response.error != undefined) {
+	                	$('<div></div>').ocmsShowErrorPopup({
+	                    	message: response.error.message
+	              		});
+	                 }
+	            }
+                var opt = {};
+                opt['cb']     = cbHandler;
+                doServiceRequest(data2, opt);
+            }
+		}
+		
+		function setupButtons() {
+		 	var buttons = $('input.ui-button');
+		 	buttons.removeClass('btn');
+		    buttons.hover(
+		            function() {
+		                $(this).addClass('ui-state-hover');
+		            },
+		            function() {
+		                $(this).removeClass('ui-state-hover');
+		            }
+		        );
+		      	buttons.mousedown(function(){
+		            $(this).addClass('ui-state-active');
+		      	}
+		        ).mouseup(function(){
+		            $(this).removeClass('ui-state-active');
+		    	}
+		  	);
+		}
+
+		function setupSideBar() {
+		    // ACCORDIONize the SideBar
+		    $("#ocmsSideBar").accordion({
+		            fillSpace:true
+		        ,   active:0
+		    });
+
+		    // Setup the hover/mousedown/mouseup icons for each action item.
+		    var allActions = $('.ocms-sidebar-action');
+		    allActions.each(function(index, section){
+
+		        var img = $(this).find('img');
+		        var sImg = img.attr('src');
+		        var sImgMO = sImg.replace('20.png','MO20.png');
+		        var sImgMD = sImg.replace('20.png','MD20.png');
+		        var a1 = $(this).find('.ocms-welcome-section-img');
+		        $(this).hover(
+		                function() {
+		                    img.attr('src', sImgMO);
+		                },
+		                function() {
+		                    img.attr('src', sImg);
+		                }
+		                );
+		        $(this).mousedown(function(){
+		            img.attr('src', sImgMD);
+
+		        }).mouseup(function(){
+		            img.attr('src', sImgMO);
+		        });
+
+		    });
+		}
+
+	    /**
+	      * Sets up our search bar.
+	      */
+	    function setupSiteSelector() {
+
+		   $('#siteCBox').ocmsComboBox({
+				layout: mainLayout,
+				overflow: 'north',
+				onItemSelected: function(text) {
+				if(text.equals('Set Up New Site')){
+					if({!isLocked})
+						unlockContentAndPages();
+		            document.location.href="{!URLFOR($Page.InstallSite, null, null)}";
+					
+				}else{
+					if({!isLocked})
+						unlockContentAndPages();
+		            //closealltabs compelete
+		            $("#changeSiteName").val(text);
+					$('#changeSite').submit();
+				}
+				},
+				model: {!siteSelectorJSON}
+			});
+	    }
+
+	    /**
+	      * Sets up our search bar.
+	      */
+	    function setupSearchBar() {
+			//-- Bind left search menu dropdown to select search type
+            $("#ocms-search-left").ocmsMenu({
+                menuId: 'searchMenu',
+                width: 100,
+                layout: mainLayout,
+                overflow: 'north',
+                bindings: {
+                    'page' : function(e, obj) {
+                        $(document).data("SearchType", obj.text());
+	                    $("#ocms-search-left").find("img").attr("src","{!URLFOR($Resource.jqueryui,'css/images/Icons/IconPage20.png')}");
+                    },
+                    'content' : function(e, obj) {
+                        $(document).data("SearchType", obj.text());
+	                    $("#ocms-search-left").find("img").attr("src","{!URLFOR($Resource.jqueryui,'css/images/Icons/IconContent20.png')}");
+                    }
+                }
+            });
+
+			//-- Bind right search 'go' button and the 'enter' key press to do the global search
+            $("#ocms-search-right").on('click', function() {
+                doGlobalSearch();
+            });
+            $('#ocms-search').keypress(function(e){
+                if(e.which == 13){
+                    doGlobalSearch();
+                }
+            });
+	    }
+
+	    /**
+	     * Setup the main toolbar
+	     */
+        function setupToolBar() {
+            // Bind mouse actions on the toolbar actions.
+            $(".ocms-toolbar-button a").mouseover(function() {
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-32-"+imgId+"-md");
+                img.addClass("ocms-icon-32-"+imgId+"-mo");
+            }).mouseout(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-32-"+imgId+"-mo");
+            }).mousedown(function() {
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-32-"+imgId+"-mo");
+                img.addClass("ocms-icon-32-"+imgId+"-md");
+            }).mouseup(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-32-"+imgId+"-md");
+            });
+            
+            //Activate buttons
+            $(".ocms-toolbar-button a").filter(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                
+                $(this).attr("href", "#");
+                switch (imgId){
+	                case 'managepages':
+                        setupButtonAction($(this), 'PageManager', 'Manage Pages', false, '/apex/PageManager?sname={!JSENCODE(sname)}'); 
+	                    break;
+	                case 'managecontents':
+                        setupButtonAction($(this), 'ContentManager', 'Manage Content', false, '/apex/ContentManager?sname={!JSENCODE(sname)}'); 
+	                    break;
+	                case 'managelibraries':
+                        setupButtonAction($(this), 'LibraryManager', 'Manage Libraries', true, '/apex/LibraryManager?sname={!JSENCODE(sname)}'); 
+	                    break;
+	                case 'managetasks':
+                        setupButtonAction($(this), 'TaskManager', 'Manage Tasks', false, '/apex/ManageTasks?sname={!JSENCODE(sname)}');
+	                    break;
+                    case 'fullpreview':
+                        setupButtonAction($(this), 'FullPreview', 'Full Preview', false, '/apex/Preview?sname={!JSENCODE(sname)}');
+                        break;
+                    case 'timetravel':
+                        setupButtonAction($(this), 'TimeTravel', 'Time Travel', false, '/apex/Preview?sname={!JSENCODE(sname)}&productionOnly=true');
+                        break;
+                    case 'livesite':
+                        $(this).attr("href", "{!siteURL}");
+                        $(this).attr("target", "ocms-livesite-window");
+                        break;
+	                default:
+	                    break;
+                }
+            });  
+                
+        } // End of setup toolbar 
+        
+         /**
+         * This function is called from the setupToolBar()
+         * It is used to set up the click actions for each toolbar button (ie. Pages, Content, Media, Tasks, Full Preview, Time Travel and Live Site) 
+         */      
+        function setupButtonAction(element, tabType, tabLabel, resizeContent, url) {  
+            element.click(function(){
+                addTab(tabType, tabLabel,url, tabType);
+                if(resizeContent)
+                    reSizeContent();
+                return false;
+            });
+        }
+
+
+        /**
+         * Disable the main toolbar
+         */
+        function disableToolBar() {
+            searchEnabled = false;
+            $(".ocms-toolbar-button a").filter(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.addClass("ocms-icon-32-"+imgId+"-dis");
+            });
+        }
+        
+        /**
+         * Enable the main toolbar
+         */
+        function enableToolBar() {
+            searchEnabled = true;
+            $(".ocms-toolbar-button a").filter(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-32-"+imgId+"-dis");
+            });
+        }
+        
+        /**
+          * This will close the sidebar panel if the panel is in the 'sliding' state, which means it's
+          * open but will close if the mouse goes outside the panel.  Used after selecting something within the
+          * sidebar panel which will open a tab in the center panel, we want it fully visible on open.
+          */
+        function closeSideBar() {
+            if(mainLayout.state.west.isSliding)
+                mainLayout.close("west");
+        }
+
+        /**
+          * This will close the sidebar panel if the panel is in the 'sliding' state, which means it's
+          * open but will close if the mouse goes outside the panel.  Used after selecting something within the
+          * sidebar panel which will open a tab in the center panel, we want it fully visible on open.
+          */
+        function closeTheSideBar() {
+            if(!mainLayout.state.west.isClosed)
+                mainLayout.close("west");
+        }
+
+
+		/**
+	 	 * When a layout content is closed or open, then method can be called to resize the
+	 	 * 	content within the center panel.
+	 	 */
+	    function reSizeContent() {
+	        mainLayout.resizeAll();
+	    }
+
+		/**
+	 	 * Recalculate the content area's width and height properties
+	 	 */
+		function reCalculateContentArea() {
+	        // Calculate the ocms-content area height, based on the header/footer heights and content areas margin/padding.
+	        var hHeight = $(".ocms-header-area").outerHeight(true);
+	        var fHeight = $(".ocms-footer-area").outerHeight(true);
+	        var cHeightDiff = $(".ocms-content").outerHeight(true)-$(".ocms-content").height();
+	        var cHeight = $(window).height() - hHeight - fHeight- cHeightDiff;
+	        var tBorder = 2;  // Tab border/frame
+
+		     var cFooterHeight = -4;		// Use this footerheight when footer is non-closeable.
+
+		    if (mainLayout.state.south.isClosed)
+		        cFooterHeight = 6;
+
+	        // IFrame is the content height, minus the tabbar height, minus the footer resizer bar height
+            var ocmsContentHeight = (cHeight - tBorder - cFooterHeight);
+            $(".ocms-content").css('height', ocmsContentHeight);
+
+	        var taHeight = $("#tabs-list").outerHeight(true);
+	        $("iframe.previewFrame").css('height', (ocmsContentHeight - taHeight));
+		}
+
+		/**
+	 	 * Performs the global search.
+	 	 */
+        function doGlobalSearch() {
+            if(!searchEnabled)
+                return;
+        
+            var sType = $(document).data("SearchType");
+            var sTabType;
+            var sDestination = 'PageManager';
+            if(sType =='Content'){
+            	sDestination = "ContentManager";
+                sTabType = "ContentManager";
+            }else{
+            	sDestination = "PageManager";
+            	sType = 'Pages';
+                sTabType = "PageManager";
+            }
+            var searchTerm = $('#ocms-search').val();
+            if(searchTerm != null){
+            	$('#tabs').tab_controller('addTab',sTabType,'Manage '+sType, '/apex/'+sDestination+'?sname={!JSENCODE(sname)}&search=' + searchTerm, sDestination, true);
+                notifySubscribers('Search.'+sType, searchTerm, null);
+        	}else{
+        		$('#tabs').tab_controller('addTab',sTabType,'Manage '+sType, '/apex/'+sDestination+'?sname={!JSENCODE(sname)}', sDestination, true);
+                notifySubscribers('Search.'+sType, '', null);
+        	}
+        }
+
+        /**
+         * Returns the version this main page is
+         */
+		function getVersion(){
+			return $('#ocms-version').html();
+		}
+
+        /**
+         * Process all our tooltips on the page.
+         */
+        function setupToolTips() {
+            $('.ocms-tooltip').tooltip({width:300,alignToComponentBottomLeft:true});
+            $('#stantive-logo').tooltip({width:300,alignToComponentBottomLeft:true,yOffset:11});
+            $('#ocms-logo').tooltip({width:300,alignToComponentBottomLeft:true,yOffset:10});
+            $('#ocms-site-middle').tooltip({width:150,alignToComponentBottomLeft:true});
+            $('#ocms-site-right').tooltip({width:150,alignToComponentBottomLeft:true,alignToComponent:$("#ocms-site-middle")});
+            $('#ocms-search-left').tooltip({width:150,alignToComponentBottomLeft:true});
+            $('#ocms-search-right').tooltip({width:150,alignToComponentBottomLeft:true});
+        }
+
+        /**
+         * Process all our tooltips on the page.
+         */
+        function setupUtilityMenu() {
+            /** Page ManagerLocalizations
+             * @var {String[String]} pageMgrLocalizations
+             */
+            var mainLocalizations = {
+                  "user.setup.label"                : "Setup"
+                , "user.logout.label"               : "Logout"
+                , "user.backsforce.label"           : "Back to Salesforce"
+                , "user.setup.description"          : "Opens the setup tab to configure OrchestraCMS"
+                , "user.logout.description"         : "Logs you out of Salesforce and OrchestraCMS"
+                , "user.backsforce.description"     : "Opens a new window to the main Salesforce interface"
+            };
+            addLocalizations(mainLocalizations);
+
+
+			var umModel = '{"id":"userMenuBox", "value":"{!JSENCODE($User.FirstName)} {!JSENCODE($User.LastName)}", "tooltip":"User menu for {!$User.FirstName}", "menu": { "id":"userMenu", '+
+					' "actions":['+
+                <apex:outputText rendered="{!showSetup}">
+                    ' {"type":"menuitem", "id":"user_setup",        "name":"user.setup.label",       	 "value":"user.setup",  "description":"user.setup.description" },' +
+                </apex:outputText>
+					'{"type":"menuitem", "id":"user_logout",       "name":"user.logout.label",        	 "value":"user.logout",  "description":"user.logout.description" }' +
+					',{"type":"menuitem", "id":"user_backsforce",   "name":"user.backsforce.label",    	 "value":"user.backsforce",  "description":"user.backsforce.description" }' +
+					']} }';
+			$('#userMenuCBox').ocmsComboBox({
+				model: $.orchestracmsUtil.parseJSON(umModel),
+				layout: mainLayout,
+				overflow: 'north',
+				updateSelectedText: false,
+                menuWidth: 160,
+				onItemSelected: function(text) {
+					$.ocmsDebug.logWarn('UserMenu [{0}]', text);
+		            if(text.equals('user.setup'))
+		            {
+                    <apex:outputText rendered="{!showSetup}">
+                        addTab('Setup','Setup','apex/Setup?sname={!JSENCODE(sname)}','ocms~~Setup');
+                    </apex:outputText>
+		            }
+		            else if(text.equals('user.logout'))
+		            {
+		            	if({!isLocked})
+		            		unlockContentAndPages();
+		            	window.location = '{!$Site.Prefix}/secur/logout.jsp';
+		            		            	
+		            }
+		            else if(text.equals('user.backsforce'))
+		            {
+                        $.orchestracmsUtil.openNewWindow('{!force_url}', 'sforcewindow', null);
+
+		            }
+
+				}
+			});
+
+            $("#ocms-help a").mouseover(function() {
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-16-"+imgId+"-md");
+                img.addClass("ocms-icon-16-"+imgId+"-mo");
+            }).mouseout(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-16-"+imgId+"-mo");
+            }).mousedown(function() {
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-16-"+imgId+"-mo");
+                img.addClass("ocms-icon-16-"+imgId+"-md");
+            }).mouseup(function(){
+                var img = $(this).find("div");
+                var imgId = img.attr("id");
+                img.removeClass("ocms-icon-16-"+imgId+"-md");
+            });
+
+        }
+
+		/**
+		 * Sets up our toolbar toggler.
+		 */
+		function setupToolbarToggler() {
+		    $('#ocms-action-bar-toggler').attr('title', 'Click to close the main toolbar');
+		        $('#ocms-action-bar-toggler').hover(
+		            function() {
+		                $(this).addClass('ocms-hover');
+		            },
+		            function() {
+		                $(this).removeClass('ocms-hover');
+		            }
+		        );
+		        $('#ocms-action-bar-toggler').on('mousedown',
+		            function(){
+		                $(this).addClass('ocms-focus');
+		            }
+		        ).on('mouseup',
+		            function(){
+		                $(this).removeClass('ocms-focus');
+		            }
+		        );
+		
+		        var actionBarClose = function() {
+                    $(this).removeClass('ocms-opened');
+                    $(this).addClass('ocms-closed');
+                    $(this).attr('title', 'Click to open the main toolbar');
+    
+                    var actionBar = $('#ocms-main-action-bar');
+                    actionBar.addClass('ocms-main-action-bar-minimized');
+                    actionBar.find('.tbLeft').hide();
+                    actionBar.find('.tbRight').hide();
+                    actionBar.find('#ocms-main-toolbar').hide();
+                    actionBar.find('#ocms-main-toolbar-mgr').hide();
+                    actionBar.find('#ocms-main-toolbar-utils').hide();
+                    mainLayout.sizePane('north', 60);
+                }
+                var actionBarOpen = function() {
+                    $(this).removeClass('ocms-closed');
+                    $(this).addClass('ocms-opened');
+                    $(this).attr('title', 'Click to close the main toolbar');
+                    var actionBar = $('#ocms-main-action-bar');
+                    actionBar.removeClass('ocms-main-action-bar-minimized');
+                    actionBar.find('.tbLeft').show();
+                    actionBar.find('.tbRight').show();
+                    actionBar.find('#ocms-main-toolbar').show();
+                    actionBar.find('#ocms-main-toolbar-mgr').show();
+                    actionBar.find('#ocms-main-toolbar-utils').show();
+                    mainLayout.sizePane('north', 106);
+                }
+                var actionBarState = 'open';
+                
+		        $('#ocms-action-bar-toggler').on('click', function() {
+		            if (actionBarState == 'open') {
+		                actionBarClose();
+		                actionBarState = 'closed';
+		            } else {
+		                actionBarOpen();
+		                actionBarState = 'open';
+		            }
+		        });
+		}
+
+		function toggleSecret(){
+			$('#secretShow').toggleClass('secretHidden');
+			$('#secret').toggleClass('secretHidden');
+		}
+
+       function showMessage(sMessage,actions) {
+           $('<div/>').ocmsShowWarningPopup({
+               message: sMessage,
+            
+               customButtons:actions
+           });
+       }
+
+    </script>
+
+    <style type="text/css">
+    	.secretHidden{
+    		display: none;
+    	}
+    </style>
+
+	<title>{!title}</title>
+
+</head>
+
+<body id="ocms-main" style="height:100%" class="ocms">
+
+<apex:pageMessages />
+<apex:outputPanel layout="block" style="padding: 0px; margin: 0px; text-align: center; height: 100%; position:relative;" id="siteSelect" rendered="{!IF(sname == null, true, false)}">
+	
+	<div class="ocms-content info-block" style="height: 100%;">
+	<!-- This section is output if no sites are configured -->
+	<div class="centered">
+		<table style="margin: auto; margin-bottom: 80px;">
+			<tr>
+				<td style="padding: 10px; padding-bottom: 30px;"><img class="nopadding" align="top" src="{!URLFOR($Resource.jqueryui,'/css/images/stantive-logo-greenCMYK_240x55_040912.png')}"/></td>
+				<td style="padding: 10px; padding-bottom: 30px;"><img class="nopadding" align="top" src="{!URLFOR($Resource.jqueryui,'/css/images/OrchestraCMS_horizongal_logo_071513.png')}"/></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+
+					<apex:outputPanel layout="block" rendered="{!IF(renderNoSites && showNewSite, true, false)}">
+						<table class="message-table">
+							<td style="vertical-align: top;">
+								<img class="ocms-icon-48 ocms-icon-48-info" src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}" alt="info" />
+							</td>
+							<td style="text-align: left; padding-left: 10px; font-size: 14px; padding-bottom: 30px;">
+								<!-- No sites are currently available. Please see the <br />documentation for site installation instructions. -->
+								No site exists.  <br/>Use the&nbsp;<apex:outputLink style="text-decoration: underline;" value="{!URLFOR($Page.cms__InstallSite)}">set up new site wizard</apex:outputLink>
+							</td>
+						</table>
+					</apex:outputPanel>
+
+					<apex:outputPanel layout="block" rendered="{!IF(renderNoAccess && !showNewSite, true, false)}">
+						<table class="message-table">
+							<td style="vertical-align: top;">
+								<img class="ocms-icon-48 ocms-icon-48-warning" src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}" alt="info" />
+							</td>
+							<td style="text-align: left; padding-left: 10px; font-size: 14px; padding-bottom: 30px;">
+								<div>
+									You are not authorized to access any sites. <br />
+									Contact your administrator to grant you access.
+								</div>
+							</td>
+						</table>
+					</apex:outputPanel>
+
+					<apex:outputPanel layout="block" rendered="{!renderExpiredAccess}">
+						<table class="message-table">
+							<td>
+								<img class="ocms-icon-48 ocms-icon-48-warning" src="{!URLFOR($Resource.jqueryui, '/css/images/cleardot.gif')}" alt="info" />
+							</td>
+							<td>
+								<div>
+			
+									<apex:outputPanel layout="block" rendered="{!hasSetupLicenseAccess}">
+
+										<p style="margin-top:0px;">The license associated with your profile in the following site(s) has expired:</p>
+										
+										<ul>
+											<apex:repeat value="{!expired_license_sites}" var="site">
+												<li>{!site.cms__Site_Label__c}</li>
+											</apex:repeat>
+										</ul>
+
+									    <div id="messagePane" style="display: none;">
+									    	<apex:repeat value="{!messages}" var="err">
+									    		<div>
+									    		<span class="title">{!err.title}</span>
+									    		<span class="message"><apex:outputText escape="false" value="{!err.message}" /></span>
+									    		</div>
+									    	</apex:repeat>
+									    </div>
+			
+										<div id="keyDialog">
+										  <apex:form >
+							
+											<apex:actionFunction action="{!updateKeys}" name="updateLicenseKeys" />
+							
+								  	  		<table cellspacing="0" cellpadding="5" border="0" style="width: 480px;">
+								  	  		  <tr>
+								  	  		    <td colspan="2">* Required</td>
+								  	  		  </tr>
+								  	  		  <tr>
+								  	  		    <td width="80px" height="30">License Key *</td>
+								  	  		    <td width="395px"><apex:inputText value="{!license_key}" size="50" /></td>
+								  	  		  </tr>
+								  	  		  <tr>
+								  	  		    <td height="27">Secret Key *</td>
+								  	  		    <td>
+								  	  		      <apex:outputText rendered="{!IF(license_secret_key != null, true, false)}">
+								  	  		   		 <div id="secretShow">
+								  	  		   		 	<a href="#" class="setup-link" onclick="toggleSecret(); return false;">Show</a>
+								  	  		   		 </div>
+								  	  		   		 <div id="secret" class="secretHidden">
+								  	  		   		 	<apex:inputText value="{!license_secret_key}" size="50" />&nbsp;&nbsp;<a href="#" class="setup-link" onclick="toggleSecret(); return false;">Hide</a>
+								  	  		   		 </div>
+								  	  		      </apex:outputText>
+								  	  		      <apex:outputText rendered="{!IF(license_secret_key != null, false, true)}">
+								  	  		   		 <apex:inputText value="{!license_secret_key}" size="50" />
+								  	  		      </apex:outputText>
+								  	  		    </td>
+								  	  		  </tr>
+								  	  		</table>
+							
+										  </apex:form>			
+										
+										</div>
+
+										<p>Contact us at <a href="http://www.stantive.com" style="text-decoration:underline">stantive.com</a> to have your license extended.</p>
+										<p>If you have been provided with new license keys, click <a href="#" onclick="$('#keyDialog').dialog('open');" style="text-decoration: underline">Update License Keys</a>.</p>
+
+									</apex:outputPanel>
+				
+									<apex:outputPanel layout="block" rendered="{!!hasSetupLicenseAccess}">
+										<apex:repeat value="{!expired_license_sites}" var="site">
+											<strong>{!site.Site_Label__c}</strong><br />
+										</apex:repeat><br />
+										Contact your site administrator to grant you access via a different license or
+										by purchasing a license extension.<br /><br />
+									</apex:outputPanel>
+
+								</div>
+							</td>
+						</table>		
+					</apex:outputPanel>
+					
+					<div style="padding: 10px; padding-bottom: 20px; text-align: right; font-size: 12px;"><u><a href="{!force_url}" style="color: rgb(0,0,0)">Back to Force.com</a></u>&nbsp;&nbsp;&gt;</div>	
+				</td>
+			</tr>
+		</table>
+		</div>	
+	</div>	
+	<div style="height:30px; position: fixed; bottom:0; color: #6D6E70; background-color: #F1F1F2; border: 1px solid rgb(208, 210, 211); width: 100%; text-align: right;">
+		<div>
+			<div style="text-align: right; padding: 8px;"><span>Copyright © {!currentYear} Stantive Technologies Group. All rights reserved.</span></div>
+		</div>
+	</div>		
+</apex:outputPanel>
+
+
+
+<!-- This section is output if site name is not null and valid? -->
+<apex:outputPanel style="width: 100%; height: 100%;" layout="block" id="mainControl" rendered="{!IF(sname == null, false, true)}">
+<div id="notificationContainer" style="z-index: 100000; position: absolute; top: 0px; left: 500px; width: 350px; background-color: #DEDEDE; padding: 5px; display: none;">
+<div id="notificationCenter">
+</div>
+</div>
+
+<!-- This is the main header area -->
+<div class="ui-layout-north" style="height: 106px;">
+
+    <div class="ocms-header-area">
+        <div class="ocms-header">
+            <div class="ocms-logos">
+                <span id="bg-logo"><img class="nopadding" align="bottom" src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/IdentityBannerOrchestraCMS.png')}"/></span>
+                <a id="stantive-logo" href="http://www.stantive.com" target="StantiveInfo">
+                    <div class="ocms-tooltipText">Stantive.com (Opens in new window)</div>
+                	<img class="nopadding" align="bottom" src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoStantive.png')}"/>
+               	</a>
+                <a id="ocms-logo" href="http://www.stantive.com" target="OrchestraInfo">
+                    <div class="ocms-tooltipText">OrchestraCMS.com (Opens in new window)</div>
+                	<img class="nopadding" align="bottom" src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/LogoOrchestraCMS.png')}"/>
+                </a>
+ 	            <span id="ocms-version">v{!packageVersion}</span>
+                <div id="ocms-utilities">
+                     <div id="userMenuCBox"></div>
+                     <div id="ocms-help">
+                     	<a title="Open the Overture tab" href="#" onclick="$('#tabs').tab_controller('addTab','Overture', '{!JSENCODE(startPageName)}', '/apex/Welcome?sname='+'{!JSENCODE(sname)}', 'ocms~~Overture', false, true ); return false;">
+	                     	<div id="ocms-startpage-icon">
+	                     		<img src='{!JSENCODE(startPageIcon)}'/>
+	                     	</div>
+	                     	<div id="ocms-startpage-link">
+	                     		{!startPageName}
+	                     	</div>
+                     	</a>
+                     </div>
+                 </div>
+            </div>
+         </div>
+
+        <div id="ocms-main-action-bar" class="ocms-action-bar">
+            <div id="ocms-action-bar-toggler" class="ocms-opened"><span class="ui-icon"></span></div>
+            <div id="ocms-main-toolbar-mgr" class="ocms-header-toolbar">
+                <div class="tbLeft"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/BackgroundIconBarLeft.png')}" alt=""/></div>
+                <div class="tbRight"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/BackgroundIconBarRight.png')}" alt=""/></div>
+                <div class="ocms-toolbar">
+                    <apex:outputText rendered="{!showManagePages}">
+                        <div style="float:left">
+                            <div class="ocms-toolbar-button ocms-tooltip">
+                                <div class="ocms-tooltipText">Manage the pages within your site.</div>
+                                <a><div id="managepages" class="ocms-icon-32 ocms-icon-32-managepages" /><span>Pages</span></a>
+                            </div>
+                        </div>
+                    </apex:outputText>
+                    <apex:outputText rendered="{!showManageContent}">
+                        <div style="float:left">
+                            <div class="ocms-toolbar-button ocms-tooltip">
+                                <div class="ocms-tooltipText">Manage the content within your site.</div>
+                                <a><div id="managecontents" class="ocms-icon-32 ocms-icon-32-managecontents" /><span>Content</span></a>
+                            </div>
+                        </div>
+                    </apex:outputText>
+                    <apex:outputText rendered="{!showManageLibraries}">
+                          <div style="float:left">
+                              <div class="ocms-toolbar-button ocms-tooltip">
+                                  <div class="ocms-tooltipText">Manage your media libraries.</div>
+                                  <a><div id="managelibraries" class="ocms-icon-32 ocms-icon-32-managelibraries" /><span>Media</span></a>
+                              </div>
+                          </div>
+                      </apex:outputText>
+                      <apex:outputText rendered="{!showWorkflowEnabled}" >
+                          <div style="float:left">
+                              <div class="ocms-toolbar-button ocms-tooltip">
+                                  <div class="ocms-tooltipText">Manage the tasks that have been assigned to you.</div>
+                                  <a><div id="managetasks" class="ocms-icon-32 ocms-icon-32-managetasks" /><span>Tasks</span></a>
+                              </div>
+                          </div>
+                      </apex:outputText>
+               </div>
+            </div>
+            <apex:outputPanel rendered="{!!simpleInterface}" >
+            <div id="ocms-main-toolbar" class="ocms-header-toolbar">
+                <div class="tbLeft"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/BackgroundIconBarLeft.png')}" alt=""/></div>
+                <div class="tbRight"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Banner/BackgroundIconBarRight.png')}" alt=""/></div>
+                <div class="ocms-toolbar">
+                    <div style="float:left">
+                        <div class="ocms-toolbar-button ocms-tooltip">
+                            <div class="ocms-tooltipText">Preview your pages and business processes exactly as they will publish</div>
+				            <a href="#" onclick="addTab('FullPreview','Full Preview','/apex/Preview?sname={!JSENCODE(sname)}', 'FullPreview'); return false;">
+				            <div id="fullpreview" class="ocms-icon-32 ocms-icon-32-fullpreview" /><span>Full Preview</span></a>
+                        </div>
+                    </div>
+                    <div style="float:left">
+                        <div class="ocms-toolbar-button ocms-tooltip">
+                            <div class="ocms-tooltipText">Review and preview the published content on your site at any date and time</div>
+				            <a href="#" onclick="addTab('TimeTravel','Time Travel','/apex/Preview?sname={!JSENCODE(sname)}&productionOnly=true', 'TimeTravel'); return false;">
+				            <div id="timetravel" class="ocms-icon-32 ocms-icon-32-timetravel" /><span>Time Travel</span></a>
+                        </div>
+                    </div>
+                    <div style="float:left">
+                        <div class="ocms-toolbar-button ocms-tooltip">
+                            <div class="ocms-tooltipText">Go to your live site</div>
+				            <a href="{!siteURL}" target="ocms-livesite-window">
+				            <div id="livesite" class="ocms-icon-32 ocms-icon-32-livesite" ></div><span>Live Site</span></a>
+                        </div>
+                    </div>
+               </div>
+            </div>
+			</apex:outputPanel>
+
+            <div id="ocms-main-toolbar-utils">
+
+				<div id="siteCBox" class="ocms-combobox">
+
+				</div>
+
+				<div class="ocms-site-search">
+					<div>
+						<div id="searchMenu" class="contextMenu" >
+						  <ul>
+							<li id="page"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Icons/IconPages20.png')}"/>Pages</li>
+							<li id="content"><img src="{!URLFOR($Resource.jqueryui,'/css/images/Icons/IconContent20.png')}"/>Content</li>
+						  </ul>
+						</div>
+		               <div id="ocms-search-left" class="ocms-search-left" title="Narrow your search"><img src="{!URLFOR($Resource.jqueryui,'css/images/Icons/IconPages20.png')}"/></div><div id="ocms-search-middle" class="ocms-search-middle"><input id="ocms-search" class="searchTerm" type="text" value=""/></div><div id="ocms-search-right" class="ocms-search-right" title="Search for content in this site" ></div>
+					</div>
+				</div>
+            </div>
+        <!-- Hidden Form for special SiteSelection Components -->
+            <div style="display:none">
+               <form id="changeSite" action="">
+              		<input id="changeSiteName" name="sname" value="{!sname}"/>
+               </form>
+	        </div>
+        <!-- Hidden Form for special SiteSelection Components -->
+        </div>
+    </div>
+</div>
+<!-- This is the main header area -->
+
+<!-- This is the main content area -->
+<div class="ui-layout-center">
+	<div class="ocms-content" >
+
+		<div id="tabs" style="height: 100%; margin:0;padding:0">
+			<ul id="tabs-list">
+			</ul>
+		</div>
+
+		<div id="previewTemplate" style="display: none;">
+		  <div class="ocms-frame-content">
+		    <iframe border="0" frameborder="0" style="padding: 0px; border: 0px;margin:0" class="previewFrame" src="" width="100%"></iframe>
+		  </div>
+		</div>
+	</div>
+	<img src="" width="0" height="0" class="ocms-context-help-icon" />
+</div>
+<!-- This is the main content area -->
+
+</apex:outputPanel>
+
+</body>
+
+</html>
+
+</apex:page>

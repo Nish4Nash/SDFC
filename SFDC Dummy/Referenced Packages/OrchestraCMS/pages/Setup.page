@@ -1,0 +1,38 @@
+<apex:page controller="cms.SetupController" action="{!startPage}" showHeader="false" sidebar="false" cache="false" standardStylesheets="false" title="Setup">
+
+<html>
+
+<head>
+
+ <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+
+ 
+ <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery.min.js')}" />
+ <!-- This is the jquery cookie extension only -->
+ <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/jquery-ui.min.js')}" />
+ <c:CmsScripts />
+
+
+ 
+</head>
+
+<body class="ocms">
+
+<apex:outputPanel rendered="{!hasAccess}">
+
+<c:SetupMenu sname="{!sname}" />
+
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!!hasAccess}">
+	<div style="padding: 10px;">
+    	You do not have Setup permission
+    </div>	
+</apex:outputPanel>
+
+
+</body>
+
+</html>
+
+</apex:page>

@@ -1,0 +1,30 @@
+.THIS th{
+    cursor:pointer;
+}
+.THIS .icon-fxr{
+    position:absolute;
+}
+.THIS .slds-modal {
+    top:auto;
+}
+.THIS .slds-modal__container{
+    padding-bottom:0;
+    max-width: 100%;
+    width: 100%;
+    margin:0;
+}
+.THIS .slds-modal__content{
+    max-height:300px;
+    letter-spacing:0.5px;
+    font-weight:300;
+}
+@media only screen and (max-device-width: 768px) {
+    .THIS .sort-button{
+        display:block;
+    }
+}
+@media only screen and (min-device-width: 769px) {
+    .THIS .sort-button{
+        display:none;
+    }
+}

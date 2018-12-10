@@ -1,0 +1,226 @@
+<apex:page controller="cms.ManageSearchController" showHeader="false" sidebar="false" standardStylesheets="false">
+<html>
+
+  <head>
+  
+    <title>Manage Search</title>
+    
+    
+     <c:CmsScripts />
+     <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/TabInterface.js')}" /> 
+    
+    <script type="text/javascript">     
+    
+        $(document).data('cms', {
+            'context'   : 'orchestracms',
+            'namespace' : '{!namespace}',
+            'site_name' : '{!SiteName}'
+        });
+   
+        $(document).ready(function() {
+        
+            $('.ocms-progress').hide();
+            
+	        $('#saveSearchProperties').button().bind('click', function(){
+	            saveSearchProperties(this);
+	        });
+	        
+            $('#addActiveFieldButton').button().bind('click', function(){
+            
+                var selected = $('#customSearchIndexFields .availableFieldList').val();
+                
+                $('#customSearchIndexFields .availableFieldList').find('option').each(function(index, element){
+                    
+                    if((selected !== null) && (selected !== undefined) && ($.inArray($(element).attr('value'), selected) != -1)){
+                        var cln = $(element).clone();
+                        $('#customSearchIndexFields .appliedFieldList').append(cln);                   
+                        $(element).remove();
+                    }
+                });
+               
+                // update attribute list status
+                $('#customSearchIndexAttributes').find('option').each(function(index, element){ 
+                   if(($.inArray($(element).attr('value'), selected) != -1)){
+                        element.setAttribute('cfgStatus', 1);
+                   }
+                });
+            });
+            
+            $('#removeActiveFieldButton').button().bind('click', function(){
+                
+                var selected = $('#customSearchIndexFields .appliedFieldList').val();
+                
+                $('#customSearchIndexFields .appliedFieldList').find('option').each(function(index, element){
+                    if((selected !== null) && (selected !== undefined) && ($.inArray($(element).attr('value'), selected) != -1)){
+                        var cln = $(element).clone();
+                        $('#customSearchIndexFields .availableFieldList').append(cln);
+                        $(element).remove();
+                    }
+                });  
+                
+                // update attribute list status
+                $('#customSearchIndexAttributes').find('option').each(function(index, element){ 
+                   if(($.inArray($(element).attr('value'), selected) != -1)){
+                        element.setAttribute('cfgStatus', 0);
+                   }
+                });
+            });
+            
+            $('#SearchPageLinkDlg').page_selector_input({
+                      mode: 'id',
+                      input_field: 'preview_SearchPageLink',
+                      input_id: 'selector_input_SearchPageLink',
+                      dialog_id: 'selector_dialog_SearchPageLink',
+                      disabled: false,
+                      selected: ('{!SearchPageName}' != '' ? {'id':'{!SearchPageId}', 'type':'Internal', 'targetType':'CurrentWindow', 'name': '{!SearchPageName}'} : null),
+                      selected_name: ('{!SearchPageName}' != '' ? '{!SearchPageName}' : null),         
+                      sname: "{!SiteName}",
+                      token: "{!token}"
+            });
+            
+        });   
+        
+        function saveSearchProperties(element) {          
+            
+            $('.ocms-progress').show();
+            
+            // get the page url link and extrct name and Id                 
+            var targetPage        = $('#SearchPageLinkDlg').page_selector_input('getSelected');
+            var page_id_to_origin = '';
+            var page_name         = '';
+            if(targetPage.id != null && targetPage.id != 'null' && targetPage.id !== undefined){
+                page_id_to_origin = targetPage.id + ':' + targetPage.originId;
+                page_name = targetPage.name;
+            }
+            
+            // get field configuration settings
+            var customFieldRecords = {};
+            $('#customSearchIndexAttributes').find('option').each(function(index, element){ 
+                 customFieldRecords[element.getAttribute('cfgName')] = element.value +':~:'+ element.getAttribute('cfgStatus');
+            });
+                
+                
+            var value = '';
+            var data = {};
+
+            data['action']            = 'saveSearchConfiguration';
+            data['page_name']         = page_name;
+            data['page_id_to_origin'] = page_id_to_origin;
+            data['cf_records']        = JSON.stringify(customFieldRecords);
+            
+            doAjaxCall(data, function(json, Success){
+                json = $.orchestracmsUtil.parseJSON(json);
+                if (Success.status && (json.error === undefined)){
+                    $('.ocms-progress').hide();
+                }else{
+                    $('<div></div>').ocmsShowErrorPopup({
+                        title : 'Error Saving Priority Data',
+                        message : json.error.message
+                    }); 
+                    $('.ocms-progress').hide();
+                }
+            }, true);
+            
+        } // end of savePriorityData()
+                
+        function doAjaxCall(data, cbHandler, bAsync) {
+                    
+            data['service']   = 'ManageSearchAjax'; 
+
+            var options = {};
+            options['cb']     = cbHandler;
+            options['bAsync'] = bAsync;
+            doServiceRequest(data, options);
+        }
+    </script>
+
+  </head>
+
+  <body class="ocms">
+  
+  <apex:outputPanel rendered="{!hasAccess}">
+  
+    <c:SetupMenu sname="{!SiteName}" activeitem="manageSearch" />
+  
+    <div style="margin-left: 210px; padding: 10px;">     
+
+        <div class="ocms-setup-breadcrumb">
+          <div class="ocms-setup-breadcrumb-start"></div>
+          <div class="ocms-setup-breadcrumb-item">Setup</div>
+          <div class="ocms-setup-breadcrumb-separator-active"></div>          
+          <div class="ocms-setup-breadcrumb-item-active">Manage Search</div>
+          <div class="ocms-setup-breadcrumb-end"></div>
+          <div class="ocms-clear"></div>
+        </div>
+        
+        <br />
+        
+        <table border="0" cellspacing="0" cellpadding="5px" >
+            <tr>
+                <td>Mapping Table</td>
+                <td>
+                    <div id="customSearchIndexFields" style="height: 120px; width: 100%; min-width: 500px; padding-top: 10px; position: relative;">
+	                  <div class="availableSearchIndexFields" style="height: 100px; width: 40%; display: inline-block;">Inactive <br />
+	                      <select size="14" style="height: 90%; min-width: 152px; width: 100%; margin: 0 2px 0 0;" class="availableFieldList" multiple="multiple" >
+	                        <apex:repeat value="{!availableCustomFields}" var="fields"> 
+	                            <option value="{!fields.Id}" cfgValue="{!fields.Name__c}"  title ="{!fields.Name__c}" > {!IF(fields.Label__c == null, fields.Name__c, fields.Label__c)}</option>
+	                        </apex:repeat>
+	                      </select>
+	                  </div>
+	                  <div class="addremovebuttons" style="padding-left: 10px; height: 90px; width: 40px; display: inline-block;">
+	                      <div style="display: table-cell; text-align: center; padding: 5px;">
+	                          <br /> <div id="addActiveFieldButton" style = "width: 70px;"> Add </div> <br /> <br />
+	                          <div id="removeActiveFieldButton"> Remove </div>
+	                      </div>
+	                  </div>
+	                  <div class="appliedSearchIndexFields" style="height: 100px; width: 40%; padding-left: 40px; display: inline-block;"> Active <br />
+	                      <select size="14" style="height: 90%; min-width: 152px; width: 100%; margin: 0 2px 0 0;" class="appliedFieldList" multiple="multiple" width="250">
+	                        <apex:repeat value="{!appliedCustomFields}" var="fields"> 
+	                           <option value="{!fields.Id}" cfgValue="{!fields.Name__c}" title ="{!fields.Name__c}" > {!IF(fields.Label__c == null, fields.Name__c, fields.Label__c)}</option>
+	                        </apex:repeat>
+	                      </select>
+	                  </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td/>
+                <td>
+	                <select id="customSearchIndexAttributes" style="display: none;">
+	                    <apex:repeat value="{!allCustomFields}" var="field"> 
+	                        <option value="{!field.id}" cfgLabel="{!field.Label__c}" cfgStatus="{!field.Index__c}" cfgName="{!field.Name}"> {!field.Name__c} </option>
+	                    </apex:repeat>
+	                </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Select Page</td>
+                <td>
+                    <input type="hidden" name="SearchPageLink" id="SearchPageLink" value="{!SearchPageName}" />
+                    <div id="SearchPageLinkDlg" style="display: inline-block;"></div> <div style="display: inline-block; vertical-align: bottom; padding: 5px;" />
+                </td>
+            </tr>
+        </table>
+    
+        <div class="buttons" style="margin-top: 30px; margin-left: 90px;">     
+            <div id="saveSearchProperties" style="display: inline-block;">Save</div>  
+        </div>
+    </div>
+    <div class="ocms-progress">
+        <img src="{!URLFOR($Resource.jqueryui, '/css/images/General/80px_AnimatedIndeterminateProgress.gif')}" />
+        <span class="ocms-progress-text">
+            <div>Please</div><div>wait</div>
+        </span>
+    </div>
+  </apex:outputPanel>
+  
+  <apex:outputPanel rendered="{!!hasAccess}">
+    <div style="padding: 10px;">
+        You do not have Setup > Manage -> Search permission
+    </div>
+  </apex:outputPanel>
+  
+  </body>
+
+</html>
+</apex:page>

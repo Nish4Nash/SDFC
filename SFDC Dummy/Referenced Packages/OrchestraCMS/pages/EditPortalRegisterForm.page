@@ -1,0 +1,115 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.PortalRegisterController" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+	<apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/UniversalLookup.js')}" />
+	
+	<apex:outputPanel layout="block" style="padding: 5px;">
+	
+	 	<script type="text/javascript" language="javascript">
+            
+            
+			$(document).ready(function(){
+			
+                ce.content_editor('registerValidationRule', 'DefaultAccount', 'REQUIRED', 'New User Default Account is a required field.');
+                ce.content_editor('registerValidationRule', 'Title', 'REQUIRED', 'Title is a required field.');
+                ce.content_editor('registerValidationRule', 'FirstNameLabel', 'REQUIRED', 'First Name Label is a required field.');
+                ce.content_editor('registerValidationRule', 'LastNameLabel', 'REQUIRED', 'Last Name Label is a required field.');
+                ce.content_editor('registerValidationRule', 'NicknameLabel', 'REQUIRED', 'Nickname Label is a required field.');
+                ce.content_editor('registerValidationRule', 'EmailLabel', 'REQUIRED', 'Email Label is a required field.');
+                ce.content_editor('registerValidationRule', 'SubmitLinkText', 'REQUIRED', 'Submit Link Text is a required field.');
+                    			    
+				ce.content_editor('registerSaveFunction', function(){
+					var attributes = new Array();
+					attributes.push({"name":"DefaultAccount", "value":$('#DefaultAccount').val(), "type":"Text"});
+					attributes.push({"name":"DefaultStartPage", "value":$('#ConfirmationPage').page_selector_input('getSerializedLink'), "type":"Text"});
+                    attributes.push({"name":"Title", "value":$('#Title').val(), "type":"Text", "simple":true});
+                    attributes.push({"name":"FirstNameLabel", "value":$('#FirstNameLabel').val(), "type":"Text", "simple":true});
+                    attributes.push({"name":"LastNameLabel", "value":$('#LastNameLabel').val(), "type":"Text", "simple":true});
+                    attributes.push({"name":"NicknameLabel", "value":$('#NicknameLabel').val(), "type":"Text", "simple":true});
+                    attributes.push({"name":"EmailLabel", "value":$('#EmailLabel').val(), "type":"Text", "simple":true});
+                    attributes.push({"name":"SubmitLinkText", "value":$('#SubmitLinkText').val(), "type":"Text", "simple":true});
+					return attributes;
+				});
+				
+				$('#ConfirmationPage').page_selector_input({
+	 				input_field: 'ConfirmationPage',
+	 				input_id: 'ConfirmationPage_selector_input',
+					dialog_id: 'ConfirmationPageDlg_selector_dialog',
+					selected: {!IF(OR(ConfirmationPageObj.LinkJSON == null,ConfirmationPageObj.LinkJSON == ''), 'null',ConfirmationPageObj.LinkJSON)},
+					selected_name: '{!JSENCODE(ConfirmationPageObj.LinkName)}'
+ 				}); 
+ 				
+	 			$(jq('universal-DefaultAccount')).ocmsUniversalLookup({
+					passThruId : 'DefaultAccount',
+					input_field_class: 'selected-object-name',
+					lookupType: 'Account',
+					selected: {'Id': $(jq('DefaultAccount')).val()},
+					enableAdvanceLookup:true,
+					order: 'Name:ASC',
+				});
+				
+			});
+
+		</script>
+        <form>
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+                <tr>
+                    <td><span>New user default account is required. New users can't register without it.</span></td>
+                </tr>
+                <tr>
+                   <td>
+                       <div style="display: inline-block;">
+                           <label class="ocmsLabel" for="DefaultAccount">New User Default Account *</label>
+                           <input type="hidden" id="DefaultAccount" name="DefaultAccount" value="{!DefaultAccount}" />
+                       		<div id= 'universal-DefaultAccount' style="display: inline-block;vertical-align: middle;" >
+	                        	<input class="ocmsTextInputLrg selected-object-name" type="text" id="DefaultAccountName" value="{!DefaultAccountName}" />
+									<span class="lookup-launcher">Select</span>
+							</div> 
+                       	</div>
+                    </td>
+                </tr>
+                   <td>
+                       <label class="ocmsLabel" for="ConfirmationPage">Confirmation Page</label>
+                    
+                       <div id="ConfirmationPage" />
+                       <p class="ocmsHelpText">Page that users see after they have registered</p>
+                   </td>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="Title">Title *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="Title" value="{!title}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="FirstNameLabel ">First Name Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="FirstNameLabel" value="{!firstNameLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="LastNameLabel">Last Name Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="LastNameLabel" value="{!lastNameLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="NicknameLabel">Nickname Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="NicknameLabel" value="{!nicknameLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="EmailLabel">Email Label *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="EmailLabel" value="{!emailLabel}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="ocmsLabel" for="SubmitLinkText">Submit Link Text *</label>
+                        <input class="ocmsTextInputLrg" type="text" id="SubmitLinkText" value="{!submitLinkText}" />
+                    </td>
+                </tr>
+          </table>
+      </form>
+      
+	</apex:outputPanel>
+</apex:page>

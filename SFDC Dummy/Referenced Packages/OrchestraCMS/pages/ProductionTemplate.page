@@ -1,0 +1,41 @@
+<apex:page controller="cms.CoreController" showHeader="false" sidebar="false" cache="{!page_cache}" expires="{!page_expires}" title="{!page_title}" standardStylesheets="false" renderAs="{!render_as}" applyHtmlTag="false" applyBodyTag="false"> 
+	
+	<!-- production -->
+	
+	<head>
+	  
+	  <apex:outputText value="{!meta_tags}" escape="false" />
+	  <script type="text/javascript">
+				{!API.InitAPIScript}
+	  </script>
+
+	  <apex:outputText escape="false" rendered="{!disable_scripts != true}">   
+          <link rel="stylesheet" href="{!URLFOR($Resource.jqueryui, '/js/rendering/jqueryui-all.css')}" type="text/css" charset="utf-8" />
+	  	  <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/rendering/jquery.min.js')}"/>      
+	      <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/rendering/jquery-ui.min.js')}" />
+	      
+	      <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/ocms.production.js')}" />
+	      <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSPublic, '/recaptcha_ajax.js')}" />
+	      <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUtil,'/IEScripts.js')}" />
+	      <apex:includeScript value="{!URLFOR($Resource.cms__jqueryui, '/js/rendering/jquery-ui-i18n.min.js')}" />
+	      
+		  <script type="text/javascript">
+		  	$(document).data('cms', CMS);
+		  	$(document).data("btn_close_inactive", "{!URLFOR($Resource.jqueryui, '/css/images/Icons/btnCloseInactive.png')}");
+			$(document).data("btn_close_active", "{!URLFOR($Resource.jqueryui, '/css/images/Icons/btnCloseActive.png')}");		  	
+		  	$(document).ready(function(){
+                $('body').addClass('OCMS-Production');     
+            });
+		  </script>
+	  </apex:outputText>
+
+	  <apex:insert name="header" />
+	
+	</head>
+
+	<apex:outputText escape="false" value="{!bodyTag}" />
+		<apex:insert name="body" />
+	<apex:outputText escape="false" value="</body>" />
+ 
+
+</apex:page>

@@ -1,0 +1,313 @@
+<apex:page controller="cms.CreateContentController" extensions="cms.HorizontalImageBar" showHeader="false" sidebar="false" cache="false" title="Orchestra CMS" standardStylesheets="false">
+    
+    <style type="text/css">
+        #images { list-style-type: none; margin: 0; padding: 0}
+        #images li { margin: 3px 3px 10px 0; padding: 1px; font-size: 4em; text-align: center; border: 1px solid #CCCCCC; }
+        #images li:last-child { margin-bottom: 0;}
+        img.bar-image {max-width: 625px; display:block; margin-bottom: 5px}
+    </style>
+
+    <c:CmsScripts />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/dam/LibraryBrowser.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/selector/link/LinkSelector.js')}" />
+
+      <script type="text/javascript">
+       
+        var site_name	= '{!content.Site_Name__c}';
+        var isPublished	= {!published};
+        var isDisabled	= {!disableAll};
+
+		// what is current user allowed to do?
+		var readOnly = true, translationOnly = false, fullEdit = false;
+	
+        // what can this user do?
+           if ('{!multilingualAccessLevel}' === 'EDIT' && {!!readOnlyCollaborator} && !isPublished && !isDisabled) {
+			readOnly = false;
+           	translationOnly = false;
+           	fullEdit = true;
+           } else if ('{!multilingualAccessLevel}' === 'TRANSLATE' && {!!readOnlyCollaborator} && !isPublished && !isDisabled) {
+			readOnly = false;
+           	translationOnly = true;
+           	fullEdit = false;
+           }
+
+	
+		// new style remove and edit icons
+        var editIcon	= '<div style="float:left;" title="Edit Properties" class="ocms-edit-btn ocms-icon-marker"><img src="'+ $(document).data("clear_dot_image")+'" class="ocms-icon-20 ocms-icon-20-edit"></div>';
+        var _removeIcon	= readOnly ? 'ocms-icon-20-delete-dis' : 'ocms-icon-20-delete';
+        var removeIcon	= '<div style="float:right;" title="Remove" class="ocms-remove-btn ocms-icon-marker"><img src="'+ $(document).data("clear_dot_image")+'" class="ocms-icon-20 '+_removeIcon+'"></div>';
+   
+
+        function SetValues() {
+            if(!isPublished) {
+                $('#images').sortable('refresh');
+                var ordered = $('#images').sortable('toArray');
+
+                var image_ids = '';
+                var links = '';
+
+                for(i=0; i < ordered.length; ++i) {
+                    try {
+                        var id = $('#'+ordered[i] +' div.image-container img.bar-image').attr('src');
+                    } catch (e) {
+                        return;
+                    } 
+                    var imageLink = $('#'+ordered[i] +' div.image-metadata-container input[id^="TargetLink_"]').val(); 
+                    image_ids += id;
+
+                    if(imageLink !== undefined && imageLink !== null && imageLink != '' && imageLink != 'undefined') {
+                        links += imageLink;
+                    } else {
+                        links += ',,,,,,';
+                    }
+
+                    if(i < ordered.length - 1 ) {
+                        image_ids += ',';
+                        links += ';';
+                    }
+                }
+            }
+            
+            $('#ImageIds').val(image_ids);
+            $('#Links').val(links);
+        }
+
+
+        $(document).ready(function() {
+
+            ce.content_editor('registerSaveFunction', function(){
+                SetValues();
+
+                var attributes = new Array();
+                attributes.push({"name":"ImageIds", "value":$('#ImageIds').val(), "type":"Text"});
+                attributes.push({"name":"Links", "value":$('#Links').val(), "type":"Text"});
+                attributes.push({"name":"Alignment", "value":$('#Alignment').val(), "type":"Text", "lang":""});
+
+                var ordered = $('#images').sortable('toArray');
+                for(var i=0; i<ordered.length; ++i) {
+                    var image = $('#'+ordered[i]);
+
+                    var altText = image.find('#image-alt-text').val();
+                    var titleText = image.find('#image-title-text').val();
+
+                    attributes.push({"name":"AltText"+i, "value":((altText == undefined || altText == null || altText == 'null') ? '' : altText), "type":"Text"});
+                    attributes.push({"name":"TitleText"+i, "value":((titleText == undefined || titleText == null || titleText == 'null') ? '' : titleText), "type":"Text"});
+                }
+
+                return attributes; 
+            });
+
+            $('#images').sortable({
+                tolerance: 'pointer',
+                disabled: readOnly,	// allow users with fullEdit or translationOnly to drag and drop!
+                stop: function() {
+                    SetValues();
+                }
+            });
+
+
+            $(document).data('sname', '{!JSENCODE(content.Site_Name__c)}');
+            var ImageLinks        = {!ImageLinksJSON};
+            var ImageLinkNames    = {!ImageLinkNamesJSON};
+            var ImageLinkStr      = '{!Links}'.split(';');
+            var ImageIdsStr       = '{!ImageIds}';
+            var ImageIds          = ImageIdsStr.split(',');
+       
+            var    ImageAltText   = {!ImageAltText};
+            var    ImageTitleText = {!ImageTitleText};
+                         
+            var index = 0; 
+                         
+            <apex:repeat id="r1" value="{!ImageLinks}" var="image">
+                    $('#images').append(CreateImage("{!image.ImageId}", 
+                                                    ImageLinkNames["{!image.Index}"], 
+                                                    ImageTitleText["{!image.Index}"], 
+                                                    ImageAltText["{!image.Index}"], 
+                                                    ImageLinks["{!image.Index}"], 
+                                                    ImageLinkNames["{!image.Index}"],
+                                                    ImageLinkStr["{!image.Index}"]));
+            </apex:repeat>
+
+            SetValues();
+
+            var libBrowser = $('#AddImage').ocmsLibraryBrowser({
+                pageHelpText: 'Lib.Browser.Help'.localize()
+            });
+            
+            var firstOpen = true;
+            
+               //Add Image
+            var AddImageDlg = $("#AddImage").dialog({
+                title: 'Lib.Browser.Title'.localize(),    // F-000318
+                autoOpen: false,
+                height: 400,
+                width: 800,
+                modal: true,
+                open: function() {
+                    libBrowser.ocmsLibraryBrowser('resize');
+                },
+                focus: function() {
+                    libBrowser.ocmsLibraryBrowser('resize');
+                },
+                close: function() {
+                },
+                resize: function(){
+                    libBrowser.ocmsLibraryBrowser('resize');
+                }
+            });
+
+            AddImageDlg.dialog('addButton', 'select'.localize(), function (event) {
+                var img = libBrowser.ocmsLibraryBrowser('getSelected');
+                if(img != null)
+                {
+                    $('#images').append(CreateImage(img.url, img.name, '', '', '', ''));
+                    $('#images').sortable('refresh');
+                    $(this).dialog('close');
+                    SetValues();
+                }
+            });
+            AddImageDlg.dialog('addButton', 'cancel'.localize(), function (event) {
+                $(this).dialog('close');
+            });
+			
+			// we have to allow translators to add images!
+            if(fullEdit || translationOnly) {
+                $('#addImageButton').on('click', function(event) {
+
+                    $('#AddImage').dialog('open');
+
+                    // F-000318 - will open to last-used folder
+                    if (firstOpen) {
+                        firstOpen = false;
+                        libBrowser.ocmsLibraryBrowser('setSelected', null); // F-000318 - force open to last used media folder
+                    }
+
+                    return false;
+                });
+                $('#addImageButton').button();
+            } else {
+                $('#addImageButton').button({disabled: true});
+            }
+
+            function CreateImage(id, name, title, alt, link, ln, linktext) {
+
+                var image = $('<li ui-widget-content ui-corner-tr ui-draggable id="img-'+index+'"></li>');
+                var container = $('<div class="image-container"><img class="bar-image" title="'+((name == 'null' || name == null) ? '' : name)+'" src="'+id+'" /></div>');
+                var metadataContainer = $('<div class="image-metadata-container" style="display:none;">'+
+                                            '<table class="ocms-input-table ocmsContentEditor ocmsContentEditorNested autoWidth">'+
+                                            '<tr><td><label class="ocmsLabel" for="image-alt-text">Alternative Text</label><input class="ocmsTextInputLrg" name="image-alt-text" id="image-alt-text" type="text" value="'+((alt == undefined || alt == null || alt == 'null') ? container.find('.bar-image').attr('title') : alt)+'" /><p class="ocmsHelpText">Words that describe the image that will be read by screen-reading software.</p></td>'+
+                                            '<tr><td><label class="ocmsLabel" for="image-title-text">Title Text</label><input class="ocmsTextInputLrg" name="image-title-text" id="image-title-text" type="text" value="'+((title == undefined || title == null || title == 'null') ? '' : title)+'" /><p class="ocmsHelpText">Text that appears when the mouse pointer hovers over the image.</p></td>'+
+                                            '<tr><td><label class="ocmsLabel" for="target_url">Link</label><input type="hidden" name="TargetLink_'+index+'" id="TargetLink_'+index+'" value="'+linktext+'" /><div id="target_url"></div><p class="ocmsHelpText">Link target when clicking on the image.</p></td></tr>'+
+                                          '<table></div>');
+
+                image.append(container);
+                image.append(metadataContainer);
+                
+                if(fullEdit || translationOnly){
+                    var controls = $('<div style="position: relative"></div>');
+					var edit = $(editIcon);
+
+                    edit.on('click', function() {
+                        metadataContainer.toggle();
+                        $(window).trigger('resize');
+
+						// hide the "remove" control while the properties are open
+                        if (metadataContainer.is(':visible')) {
+                            $(remove).hide();
+                            $(edit).attr('title', 'Hide properties');
+                        } else {
+                            $(remove).show();
+                            $(edit).attr('title', 'Show properties');
+                        }
+                        return false;
+                    });
+
+					var remove = $(removeIcon);
+                    var clear = $('<div style="clear:both;"></div>');
+
+                    remove.on('click', function() {
+                        image.remove();                     
+                        SetValues();
+                        return false;
+                    });
+
+                    controls.append(edit);
+                    controls.append(remove);
+                    controls.append(clear);
+                    image.find('.image-container').append(controls);
+                }
+
+                $('#images').append(image);
+
+                metadataContainer.find('#target_url').page_selector_input({
+                    input_field: 'TargetLink_'+index,
+                    input_id: 'image_link_'+index+'_selector',
+                    selected: (link.id || link.url || link.name ? link : null),
+                    selected_name: ln
+                });
+
+                ++index; 
+                return image;
+            }
+          
+            
+        });
+    </script>
+
+
+    <apex:outputPanel id="o" >
+        <form>
+
+            <input type="hidden" name="ImageIds" id="ImageIds"  value="{!ImageIds}" />
+            <input type="hidden" name="Links" id="Links" value="{!Links}" />
+
+            <table class="ocmsContentEditor ocmsContentEditorNested">
+                <tr>
+                    <td>
+                        <label class="ocmsLabel">Align</label>
+                        <apex:outputText escape="false" rendered="{!!disableAll}">
+
+                            <select id="Alignment" name="Alignment" class="ocmsLanguageNeutral">
+                                <apex:repeat value="{!AlignmentOptions}" var="a" >
+                                    <apex:outputText escape="false" rendered="{!a.selected}">
+                                        <option value="{!a.so.Value}" selected="selected"><apex:outputText value="{!a.so.Label}" /></option>
+                                    </apex:outputText>
+                                    <apex:outputText escape="false" rendered="{!!a.selected}">
+                                        <option value="{!a.so.Value}"><apex:outputText value="{!a.so.Label}" /></option>
+                                    </apex:outputText>
+                                </apex:repeat>
+                            </select>
+
+                        </apex:outputText>
+                        <apex:outputText rendered="{!disableAll}">
+
+                            <select id="Alignment" name="Alignment" class="ocmsLanguageNeutral" disabled="disabled">
+                                <apex:repeat value="{!AlignmentOptions}" var="a" >
+                                    <apex:outputText escape="false" rendered="{!a.selected}">
+                                        <option value="{!a.so.Value}" selected="selected"><apex:outputText value="{!a.so.Label}" /></option>
+                                    </apex:outputText>
+                                    <apex:outputText escape="false" rendered="{!!a.selected}">
+                                        <option value="{!a.so.Value}"><apex:outputText value="{!a.so.Label}" /></option>
+                                    </apex:outputText>
+                                </apex:repeat>
+                            </select>
+
+                        </apex:outputText>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="ui-button" id="addImageButton">Add Image</span>
+                        <div id="AddImage"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <ul id="images"></ul>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </apex:outputPanel>
+</apex:page>

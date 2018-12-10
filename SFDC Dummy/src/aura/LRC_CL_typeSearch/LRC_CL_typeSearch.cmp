@@ -1,0 +1,16 @@
+<!--***********************************************************************************
+* Component: LRC_CL_typeSearch
+* CreatedBy: Ajay Agnihotri 
+* Description: This is inputbox search component, used in dataGrid.
+
+* Revision History
+***********************************************************************************-->
+<aura:component >
+
+    <aura:attribute name="SearchText" type="String"/>
+    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+
+        <c:LRC_CL_svgIcon class="slds-input__icon slds-icon-text-default" svgPath="/resource/slds103/assets/icons/utility-sprite/svg/symbols.svg#search" category="standard" size="large" name="Search" />
+        <input id="lookup" class="slds-input" type="text" value="{!v.SearchText}" onkeyup="{!c.search}" />
+    </div>
+</aura:component>

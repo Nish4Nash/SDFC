@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Distribution Item</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Distribution Item</value>
+    </caseValues>
+    <fields>
+        <label><!-- Content Layout Instance --></label>
+        <name>Content_Layout_Instance__c</name>
+        <relationshipLabel><!-- Distribution Item --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content --></label>
+        <name>Content__c</name>
+        <relationshipLabel><!-- Distribution Item --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Distribution List --></label>
+        <name>Distribution_List__c</name>
+        <relationshipLabel><!-- Distribution Item --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

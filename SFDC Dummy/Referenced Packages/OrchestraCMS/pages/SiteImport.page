@@ -1,0 +1,5 @@
+<apex:page controller="cms.SiteImportController" showHeader="false" sidebar="false" cache="false" title="Setup">
+
+<!-- depricated -->
+
+</apex:page>

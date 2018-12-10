@@ -1,0 +1,4 @@
+<aura:event type="Application" description="Event template">
+   <aura:attribute name="TotalPageLength" type="Integer"/>
+     <aura:attribute name="serverUpdate" type="boolean" default="false"/>
+</aura:event>

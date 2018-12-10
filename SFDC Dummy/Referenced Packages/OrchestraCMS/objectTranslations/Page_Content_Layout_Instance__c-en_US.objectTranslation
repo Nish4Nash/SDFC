@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Page Content Layout Instance</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Page Content Layout Instances</value>
+    </caseValues>
+    <fields>
+        <label><!-- Cache Location --></label>
+        <name>Cache_Location__c</name>
+    </fields>
+    <fields>
+        <label><!-- Cache Panel --></label>
+        <name>Cache_Panel__c</name>
+    </fields>
+    <fields>
+        <label><!-- Cache --></label>
+        <name>Cache__c</name>
+    </fields>
+    <fields>
+        <label><!-- Content Layout Instance --></label>
+        <name>Content_Layout_Instance__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Layout --></label>
+        <name>Content_Layout__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Content Version Origin --></label>
+        <name>Content_Version_Origin__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Dynamic Load --></label>
+        <name>Dynamic_Load__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id --></label>
+        <name>External_Id2__c</name>
+    </fields>
+    <fields>
+        <label><!-- External Id (Deprecated) --></label>
+        <name>External_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- Layout Panel Order --></label>
+        <name>Layout_Panel_Order__c</name>
+    </fields>
+    <fields>
+        <label><!-- Layout Panel --></label>
+        <name>Layout_Panel__c</name>
+    </fields>
+    <fields>
+        <label><!-- Locked --></label>
+        <name>Locked__c</name>
+    </fields>
+    <fields>
+        <label><!-- Page Layout --></label>
+        <name>Page_Layout__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Page --></label>
+        <name>Page__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Site Name --></label>
+        <name>Site_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sites --></label>
+        <name>Sites__c</name>
+        <relationshipLabel><!-- Page Content Layout Instances --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

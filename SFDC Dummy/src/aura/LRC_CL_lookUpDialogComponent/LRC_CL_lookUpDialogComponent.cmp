@@ -1,0 +1,47 @@
+<!--***********************************************************************************
+* Component: LRC_CL_lookUpDialogComponent
+* CreatedBy: Ajay Agnihotri
+* Description: This is the final component that reuses datagrid and typeahead to build reusable custom lookup component
+* Revision History
+***********************************************************************************-->
+<aura:component >
+	<ltng:require styles="/resource/slds103/assets/styles/salesforce-lightning-design-system-ltng.css" />
+    <aura:attribute name="sObjectAPI" type="String" required="true"/>
+    <aura:attribute name="sObjectLookUpColumn1" type="String" required="true"/>
+    <aura:attribute name="sObjectLookUpColumn2" type="String" required="true"/>
+    <aura:attribute name="sObjectLookUpColumn3" type="String" required="true"/>
+    <aura:attribute name="sObjectLookUpColumn4" type="String" required="true"/>
+    <aura:attribute name="AppSearchText" type="String" />
+    <aura:attribute name="sObjectLabel" type="String" required="true"/>
+    <aura:attribute name="sObjectPluralLabel" type="String" required="true"/>
+    <aura:attribute name="TypeAheadsearchField" type="String" required="true"/>
+    <aura:attribute name="TypeAheadDisplayField" type="String" required="true"/>
+    <aura:attribute name="TypeAheadlistIconSVGPath" type="String" required="true"/>
+    <aura:attribute name="TypeAheadlistIconClass" type="String" required="true"/>
+
+	<div class="slds">
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size--2-of-3 slds-small-order--1">
+                
+                <div class="slds-grid pad-bottom-5" style="padding:0px 0px 0px 0px;">
+                    
+                    	<!--<span class="slds-badge slds-theme- -default"><label class="labelCol" for="lookupSearchText"><b>Custom LookUp</b></label></span>-->
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right" style="width:250px;">
+							<c:LRC_CL_typeAheadComponent label="{!v.sObjectLabel}"  pluralLabel="{!v.sObjectPluralLabel}" searchField="{!v.TypeAheadsearchField}" DisplayField="{!v.TypeAheadDisplayField}" sObjectAPIName="{!v.sObjectAPI}" listIconSVGPath="{!v.TypeAheadlistIconSVGPath}" listIconClass="{!v.TypeAheadlistIconClass}" />
+                        </div>
+                </div>
+			 </div>
+		 </div>	 
+                <!--PopUp To Manage Product -->
+                <div class="transbox" id="lookUpPopupDiv" aura:id="auralookUpPopupDiv" style="display:none;width:100%;height:100%;position:absolute;top:0;left:0;border: 0px solid black;">
+                	<div class="popupdivCls" style="border-radius: 1em !important;border: 0px solid black;overflow:auto;">
+                        <div style="border: 0px solid black;">    
+                    		<c:LRC_CL_dataGrid sObjectAPI="{!v.sObjectAPI}" sObjectLookUpColumn1="{!v.sObjectLookUpColumn1}" sObjectLookUpColumn2="{!v.sObjectLookUpColumn2}" sObjectLookUpColumn3="{!v.sObjectLookUpColumn3}" sObjectLookUpColumn4="{!v.sObjectLookUpColumn4}" dataGridSearchText="{!v.AppSearchText}" listIconSVGPath="{!v.TypeAheadlistIconSVGPath}"/>
+                		</div>
+                    </div>
+                </div> 
+				
+        
+    </div>
+</aura:component>

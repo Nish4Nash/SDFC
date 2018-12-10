@@ -1,0 +1,5 @@
+<apex:page controller="cms.SiteExportController" showHeader="false" sidebar="false" cache="false" title="Setup">
+
+<!-- deprecated -->
+
+</apex:page>

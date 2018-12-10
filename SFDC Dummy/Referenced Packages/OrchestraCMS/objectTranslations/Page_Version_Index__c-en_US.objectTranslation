@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Page Version Index</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Page Version Indexes</value>
+    </caseValues>
+    <fields>
+        <label><!-- Has Cache --></label>
+        <name>Has_Cache__c</name>
+    </fields>
+    <fields>
+        <label><!-- Is Visualforce --></label>
+        <name>Is_Visualforce__c</name>
+    </fields>
+    <fields>
+        <label><!-- Language --></label>
+        <name>Language__c</name>
+        <relationshipLabel><!-- Page Version Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Page --></label>
+        <name>Page__c</name>
+        <relationshipLabel><!-- Page Version Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Publish End Date --></label>
+        <name>Publish_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Publish Start Date --></label>
+        <name>Publish_Start_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- SiteId --></label>
+        <name>SiteId__c</name>
+        <relationshipLabel><!-- Page Version Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Site Map Id --></label>
+        <name>Site_Map_Id__c</name>
+        <relationshipLabel><!-- Page Version Indexes --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- URL_Long --></label>
+        <name>URL_Long__c</name>
+    </fields>
+    <fields>
+        <label><!-- URL --></label>
+        <name>URL__c</name>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

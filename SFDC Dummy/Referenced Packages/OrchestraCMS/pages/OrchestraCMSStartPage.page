@@ -1,0 +1,45 @@
+<apex:page showHeader="false" sidebar="false" cache="false" standardStylesheets="false" title="">
+<head>
+    <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms-min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.cms__jqueryui, '/css/ocms.gwt.css')}" />
+    
+    <c:CmsScripts />
+    
+    <apex:includeScript value="{!URLFOR($Resource.cms__OrchestraCMSUI, '/StartPage.js')}" />
+
+    <script type="text/javascript">
+    function init() {
+        var data = {};
+        data['action'] = 'getStartPage';
+        
+        var options = {};
+        options['readonly'] = false;
+        options['bAsync'] = true;
+        options['cb'] = function(json, success) {
+            json = $.orchestracmsUtil.parseJSON(json);
+            if (!success.status || json.error !== undefined) {
+                $.ocmsDebug.logError('Error encountered getting the start page configuration: {0}', json.error.message);
+            } else {
+                ocmsStartPage.create(json.success.message);
+
+            }
+
+        }
+        
+        _doAjaxRequest(data, options);
+    
+    }
+
+    function _doAjaxRequest(data, options){
+        data['service'] = 'StartPageController';
+        $.ocmsDebug.logDebug("Running: {0}", data);
+        
+        doServiceRequest(data, options);
+    }
+    
+    init();
+    
+    </script>
+</head>
+<body class="ocms"></body>
+</apex:page>
